@@ -6,11 +6,17 @@ export interface UserRoleItem {
 
 export interface OrganizerProfile {
   id: string;
+  userId?: string;
   organizationName: string;
   description?: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED' | 'SUSPENDED';
   createdAt?: string;
   updatedAt?: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+  };
 }
 
 export interface User {

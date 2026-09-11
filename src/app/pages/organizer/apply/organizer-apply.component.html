@@ -1,0 +1,163 @@
+<div class="row">
+  <div class="col-12">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+      <h4 class="mb-sm-0">Pengajuan Organizer</h4>
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a href="javascript: void(0);">Organizer</a></li>
+          <li class="breadcrumb-item active">Pengajuan</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+
+    <!-- Stepper Card Header (Hidden when APPROVED) -->
+    <div *ngIf="organizerProfile?.status !== 'APPROVED'" class="card mb-4">
+      <div class="card-body p-4">
+        <h5 class="card-title mb-4 text-center">Tahapan Pengajuan Organizer</h5>
+
+        <div class="organizer-stepper">
+          <!-- Step 1 -->
+          <div class="step-item" [ngClass]="{
+              'completed': organizerProfile !== null,
+              'active': organizerProfile === null
+            }">
+            <div class="step-circle">
+              <i *ngIf="organizerProfile !== null" class="ri-check-line"></i>
+              <span *ngIf="organizerProfile === null">1</span>
+            </div>
+            <div class="step-title">Langkah 1</div>
+            <div class="step-subtitle">Isi Formulir Organisasi</div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-item" [ngClass]="{
+              'completed': organizerProfile?.status === 'APPROVED',
+              'active': organizerProfile?.status === 'PENDING',
+              'rejected': organizerProfile?.status === 'REJECTED'
+            }">
+            <div class="step-circle">
+              <i *ngIf="organizerProfile?.status === 'APPROVED'" class="ri-check-line"></i>
+              <i *ngIf="organizerProfile?.status === 'REJECTED'" class="ri-close-line"></i>
+              <span *ngIf="organizerProfile?.status !== 'APPROVED' && organizerProfile?.status !== 'REJECTED'">2</span>
+            </div>
+            <div class="step-title">Langkah 2</div>
+            <div class="step-subtitle">
+              {{ organizerProfile?.status === 'REJECTED' ? 'Pengajuan Ditolak' : 'Peninjauan Admin' }}
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-item" [ngClass]="{
+              'completed active': organizerProfile?.status === 'APPROVED'
+            }">
+            <div class="step-circle">
+              <i *ngIf="organizerProfile?.status === 'APPROVED'" class="ri-check-line"></i>
+              <span *ngIf="organizerProfile?.status !== 'APPROVED'">3</span>
+            </div>
+            <div class="step-title">Langkah 3</div>
+            <div class="step-subtitle">Resmi Menjadi Organizer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approved Success Banner Card (Shown when status is APPROVED) -->
+    <div *ngIf="organizerProfile?.status === 'APPROVED'" class="card border-0 shadow-sm bg-success-subtle mb-4">
+      <div class="card-body p-4 text-center">
+        <div class="avatar-md mx-auto mb-3">
+          <div class="avatar-title bg-success text-white rounded-circle fs-24 shadow">
+            <i class="ri-checkbox-circle-fill"></i>
+          </div>
+        </div>
+        <h4 class="text-success fw-bold mb-2">Pengajuan Organizer Telah Disetujui!</h4>
+        <p class="text-muted fs-14 mb-4 mx-auto" style="max-width: 600px;">
+          Selamat! Akun organisasi <strong>"{{ organizerProfile?.organizationName }}"</strong> Anda telah resmi disetujui. Anda sekarang memiliki hak akses penuh untuk membuat dan mengelola event.
+        </p>
+        <div class="d-flex justify-content-center gap-2">
+          <a routerLink="/organizer/profile" class="btn btn-success">
+            <i class="ri-user-settings-line me-1 align-bottom"></i> Kelola Profil Organizer
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Card (Hidden when APPROVED) -->
+    <div *ngIf="organizerProfile?.status !== 'APPROVED'" class="card">
+      <div class="card-header align-items-center d-flex">
+        <h4 class="card-title mb-0 flex-grow-1">Profil & Status Organizer</h4>
+        <div *ngIf="organizerProfile">
+          <span [class]="getStatusBadgeClass(organizerProfile.status)">
+            {{ organizerProfile.status }}
+          </span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="organizerProfile" class="alert alert-info border-0 mb-4" role="alert">
+          <div class="d-flex align-items-center">
+            <div class="flex-shrink-0 me-3">
+              <i class="ri-information-line fs-20"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h5 class="alert-heading fs-14 mb-1">Status Pengajuan: {{ organizerProfile.status }}</h5>
+              <p class="mb-0 fs-13" *ngIf="organizerProfile.status === 'PENDING'">
+                Pengajuan Anda sedang ditinjau oleh Admin. Anda belum dapat membuat event hingga status disetujui (APPROVED).
+              </p>
+              <p class="mb-0 fs-13" *ngIf="organizerProfile.status === 'REJECTED'">
+                Pengajuan Anda sebelumnya ditolak. Anda dapat memperbarui informasi organisasi dan mengajukan kembali.
+              </p>
+              <p class="mb-0 fs-13" *ngIf="organizerProfile.status === 'SUSPENDED'">
+                Akun organizer Anda saat ini ditangguhkan (SUSPENDED). Silakan hubungi Administrator untuk informasi lebih lanjut.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="successMsg" class="alert alert-success border-0" role="alert">
+          {{ successMsg }}
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger border-0" role="alert">
+          {{ error }}
+        </div>
+
+        <form [formGroup]="organizerForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="organizationName" class="form-label">
+              Nama Organisasi / Komunitas <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control" id="organizationName"
+              placeholder="Masukkan nama organisasi atau komunitas Anda" formControlName="organizationName"
+              [ngClass]="{ 'is-invalid': submitted && f['organizationName'].errors }" />
+            <div class="invalid-feedback" *ngIf="f['organizationName'].errors?.['required']">
+              Nama organisasi wajib diisi.
+            </div>
+            <div class="invalid-feedback" *ngIf="f['organizationName'].errors?.['maxlength']">
+              Nama organisasi maksimal 150 karakter.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Deskripsi Organisasi</label>
+            <textarea class="form-control" id="description" rows="4"
+              placeholder="Jelaskan mengenai organisasi, latar belakang, atau jenis event yang ingin Anda selenggarakan"
+              formControlName="description"></textarea>
+          </div>
+
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status"></span>
+              {{ organizerProfile ? 'Perbarui Profil Organizer' : 'Kirim Pengajuan Organizer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -9,4 +9,5 @@ export interface MenuItem {
   badge?: any;
   parentId?: number;
   isLayout?: boolean;
+  roles?: string[];
 }

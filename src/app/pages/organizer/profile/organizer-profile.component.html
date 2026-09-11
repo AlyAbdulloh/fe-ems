@@ -1,0 +1,90 @@
+<div class="row">
+  <div class="col-12">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+      <h4 class="mb-sm-0">Profil Organizer</h4>
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a href="javascript: void(0);">Organizer</a></li>
+          <li class="breadcrumb-item active">Profil</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header align-items-center d-flex">
+        <h4 class="card-title mb-0 flex-grow-1">Ubah Identitas Organizer</h4>
+        <div *ngIf="organizerProfile">
+          <span [class]="getStatusBadgeClass(organizerProfile.status)">
+            {{ organizerProfile.status }}
+          </span>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="fetching" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Memuat...</span>
+          </div>
+        </div>
+
+        <div *ngIf="!fetching">
+          <div *ngIf="successMsg" class="alert alert-success border-0" role="alert">
+            {{ successMsg }}
+          </div>
+
+          <div *ngIf="error" class="alert alert-danger border-0" role="alert">
+            {{ error }}
+          </div>
+
+          <form [formGroup]="organizerForm" (ngSubmit)="onSubmit()">
+            <div class="mb-3">
+              <label for="organizationName" class="form-label">
+                Nama Organisasi / Komunitas <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="organizationName"
+                placeholder="Masukkan nama organisasi atau komunitas Anda"
+                formControlName="organizationName"
+                [ngClass]="{ 'is-invalid': submitted && f['organizationName'].errors }"
+              />
+              <div class="invalid-feedback" *ngIf="f['organizationName'].errors?.['required']">
+                Nama organisasi wajib diisi.
+              </div>
+              <div class="invalid-feedback" *ngIf="f['organizationName'].errors?.['maxlength']">
+                Nama organisasi maksimal 150 karakter.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="description" class="form-label">Deskripsi Organisasi</label>
+              <textarea
+                class="form-control"
+                id="description"
+                rows="4"
+                placeholder="Jelaskan mengenai organisasi, latar belakang, atau jenis event yang diselenggarakan"
+                formControlName="description"
+              ></textarea>
+            </div>
+
+            <div class="text-end">
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="loading"
+              >
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-1" role="status"></span>
+                Simpan Perubahan
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

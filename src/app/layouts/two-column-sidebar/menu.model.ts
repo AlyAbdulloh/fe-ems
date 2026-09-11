@@ -10,4 +10,5 @@ export interface MenuItem {
   isLayout?: boolean;
   collapseid?: string;
   isCollapsed?: any;
+  roles?: string[];
 }

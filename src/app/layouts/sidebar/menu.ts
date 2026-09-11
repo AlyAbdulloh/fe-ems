@@ -64,6 +64,32 @@ export const MENU: MenuItem[] = [
     ]
   },
   {
+    id: 1000,
+    label: 'Organizer',
+    isTitle: true
+  },
+  {
+    id: 1001,
+    label: 'Pengajuan Organizer',
+    icon: 'ri-building-line',
+    link: '/organizer/apply',
+    roles: ['USER']
+  },
+  {
+    id: 1003,
+    label: 'Profil Organizer',
+    icon: 'ri-user-settings-line',
+    link: '/organizer/profile',
+    roles: ['ORGANIZER']
+  },
+  {
+    id: 1002,
+    label: 'Kelola Organizer',
+    icon: 'ri-checkbox-circle-line',
+    link: '/organizer/manage',
+    roles: ['ADMIN']
+  },
+  {
     id: 8,
     label: 'MENUITEMS.APPS.TEXT',
     icon: 'lab la-delicious',

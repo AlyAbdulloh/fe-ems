@@ -2,11 +2,9 @@ import { Component, OnInit, EventEmitter, Output, ViewChild, ElementRef } from '
 import { Router, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
-// Menu Pachage
-// import MetisMenu from 'metismenujs';
-
 import { MENU } from './menu';
 import { MenuItem } from './menu.model';
+import { AuthenticationService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-horizontal-topbar',
@@ -20,13 +18,44 @@ export class HorizontalTopbarComponent implements OnInit {
   @ViewChild('sideMenu') sideMenu!: ElementRef;
   @Output() mobileMenuButtonClicked = new EventEmitter();
 
-  constructor(private router: Router, public translate: TranslateService) {
+  constructor(
+    private router: Router,
+    public translate: TranslateService,
+    private authService: AuthenticationService,
+  ) {
     translate.setDefaultLang('en');
   }
 
   ngOnInit(): void {
-    // Menu Items
-    this.menuItems = MENU;
+    // Menu Items filtered by User Roles
+    this.menuItems = this.filterMenuItems(MENU);
+  }
+
+  private filterMenuItems(items: MenuItem[]): MenuItem[] {
+    const currentUser = this.authService.currentUserValue;
+    const userRoles: string[] = currentUser?.roles?.map((r: any) =>
+      typeof r === 'string' ? r : r.role?.name
+    ) || [];
+
+    return items
+      .map((item: MenuItem) => {
+        const newItem = { ...item };
+        if (newItem.subItems && Array.isArray(newItem.subItems)) {
+          newItem.subItems = this.filterMenuItems(newItem.subItems);
+        }
+        return newItem;
+      })
+      .filter((item: MenuItem) => {
+        if (item.subItems && Array.isArray(item.subItems) && item.subItems.length === 0 && !item.link) {
+          return false;
+        }
+
+        if (!item.roles || !Array.isArray(item.roles) || item.roles.length === 0) {
+          return true;
+        }
+
+        return item.roles.some((role: string) => userRoles.includes(role));
+      });
   }
 
   /***

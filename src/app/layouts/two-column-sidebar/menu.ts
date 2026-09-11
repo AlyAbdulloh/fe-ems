@@ -63,6 +63,35 @@ export const MENU: MenuItem[] = [
     ]
   },
   {
+    id: 1000,
+    label: 'Organizer',
+    collapseid: 'sidebarOrganizer',
+    icon: 'user-check',
+    subItems: [
+      {
+        id: 1001,
+        label: 'Pengajuan Organizer',
+        link: '/organizer/apply',
+        parentId: 1000,
+        roles: ['USER']
+      },
+      {
+        id: 1003,
+        label: 'Profil Organizer',
+        link: '/organizer/profile',
+        parentId: 1000,
+        roles: ['ORGANIZER']
+      },
+      {
+        id: 1002,
+        label: 'Kelola Organizer',
+        link: '/organizer/manage',
+        parentId: 1000,
+        roles: ['ADMIN']
+      }
+    ]
+  },
+  {
     id: 8,
     label: 'MENUITEMS.APPS.TEXT',
     collapseid: 'sidebarApps',
