@@ -60,7 +60,7 @@ export const MENU: MenuItem[] = [
         link: '/dashboard-blog',
         parentId: 2,
       }
-      
+
     ]
   },
   {
@@ -81,6 +81,44 @@ export const MENU: MenuItem[] = [
     icon: 'ri-user-settings-line',
     link: '/organizer/profile',
     roles: ['ORGANIZER']
+  },
+  {
+    id: 1020,
+    label: 'Event',
+    isTitle: true
+  },
+  {
+    id: 1004,
+    label: 'Buat Event Baru',
+    icon: 'ri-add-circle-line',
+    link: '/events/create',
+    roles: ['ORGANIZER']
+  },
+  {
+    id: 1005,
+    label: 'Kelola Event Saya',
+    icon: 'ri-calendar-event-line',
+    link: '/events/manage',
+    roles: ['ORGANIZER']
+  },
+  {
+    id: 1010,
+    label: 'Master Data',
+    isTitle: true
+  },
+  {
+    id: 1006,
+    label: 'Kategori Event',
+    icon: 'ri-price-tag-3-line',
+    link: '/event-categories',
+    roles: ['ADMIN']
+  },
+  {
+    id: 1007,
+    label: 'Venue & Lokasi',
+    icon: 'ri-map-pin-line',
+    link: '/venues',
+    roles: ['ADMIN']
   },
   {
     id: 1002,

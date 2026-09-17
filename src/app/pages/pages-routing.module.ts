@@ -64,6 +64,15 @@ const routes: Routes = [
     {
       path: 'organizer', loadChildren: () => import('./organizer/organizer.module').then(m => m.OrganizerModule)
     },
+    {
+      path: 'event-categories', loadChildren: () => import('./event-categories/event-categories.module').then(m => m.EventCategoriesModule)
+    },
+    {
+      path: 'venues', loadChildren: () => import('./venues/venues.module').then(m => m.VenuesModule)
+    },
+    {
+      path: 'events', loadChildren: () => import('./events/events.module').then(m => m.EventsModule)
+    },
 ];
 
 @NgModule({

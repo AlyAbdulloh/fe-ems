@@ -83,12 +83,54 @@ export const MENU: MenuItem[] = [
         link: '/organizer/profile',
         parentId: 1000,
         roles: ['ORGANIZER']
+      }
+    ]
+  },
+  {
+    id: 1020,
+    label: 'Event',
+    icon: 'bx bx-calendar',
+    subItems: [
+      {
+        id: 1004,
+        label: 'Buat Event Baru',
+        link: '/events/create',
+        parentId: 1020,
+        roles: ['ORGANIZER']
+      },
+      {
+        id: 1005,
+        label: 'Kelola Event Saya',
+        link: '/events/manage',
+        parentId: 1020,
+        roles: ['ORGANIZER']
+      }
+    ]
+  },
+  {
+    id: 1010,
+    label: 'Master Data',
+    icon: 'bx bx-data',
+    subItems: [
+      {
+        id: 1006,
+        label: 'Kategori Event',
+        link: '/event-categories',
+        parentId: 1010,
+        roles: ['ADMIN']
+      },
+      {
+        id: 1007,
+        label: 'Venue & Lokasi',
+        link: '/venues',
+        parentId: 1010,
+        roles: ['ADMIN']
       },
       {
         id: 1002,
         label: 'Kelola Organizer',
         link: '/organizer/manage',
-        parentId: 1000,
+        parentId: 1010,
         roles: ['ADMIN']
       }
     ]

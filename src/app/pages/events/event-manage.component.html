@@ -1,0 +1,187 @@
+<div class="row">
+  <div class="col-12">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+      <h4 class="mb-sm-0">Kelola Event Saya</h4>
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a href="javascript: void(0);">Event</a></li>
+          <li class="breadcrumb-item active">Event Saya</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header border-0">
+        <div class="row g-4 align-items-center">
+          <div class="col-sm-auto">
+            <h5 class="card-title mb-0">Daftar Event Diselenggarakan</h5>
+          </div>
+          <div class="col-sm">
+            <div class="d-flex justify-content-sm-end gap-2">
+              <div class="search-box" style="min-width: 280px;">
+                <input
+                  type="text"
+                  class="form-control search"
+                  placeholder="Cari judul atau deskripsi..."
+                  [value]="searchQuery"
+                  (input)="onSearchInput($event)"
+                />
+                <i class="ri-search-line search-icon"></i>
+              </div>
+
+              <select
+                class="form-select"
+                style="width: 150px;"
+                [(ngModel)]="statusFilter"
+                (change)="onFilterChange()"
+              >
+                <option value="">Status Event</option>
+                <option value="DRAFT">DRAFT</option>
+                <option value="PUBLISHED">PUBLISHED</option>
+                <option value="COMPLETED">COMPLETED</option>
+                <option value="CANCELLED">CANCELLED</option>
+              </select>
+
+              <a routerLink="/events/create" class="btn btn-success">
+                <i class="ri-add-line align-bottom me-1"></i> Buat Event Baru
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="error" class="alert alert-danger border-0 mb-3" role="alert">
+          {{ error }}
+        </div>
+
+        <div class="table-responsive table-card mb-1">
+          <table class="table align-middle table-nowrap mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col">Judul Event</th>
+                <th scope="col">Kategori & Venue</th>
+                <th scope="col">Tanggal & Waktu</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-center" style="width: 200px;">Aksi / Ubah Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="loading">
+                <td colspan="5" class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Memuat...</span>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="!loading && events.length === 0">
+                <td colspan="5" class="text-center py-4">
+                  <p class="text-muted mb-0">Belum ada event tersimpan. Silakan klik tombol "Buat Event Baru".</p>
+                </td>
+              </tr>
+
+              <tr *ngFor="let item of events">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img
+                      *ngIf="item.bannerImage"
+                      [src]="item.bannerImage"
+                      alt="Banner"
+                      class="avatar-xs rounded me-2 object-fit-cover"
+                    />
+                    <div>
+                      <div class="fw-semibold text-dark">{{ item.title }}</div>
+                      <small class="text-muted">Slug: {{ item.slug }}</small>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <span class="badge bg-light text-dark me-1" *ngIf="item.category">
+                      {{ item.category.name }}
+                    </span>
+                    <span class="badge bg-soft-primary text-primary" *ngIf="item.venue">
+                      {{ item.venue.name }} ({{ item.venue.type }})
+                    </span>
+                    <span class="text-muted fs-12" *ngIf="!item.category && !item.venue">-</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="fs-13">
+                    <i class="ri-calendar-line text-muted me-1"></i>
+                    {{ item.startDatetime | date:'dd MMM yyyy, HH:mm' }}
+                  </div>
+                  <small class="text-muted">
+                    s/d {{ item.endDatetime | date:'dd MMM yyyy, HH:mm' }}
+                  </small>
+                </td>
+                <td>
+                  <span [class]="getStatusBadgeClass(item.status)">
+                    {{ item.status }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <div class="btn-group btn-group-sm" role="group">
+                    <button
+                      *ngIf="item.status === 'DRAFT'"
+                      class="btn btn-soft-success"
+                      title="Publikasikan Event"
+                      (click)="updateStatus(item, 'PUBLISHED')"
+                    >
+                      <i class="ri-send-plane-line align-middle me-1"></i> Publish
+                    </button>
+                    <button
+                      *ngIf="item.status === 'PUBLISHED'"
+                      class="btn btn-soft-info"
+                      title="Tandai Selesai"
+                      (click)="updateStatus(item, 'COMPLETED')"
+                    >
+                      <i class="ri-checkbox-circle-line align-middle me-1"></i> Complete
+                    </button>
+                    <button
+                      *ngIf="item.status !== 'CANCELLED' && item.status !== 'COMPLETED'"
+                      class="btn btn-soft-danger"
+                      title="Batalkan Event"
+                      (click)="updateStatus(item, 'CANCELLED')"
+                    >
+                      <i class="ri-close-circle-line align-middle me-1"></i> Cancel
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-end mt-3" *ngIf="meta.totalPages > 1">
+          <div class="pagination-wrap hstack gap-2">
+            <button
+              class="page-item pagination-prev btn btn-sm btn-light"
+              [disabled]="page === 1"
+              (click)="changePage(page - 1)"
+            >
+              Sebelumnya
+            </button>
+            <span class="align-self-center px-2 fs-13">
+              Halaman {{ page }} dari {{ meta.totalPages }}
+            </span>
+            <button
+              class="page-item pagination-next btn btn-sm btn-light"
+              [disabled]="page === meta.totalPages"
+              (click)="changePage(page + 1)"
+            >
+              Selanjutnya
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

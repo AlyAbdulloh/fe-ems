@@ -1,0 +1,150 @@
+<div class="row">
+  <div class="col-12">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+      <h4 class="mb-sm-0">Buat Event Baru</h4>
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a href="javascript: void(0);">Event</a></li>
+          <li class="breadcrumb-item active">Buat Event</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="card">
+      <div class="card-header align-items-center d-flex">
+        <h4 class="card-title mb-0 flex-grow-1">Formulir Informasi Event</h4>
+      </div>
+
+      <div class="card-body">
+        <div *ngIf="error" class="alert alert-danger border-0 mb-3" role="alert">
+          {{ error }}
+        </div>
+
+        <form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="eventTitle" class="form-label">
+                Judul Event <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="eventTitle"
+                placeholder="Masukkan judul event Anda (contoh: Java Web Summit 2026)"
+                formControlName="title"
+                [ngClass]="{ 'is-invalid': submitted && f['title'].errors }"
+              />
+              <div class="invalid-feedback" *ngIf="f['title'].errors?.['required']">
+                Judul event wajib diisi.
+              </div>
+              <div class="invalid-feedback" *ngIf="f['title'].errors?.['maxlength']">
+                Judul event maksimal 200 karakter.
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="categoryId" class="form-label">Kategori Event</label>
+              <select class="form-select" id="categoryId" formControlName="categoryId">
+                <option value="">-- Pilih Kategori Event --</option>
+                <option *ngFor="let cat of categories" [value]="cat.id">
+                  {{ cat.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="venueId" class="form-label">Venue / Lokasi Event</label>
+              <select class="form-select" id="venueId" formControlName="venueId">
+                <option value="">-- Pilih Venue / Lokasi --</option>
+                <option *ngFor="let v of venues" [value]="v.id">
+                  {{ v.name }} ({{ v.type }} - {{ v.city || 'Online' }})
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label for="startDatetime" class="form-label">
+                Waktu Mulai <span class="text-danger">*</span>
+              </label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                id="startDatetime"
+                formControlName="startDatetime"
+                [ngClass]="{ 'is-invalid': submitted && f['startDatetime'].errors }"
+              />
+              <div class="invalid-feedback" *ngIf="f['startDatetime'].errors?.['required']">
+                Waktu mulai event wajib diisi.
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="endDatetime" class="form-label">
+                Waktu Selesai <span class="text-danger">*</span>
+              </label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                id="endDatetime"
+                formControlName="endDatetime"
+                [ngClass]="{ 'is-invalid': submitted && f['endDatetime'].errors }"
+              />
+              <div class="invalid-feedback" *ngIf="f['endDatetime'].errors?.['required']">
+                Waktu selesai event wajib diisi.
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="bannerFile" class="form-label">Gambar Banner Event</label>
+              <input
+                type="file"
+                class="form-control"
+                id="bannerFile"
+                accept=".jpg,.jpeg,.png"
+                (change)="onFileSelected($event)"
+              />
+              <div class="form-text text-muted">
+                Format yang didukung: <strong>JPG, JPEG, PNG</strong>. Ukuran maksimal file: <strong>5 MB</strong>.
+              </div>
+              <div *ngIf="bannerPreviewUrl" class="mt-2">
+                <label class="form-label d-block text-muted small">Pratinjau Banner:</label>
+                <img [src]="bannerPreviewUrl" alt="Banner Preview" class="img-thumbnail rounded" style="max-height: 180px; object-fit: cover;" />
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="eventDescription" class="form-label">Deskripsi Event</label>
+              <textarea
+                class="form-control"
+                id="eventDescription"
+                rows="5"
+                placeholder="Jelaskan mengenai informasi detail event, topik pembicaraan, atau instruksi peserta..."
+                formControlName="description"
+              ></textarea>
+            </div>
+
+            <div class="col-md-6">
+              <label for="eventStatus" class="form-label">Status Event Saat Dibuat</label>
+              <select class="form-select" id="eventStatus" formControlName="status">
+                <option value="DRAFT">DRAFT (Simpan Draf & Belum Dipublikasikan)</option>
+                <option value="PUBLISHED">PUBLISHED (Langsung Dipublikasikan ke Publik)</option>
+              </select>
+            </div>
+
+            <div class="col-12 text-end mt-4">
+              <a routerLink="/events/manage" class="btn btn-light me-2">Batal</a>
+              <button type="submit" class="btn btn-primary" [disabled]="loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
+                Simpan Event
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
