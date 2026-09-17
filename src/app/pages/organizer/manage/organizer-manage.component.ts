@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { OrganizerService } from '../../../core/services/organizer.service';
 import { OrganizerProfile } from '../../../core/models/user.model';
 import { PaginationMeta } from '../../../core/models/api-response.model';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -9,7 +11,7 @@ import Swal from 'sweetalert2';
   templateUrl: './organizer-manage.component.html',
   styleUrls: ['./organizer-manage.component.scss'],
 })
-export class OrganizerManageComponent implements OnInit {
+export class OrganizerManageComponent implements OnInit, OnDestroy {
   organizers: OrganizerProfile[] = [];
   loading = false;
   error = '';
@@ -21,10 +23,32 @@ export class OrganizerManageComponent implements OnInit {
   searchQuery = '';
   meta: PaginationMeta = { total: 0, page: 1, limit: 10, totalPages: 1 };
 
+  private searchSubject = new Subject<string>();
+  private searchSub!: Subscription;
+
   constructor(private organizerService: OrganizerService) {}
 
   ngOnInit(): void {
     this.loadOrganizers();
+
+    this.searchSub = this.searchSubject
+      .pipe(debounceTime(400), distinctUntilChanged())
+      .subscribe((query) => {
+        this.searchQuery = query;
+        this.page = 1;
+        this.loadOrganizers();
+      });
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchSub) {
+      this.searchSub.unsubscribe();
+    }
+  }
+
+  onSearchInput(event: any) {
+    const val = event.target?.value || '';
+    this.searchSubject.next(val);
   }
 
   async loadOrganizers() {
