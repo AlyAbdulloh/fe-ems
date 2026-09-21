@@ -18,27 +18,17 @@
       <div class="card-header border-0">
         <div class="row g-4 align-items-center">
           <div class="col-sm-auto">
-            <h5 class="card-title mb-0">Daftar Event Diselenggarakan</h5>
+            <!-- <h5 class="card-title mb-0">Daftar Event Diselenggarakan</h5> -->
           </div>
           <div class="col-sm">
             <div class="d-flex justify-content-sm-end gap-2">
               <div class="search-box" style="min-width: 280px;">
-                <input
-                  type="text"
-                  class="form-control search"
-                  placeholder="Cari judul atau deskripsi..."
-                  [value]="searchQuery"
-                  (input)="onSearchInput($event)"
-                />
+                <input type="text" class="form-control search" placeholder="Cari judul atau deskripsi..."
+                  [value]="searchQuery" (input)="onSearchInput($event)" />
                 <i class="ri-search-line search-icon"></i>
               </div>
 
-              <select
-                class="form-select"
-                style="width: 150px;"
-                [(ngModel)]="statusFilter"
-                (change)="onFilterChange()"
-              >
+              <select class="form-select" style="width: 150px;" [(ngModel)]="statusFilter" (change)="onFilterChange()">
                 <option value="">Status Event</option>
                 <option value="DRAFT">DRAFT</option>
                 <option value="PUBLISHED">PUBLISHED</option>
@@ -88,12 +78,8 @@
               <tr *ngFor="let item of events">
                 <td>
                   <div class="d-flex align-items-center">
-                    <img
-                      *ngIf="item.bannerImage"
-                      [src]="item.bannerImage"
-                      alt="Banner"
-                      class="avatar-xs rounded me-2 object-fit-cover"
-                    />
+                    <img *ngIf="item.bannerImage" [src]="apiUrl + item.bannerImage" alt="Banner"
+                      class="avatar-xs rounded me-2 object-fit-cover" />
                     <div>
                       <div class="fw-semibold text-dark">{{ item.title }}</div>
                       <small class="text-muted">Slug: {{ item.slug }}</small>
@@ -126,31 +112,38 @@
                   </span>
                 </td>
                 <td class="text-center">
-                  <div class="btn-group btn-group-sm" role="group">
-                    <button
-                      *ngIf="item.status === 'DRAFT'"
-                      class="btn btn-soft-success"
-                      title="Publikasikan Event"
-                      (click)="updateStatus(item, 'PUBLISHED')"
-                    >
-                      <i class="ri-send-plane-line align-middle me-1"></i> Publish
+                  <div class="dropdown" ngbDropdown>
+                    <button class="btn btn-soft-secondary btn-sm dropdown-toggle" type="button" ngbDropdownToggle>
+                      <i class="ri-more-fill align-middle me-1"></i> Aksi
                     </button>
-                    <button
-                      *ngIf="item.status === 'PUBLISHED'"
-                      class="btn btn-soft-info"
-                      title="Tandai Selesai"
-                      (click)="updateStatus(item, 'COMPLETED')"
-                    >
-                      <i class="ri-checkbox-circle-line align-middle me-1"></i> Complete
-                    </button>
-                    <button
-                      *ngIf="item.status !== 'CANCELLED' && item.status !== 'COMPLETED'"
-                      class="btn btn-soft-danger"
-                      title="Batalkan Event"
-                      (click)="updateStatus(item, 'CANCELLED')"
-                    >
-                      <i class="ri-close-circle-line align-middle me-1"></i> Cancel
-                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" ngbDropdownMenu>
+                      <li>
+                        <a class="dropdown-item" [routerLink]="['/events/detail', item.id]">
+                          <i class="ri-eye-line me-2 text-info align-middle"></i> Detail Event
+                        </a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" [routerLink]="['/events/edit', item.id]">
+                          <i class="ri-pencil-line me-2 text-warning align-middle"></i> Edit Event
+                        </a>
+                      </li>
+                      <li><hr class="dropdown-divider" /></li>
+                      <li *ngIf="item.status === 'DRAFT'">
+                        <a class="dropdown-item text-success" href="javascript:void(0)" (click)="updateStatus(item, 'PUBLISHED')">
+                          <i class="ri-send-plane-line me-2 align-middle"></i> Publish Event
+                        </a>
+                      </li>
+                      <li *ngIf="item.status === 'PUBLISHED'">
+                        <a class="dropdown-item text-info" href="javascript:void(0)" (click)="updateStatus(item, 'COMPLETED')">
+                          <i class="ri-checkbox-circle-line me-2 align-middle"></i> Tandai Complete
+                        </a>
+                      </li>
+                      <li *ngIf="item.status !== 'CANCELLED' && item.status !== 'COMPLETED'">
+                        <a class="dropdown-item text-danger" href="javascript:void(0)" (click)="updateStatus(item, 'CANCELLED')">
+                          <i class="ri-close-circle-line me-2 align-middle"></i> Batalkan Event
+                        </a>
+                      </li>
+                    </ul>
                   </div>
                 </td>
               </tr>
@@ -161,21 +154,15 @@
         <!-- Pagination -->
         <div class="d-flex justify-content-end mt-3" *ngIf="meta.totalPages > 1">
           <div class="pagination-wrap hstack gap-2">
-            <button
-              class="page-item pagination-prev btn btn-sm btn-light"
-              [disabled]="page === 1"
-              (click)="changePage(page - 1)"
-            >
+            <button class="page-item pagination-prev btn btn-sm btn-light" [disabled]="page === 1"
+              (click)="changePage(page - 1)">
               Sebelumnya
             </button>
             <span class="align-self-center px-2 fs-13">
               Halaman {{ page }} dari {{ meta.totalPages }}
             </span>
-            <button
-              class="page-item pagination-next btn btn-sm btn-light"
-              [disabled]="page === meta.totalPages"
-              (click)="changePage(page + 1)"
-            >
+            <button class="page-item pagination-next btn btn-sm btn-light" [disabled]="page === meta.totalPages"
+              (click)="changePage(page + 1)">
               Selanjutnya
             </button>
           </div>

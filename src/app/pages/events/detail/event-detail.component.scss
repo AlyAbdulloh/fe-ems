@@ -1,0 +1,21 @@
+.timeline-sessions {
+  .session-card {
+    border-radius: 8px;
+    border-color: #eff2f7 !important;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      border-color: #405189 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    }
+  }
+}
+
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+.modal.show {
+  background: rgba(0, 0, 0, 0.4);
+}

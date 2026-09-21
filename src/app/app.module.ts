@@ -50,9 +50,9 @@ export function createTranslateLoader(http: HttpClient): any {
   return new TranslateHttpLoader(http, 'assets/i18n/', '.json');
 }
 
-if (environment.defaultauth === 'firebase') {
-  initFirebaseBackend(environment.firebaseConfig);
-}
+// if (environment.defaultauth === 'firebase') {
+//   initFirebaseBackend(environment.firebaseConfig);
+// }
 
 @NgModule({
   declarations: [AppComponent],
@@ -111,4 +111,4 @@ if (environment.defaultauth === 'firebase') {
     provideHttpClient(withInterceptorsFromDi()),
   ],
 })
-export class AppModule {}
+export class AppModule { }

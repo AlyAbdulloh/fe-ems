@@ -1,11 +1,11 @@
 <div class="row">
   <div class="col-12">
     <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-      <h4 class="mb-sm-0">Buat Event Baru</h4>
+      <h4 class="mb-sm-0">{{ isEditMode ? 'Edit Event' : 'Buat Event Baru' }}</h4>
       <div class="page-title-right">
         <ol class="breadcrumb m-0">
           <li class="breadcrumb-item"><a href="javascript: void(0);">Event</a></li>
-          <li class="breadcrumb-item active">Buat Event</li>
+          <li class="breadcrumb-item active">{{ isEditMode ? 'Edit Event' : 'Buat Event' }}</li>
         </ol>
       </div>
     </div>
@@ -16,7 +16,9 @@
   <div class="col-lg-10">
     <div class="card">
       <div class="card-header align-items-center d-flex">
-        <h4 class="card-title mb-0 flex-grow-1">Formulir Informasi Event</h4>
+        <h4 class="card-title mb-0 flex-grow-1">
+          {{ isEditMode ? 'Formulir Perubahan Event' : 'Formulir Informasi Event' }}
+        </h4>
       </div>
 
       <div class="card-body">
@@ -58,7 +60,12 @@
 
             <div class="col-md-6">
               <label for="venueId" class="form-label">Venue / Lokasi Event</label>
-              <select class="form-select" id="venueId" formControlName="venueId">
+              <select
+                class="form-select"
+                id="venueId"
+                formControlName="venueId"
+                (change)="checkVenueAvailability()"
+              >
                 <option value="">-- Pilih Venue / Lokasi --</option>
                 <option *ngFor="let v of venues" [value]="v.id">
                   {{ v.name }} ({{ v.type }} - {{ v.city || 'Online' }})
@@ -75,6 +82,7 @@
                 class="form-control"
                 id="startDatetime"
                 formControlName="startDatetime"
+                (change)="checkVenueAvailability()"
                 [ngClass]="{ 'is-invalid': submitted && f['startDatetime'].errors }"
               />
               <div class="invalid-feedback" *ngIf="f['startDatetime'].errors?.['required']">
@@ -91,6 +99,7 @@
                 class="form-control"
                 id="endDatetime"
                 formControlName="endDatetime"
+                (change)="checkVenueAvailability()"
                 [ngClass]="{ 'is-invalid': submitted && f['endDatetime'].errors }"
               />
               <div class="invalid-feedback" *ngIf="f['endDatetime'].errors?.['required']">
@@ -128,10 +137,12 @@
             </div>
 
             <div class="col-md-6">
-              <label for="eventStatus" class="form-label">Status Event Saat Dibuat</label>
+              <label for="eventStatus" class="form-label">Status Event</label>
               <select class="form-select" id="eventStatus" formControlName="status">
                 <option value="DRAFT">DRAFT (Simpan Draf & Belum Dipublikasikan)</option>
                 <option value="PUBLISHED">PUBLISHED (Langsung Dipublikasikan ke Publik)</option>
+                <option value="COMPLETED" *ngIf="isEditMode">COMPLETED (Event Telah Selesai)</option>
+                <option value="CANCELLED" *ngIf="isEditMode">CANCELLED (Event Dibatalkan)</option>
               </select>
             </div>
 
@@ -139,7 +150,7 @@
               <a routerLink="/events/manage" class="btn btn-light me-2">Batal</a>
               <button type="submit" class="btn btn-primary" [disabled]="loading">
                 <span *ngIf="loading" class="spinner-border spinner-border-sm me-1"></span>
-                Simpan Event
+                {{ isEditMode ? 'Perbarui Event' : 'Simpan Event' }}
               </button>
             </div>
           </div>

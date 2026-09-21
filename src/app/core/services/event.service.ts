@@ -16,6 +16,38 @@ interface LayoutEvent {
 
 export type EventStatusType = 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'COMPLETED';
 
+export interface SpeakerItem {
+  id: string;
+  name: string;
+  bio?: string;
+  company?: string;
+  photo?: string;
+}
+
+export interface EventSessionItem {
+  id: string;
+  eventId: string;
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
+  roomOrTrack?: string;
+  speakerId?: string;
+  speaker?: SpeakerItem;
+}
+
+export interface CreateSessionRequest {
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime: string;
+  roomOrTrack?: string;
+  speakerName?: string;
+  speakerBio?: string;
+  speakerCompany?: string;
+  speakerId?: string;
+}
+
 export interface EventItem {
   id: string;
   organizerId: string;
@@ -42,6 +74,7 @@ export interface EventItem {
   };
   venue?: Venue;
   category?: EventCategory;
+  sessions?: EventSessionItem[];
 }
 
 export interface CreateEventRequest {
@@ -176,6 +209,30 @@ export class EventService {
   }
 
   /**
+   * Check venue availability for a date/time range
+   */
+  async checkVenueAvailability(
+    venueId: string,
+    startDatetime: string,
+    endDatetime: string,
+    excludeEventId?: string,
+  ): Promise<ApiResponse<{ available: boolean; message?: string }>> {
+    let params = new HttpParams()
+      .set('venueId', venueId)
+      .set('startDatetime', startDatetime)
+      .set('endDatetime', endDatetime);
+    if (excludeEventId) {
+      params = params.set('excludeEventId', excludeEventId);
+    }
+    return await firstValueFrom(
+      this.http.get<ApiResponse<{ available: boolean; message?: string }>>(
+        `${API_URL}events/check-venue-availability`,
+        { params },
+      ),
+    );
+  }
+
+  /**
    * Upload event banner image (Max 5MB, JPG/JPEG/PNG)
    */
   async uploadBanner(file: File): Promise<ApiResponse<{ message: string; url: string; filename: string }>> {
@@ -188,5 +245,40 @@ export class EventService {
       ),
     );
   }
+
+  /**
+   * Add a session to event
+   */
+  async createSession(eventId: string, data: CreateSessionRequest): Promise<ApiResponse<EventSessionItem>> {
+    return await firstValueFrom(
+      this.http.post<ApiResponse<EventSessionItem>>(`${API_URL}events/${eventId}/sessions`, data),
+    );
+  }
+
+  /**
+   * Update a session of an event
+   */
+  async updateSession(
+    eventId: string,
+    sessionId: string,
+    data: Partial<CreateSessionRequest>,
+  ): Promise<ApiResponse<EventSessionItem>> {
+    return await firstValueFrom(
+      this.http.patch<ApiResponse<EventSessionItem>>(
+        `${API_URL}events/${eventId}/sessions/${sessionId}`,
+        data,
+      ),
+    );
+  }
+
+  /**
+   * Delete a session of an event
+   */
+  async deleteSession(eventId: string, sessionId: string): Promise<ApiResponse<any>> {
+    return await firstValueFrom(
+      this.http.delete<ApiResponse<any>>(`${API_URL}events/${eventId}/sessions/${sessionId}`),
+    );
+  }
 }
+
 

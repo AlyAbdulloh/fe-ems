@@ -1,0 +1,471 @@
+<!-- Page Title & Breadcrumb -->
+<div class="row">
+  <div class="col-12">
+    <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-2">
+        <a routerLink="/events/manage" class="btn btn-sm btn-soft-secondary rounded-circle">
+          <i class="ri-arrow-left-line fs-16 align-middle"></i>
+        </a>
+        <h4 class="mb-sm-0">Detail Event</h4>
+      </div>
+      <div class="page-title-right">
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a routerLink="/events/manage">Kelola Event</a></li>
+          <li class="breadcrumb-item active">Detail</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Spinner -->
+<div *ngIf="loading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Memuat data detail event...</span>
+  </div>
+  <p class="text-muted mt-2">Memuat informasi detail event...</p>
+</div>
+
+<!-- Error Alert -->
+<div *ngIf="!loading && error" class="alert alert-danger border-0 shadow-sm" role="alert">
+  <i class="ri-error-warning-line me-2 fs-16 align-middle"></i>
+  {{ error }}
+  <div class="mt-3">
+    <a routerLink="/events/manage" class="btn btn-sm btn-outline-danger">Kembali ke Daftar Event</a>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div *ngIf="!loading && event" class="row">
+
+  <!-- Header Card Summary -->
+  <div class="col-12 mb-4">
+    <div class="card card-height-100 overflow-hidden border-0 shadow-sm">
+      <div class="card-body p-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span [class]="getStatusBadgeClass(event.status)" class="px-2 py-1 fs-12">
+                {{ event.status }}
+              </span>
+              <span class="badge bg-soft-primary text-primary px-2 py-1" *ngIf="event.category">
+                <i class="ri-price-tag-3-line me-1"></i> {{ event.category.name }}
+              </span>
+              <span class="badge bg-soft-info text-info px-2 py-1" *ngIf="event.venue">
+                <i class="ri-map-pin-line me-1"></i> {{ event.venue.name }} ({{ event.venue.type }})
+              </span>
+            </div>
+            <h3 class="fw-bold text-dark mb-2">{{ event.title }}</h3>
+            <div class="text-muted fs-13 d-flex flex-wrap gap-4 align-items-center">
+              <div>
+                <i class="ri-calendar-event-line text-primary me-1"></i>
+                <span class="fw-medium text-dark">{{ event.startDatetime | date:'dd MMMM yyyy, HH:mm' }}</span>
+                s/d
+                <span class="fw-medium text-dark">{{ event.endDatetime | date:'dd MMMM yyyy, HH:mm' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+            <a [routerLink]="['/events/edit', event.id]" class="btn btn-warning">
+              <i class="ri-pencil-line align-middle me-1"></i> Edit Event
+            </a>
+            <a routerLink="/events/manage" class="btn btn-light">
+              <i class="ri-arrow-left-line align-middle me-1"></i> Kembali
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Column: Details, Venue & Sessions -->
+  <div class="col-lg-8">
+
+    <!-- Banner & Description Card -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-body p-4">
+        <div *ngIf="event.bannerImage" class="mb-4 rounded overflow-hidden text-center bg-light">
+          <img
+            [src]="apiUrl + event.bannerImage"
+            alt="Banner Event"
+            class="img-fluid rounded shadow-sm"
+            style="max-height: 380px; width: 100%; object-fit: cover;"
+          />
+        </div>
+        <h5 class="card-title fw-bold mb-3 text-dark">Deskripsi Event</h5>
+        <div class="text-muted fs-14 leading-relaxed" style="white-space: pre-line;">
+          {{ event.description || 'Belum ada deskripsi untuk event ini.' }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Venue Card if Available -->
+    <div class="card border-0 shadow-sm mb-4" *ngIf="event.venue">
+      <div class="card-header bg-transparent border-bottom-dashed py-3">
+        <h5 class="card-title mb-0 fw-bold text-dark">
+          <i class="ri-building-line text-primary me-2 align-middle"></i>
+          Informasi Venue / Lokasi
+        </h5>
+      </div>
+      <div class="card-body p-4">
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <small class="text-muted d-block mb-1">Nama Venue</small>
+            <div class="fw-semibold text-dark fs-15">{{ event.venue.name }}</div>
+          </div>
+          <div class="col-sm-6">
+            <small class="text-muted d-block mb-1">Tipe & Kapasitas</small>
+            <div class="fw-medium text-dark">
+              <span class="badge bg-light text-dark me-1">{{ event.venue.type }}</span>
+              <span *ngIf="event.venue.capacity">Kapasitas: {{ event.venue.capacity | number }} orang</span>
+            </div>
+          </div>
+          <div class="col-12" *ngIf="event.venue.address">
+            <small class="text-muted d-block mb-1">Alamat Lengkap</small>
+            <div class="text-dark">
+              <i class="ri-map-pin-2-line text-danger me-1"></i>
+              {{ event.venue.address }}
+              <span *ngIf="event.venue.city">, {{ event.venue.city }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sesi & Rundown Event Card -->
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-transparent border-bottom-dashed py-3 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+          <h5 class="card-title mb-0 fw-bold text-dark">
+            <i class="ri-time-line text-success me-2 align-middle"></i>
+            Rundown & Sesi Event
+          </h5>
+          <span class="badge bg-soft-success text-success rounded-pill px-2">
+            {{ event.sessions?.length || 0 }} Sesi
+          </span>
+        </div>
+        <button class="btn btn-sm btn-success" (click)="openAddSessionModal()">
+          <i class="ri-add-line align-middle me-1"></i> Tambah Sesi
+        </button>
+      </div>
+
+      <div class="card-body p-4">
+
+        <!-- Empty State -->
+        <div *ngIf="!event.sessions || event.sessions.length === 0" class="text-center py-5 bg-light rounded-3 border border-dashed">
+          <div class="avatar-md mx-auto mb-3 text-success">
+            <div class="avatar-title bg-soft-success rounded-circle fs-24">
+              <i class="ri-calendar-todo-line"></i>
+            </div>
+          </div>
+          <h6 class="fw-bold text-dark">Belum Ada Sesi Event</h6>
+          <p class="text-muted fs-13 mb-3 mx-auto" style="max-width: 420px;">
+            Susun jadwal dan rundown acara Anda dengan menambahkan sesi event (misal: Sesi Pembukaan, Keynote Speech, Break, dsb).
+          </p>
+          <button class="btn btn-sm btn-success px-3" (click)="openAddSessionModal()">
+            <i class="ri-add-line align-middle me-1"></i> Tambah Sesi Pertama
+          </button>
+        </div>
+
+        <!-- Sessions List -->
+        <div *ngIf="event.sessions && event.sessions.length > 0" class="timeline-sessions position-relative">
+          <div
+            *ngFor="let session of event.sessions; let i = index"
+            class="session-card card border mb-3 shadow-none hover-shadow transition"
+          >
+            <div class="card-body p-3">
+              <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
+                <div class="d-flex align-items-start gap-3">
+                  <!-- Time Badge -->
+                  <div class="bg-soft-primary text-primary px-3 py-2 rounded text-center" style="min-width: 140px;">
+                    <i class="ri-time-line me-1"></i>
+                    <span class="fw-bold fs-14">
+                      {{ session.startTime | date:'HH:mm' }} - {{ session.endTime | date:'HH:mm' }}
+                    </span>
+                    <small class="d-block text-muted fs-11 mt-1">
+                      {{ session.startTime | date:'dd MMM yyyy' }}
+                    </small>
+                  </div>
+
+                  <!-- Session Content -->
+                  <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                      <span class="badge bg-light text-dark">Sesi #{{ i + 1 }}</span>
+                      <span class="badge bg-soft-info text-info" *ngIf="session.roomOrTrack">
+                        <i class="ri-community-line me-1"></i> {{ session.roomOrTrack }}
+                      </span>
+                    </div>
+
+                    <h5 class="fw-bold text-dark fs-16 mb-2">{{ session.title }}</h5>
+
+                    <p class="text-muted fs-13 mb-2" *ngIf="session.description">
+                      {{ session.description }}
+                    </p>
+
+                    <!-- Speaker Info Card -->
+                    <div *ngIf="session.speaker" class="bg-light rounded p-2 d-inline-flex align-items-center gap-2 mt-1">
+                      <div class="avatar-xs">
+                        <span class="avatar-title bg-soft-primary text-primary rounded-circle fw-bold">
+                          {{ session.speaker.name.charAt(0).toUpperCase() }}
+                        </span>
+                      </div>
+                      <div class="fs-12">
+                        <span class="fw-semibold text-dark">{{ session.speaker.name }}</span>
+                        <span class="text-muted ms-1" *ngIf="session.speaker.company">({{ session.speaker.company }})</span>
+                        <small class="d-block text-muted" *ngIf="session.speaker.bio">{{ session.speaker.bio }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Session Actions -->
+                <div class="btn-group btn-group-sm ms-auto">
+                  <button class="btn btn-soft-warning" title="Edit Sesi" (click)="openEditSessionModal(session)">
+                    <i class="ri-pencil-line"></i> Edit
+                  </button>
+                  <button class="btn btn-soft-danger" title="Hapus Sesi" (click)="deleteSession(session)">
+                    <i class="ri-delete-bin-line"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right Column: Metadata Sidebar -->
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm mb-4">
+      <div class="card-header bg-transparent border-bottom-dashed py-3">
+        <h5 class="card-title mb-0 fw-bold text-dark">Metadata Event</h5>
+      </div>
+      <div class="card-body p-4">
+        <ul class="list-unstyled mb-0 vstack gap-3 fs-14">
+          <li class="d-flex align-items-center justify-content-between">
+            <span class="text-muted"><i class="ri-user-star-line me-2"></i> Penyelenggara:</span>
+            <span class="fw-semibold text-dark" *ngIf="event.organizer">
+              {{ event.organizer.organizationName }}
+            </span>
+          </li>
+          <li class="d-flex align-items-center justify-content-between" *ngIf="event.organizer?.user">
+            <span class="text-muted"><i class="ri-mail-line me-2"></i> Email Pemilik:</span>
+            <span class="fw-medium text-dark">{{ event.organizer?.user?.email }}</span>
+          </li>
+          <li class="d-flex align-items-center justify-content-between">
+            <span class="text-muted"><i class="ri-global-line me-2"></i> Event Slug:</span>
+            <span class="badge bg-light text-dark font-monospace">{{ event.slug }}</span>
+          </li>
+          <li class="d-flex align-items-center justify-content-between">
+            <span class="text-muted"><i class="ri-calendar-check-line me-2"></i> Dibuat Pada:</span>
+            <span class="text-dark">{{ event.createdAt | date:'dd MMM yyyy, HH:mm' }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal Dialog Add / Edit Session -->
+<div *ngIf="isSessionModalOpen" class="modal-backdrop fade show"></div>
+<div
+  *ngIf="isSessionModalOpen"
+  class="modal fade show d-block"
+  tabindex="-1"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-light">
+        <h5 class="modal-header-title fw-bold text-dark m-0">
+          <i class="ri-time-line text-primary me-2 align-middle"></i>
+          {{ isEditingSession ? 'Edit Sesi Event' : 'Tambah Sesi Event Baru' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeSessionModal()"></button>
+      </div>
+
+      <form [formGroup]="sessionForm" (ngSubmit)="submitSession()">
+        <div class="modal-body p-4">
+          <div class="row g-3">
+
+            <!-- Judul Sesi -->
+            <div class="col-12">
+              <label class="form-label fw-medium text-dark">Judul Sesi <span class="text-danger">*</span></label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Contoh: Keynote Speech: Masa Depan AI"
+                formControlName="title"
+                [ngClass]="{ 'is-invalid': sessionForm.get('title')?.touched && sessionForm.get('title')?.invalid }"
+              />
+              <div *ngIf="sessionForm.get('title')?.touched && sessionForm.get('title')?.invalid" class="invalid-feedback">
+                Judul sesi wajib diisi (maksimal 200 karakter).
+              </div>
+            </div>
+
+            <!-- Room / Track -->
+            <div class="col-12">
+              <label class="form-label fw-medium text-dark">Ruangan / Track (Opsional)</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Contoh: Main Hall / Track A / Room 102"
+                formControlName="roomOrTrack"
+              />
+            </div>
+
+            <!-- Datetime Start & End -->
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-dark">Waktu Mulai <span class="text-danger">*</span></label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                formControlName="startTime"
+                [ngClass]="{ 'is-invalid': sessionForm.get('startTime')?.touched && sessionForm.get('startTime')?.invalid }"
+              />
+              <div *ngIf="sessionForm.get('startTime')?.touched && sessionForm.get('startTime')?.invalid" class="invalid-feedback">
+                Waktu mulai sesi wajib diisi.
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-dark">Waktu Selesai <span class="text-danger">*</span></label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                formControlName="endTime"
+                [ngClass]="{ 'is-invalid': sessionForm.get('endTime')?.touched && sessionForm.get('endTime')?.invalid }"
+              />
+              <div *ngIf="sessionForm.get('endTime')?.touched && sessionForm.get('endTime')?.invalid" class="invalid-feedback">
+                Waktu selesai sesi wajib diisi.
+              </div>
+            </div>
+
+            <!-- Deskripsi Sesi -->
+            <div class="col-12">
+              <label class="form-label fw-medium text-dark">Deskripsi Sesi (Opsional)</label>
+              <textarea
+                class="form-control"
+                rows="3"
+                placeholder="Penjelasan singkat mengenai topik atau kegiatan pada sesi ini..."
+                formControlName="description"
+              ></textarea>
+            </div>
+
+            <!-- Master Speaker Selection -->
+            <div class="col-12 mt-3">
+              <div class="p-3 bg-light rounded border border-dashed">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  <label class="form-label fw-bold text-dark m-0">
+                    <i class="ri-user-voice-line text-info me-1 align-middle"></i>
+                    Pilih Pembicara / Speaker (Master Data)
+                  </label>
+                  <button type="button" class="btn btn-sm btn-soft-primary" (click)="openAddSpeakerModal()">
+                    <i class="ri-add-line me-1"></i> Tambah Speaker Baru
+                  </button>
+                </div>
+
+                <select class="form-select" formControlName="speakerId">
+                  <option value="">-- Tidak ada Speaker / Pilih dari Master Data --</option>
+                  <option *ngFor="let sp of speakers" [value]="sp.id">
+                    {{ sp.name }} {{ sp.company ? '(' + sp.company + ')' : '' }}
+                  </option>
+                </select>
+                <small class="text-muted d-block mt-1">
+                  Pilih pembicara dari Master Data Speaker. Jika belum ada, klik "+ Tambah Speaker Baru".
+                </small>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light p-3">
+          <button type="button" class="btn btn-light" (click)="closeSessionModal()" [disabled]="submittingSession">
+            Batal
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="submittingSession">
+            <span *ngIf="submittingSession" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            {{ submittingSession ? 'Menyimpan...' : (isEditingSession ? 'Simpan Perubahan' : 'Tambah Sesi') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Quick Add Master Speaker -->
+<div *ngIf="isSpeakerModalOpen" class="modal-backdrop fade show" style="z-index: 1055;"></div>
+<div
+  *ngIf="isSpeakerModalOpen"
+  class="modal fade show d-block"
+  tabindex="-1"
+  role="dialog"
+  style="z-index: 1056;"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-light">
+        <h5 class="modal-header-title fw-bold text-dark m-0">
+          <i class="ri-user-add-line text-primary me-2 align-middle"></i>
+          Tambah Master Speaker Baru
+        </h5>
+        <button type="button" class="btn-close" (click)="closeSpeakerModal()"></button>
+      </div>
+
+      <form [formGroup]="speakerForm" (ngSubmit)="submitSpeaker()">
+        <div class="modal-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-medium text-dark">Nama Speaker <span class="text-danger">*</span></label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Contoh: Dr. Budi Santoso"
+              formControlName="name"
+              [ngClass]="{ 'is-invalid': speakerForm.get('name')?.touched && speakerForm.get('name')?.invalid }"
+            />
+            <div *ngIf="speakerForm.get('name')?.touched && speakerForm.get('name')?.invalid" class="invalid-feedback">
+              Nama speaker wajib diisi.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-medium text-dark">Perusahaan / Institusi (Opsional)</label>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Contoh: PT Technology Indonesia"
+              formControlName="company"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-medium text-dark">Bio Singkat (Opsional)</label>
+            <textarea
+              class="form-control"
+              rows="3"
+              placeholder="Profil singkat atau keahlian pembicara..."
+              formControlName="bio"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light p-3">
+          <button type="button" class="btn btn-light" (click)="closeSpeakerModal()" [disabled]="submittingSpeaker">
+            Batal
+          </button>
+          <button type="submit" class="btn btn-success" [disabled]="submittingSpeaker">
+            <span *ngIf="submittingSpeaker" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            Simpan Speaker
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

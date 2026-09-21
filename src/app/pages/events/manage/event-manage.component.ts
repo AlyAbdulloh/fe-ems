@@ -1,9 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { EventItem, EventService, EventStatusType } from '../../core/services/event.service';
-import { PaginationMeta } from '../../core/models/api-response.model';
+import { EventItem, EventService, EventStatusType } from '../../../core/services/event.service';
+import { PaginationMeta } from '../../../core/models/api-response.model';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import Swal from 'sweetalert2';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-event-manage',
@@ -11,6 +12,8 @@ import Swal from 'sweetalert2';
   styleUrls: ['./event-manage.component.scss'],
 })
 export class EventManageComponent implements OnInit, OnDestroy {
+
+  apiUrl: string = environment.url;
   events: EventItem[] = [];
   loading = false;
   error = '';
@@ -24,7 +27,7 @@ export class EventManageComponent implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
   private searchSub!: Subscription;
 
-  constructor(private eventService: EventService) {}
+  constructor(private eventService: EventService) { }
 
   ngOnInit(): void {
     this.loadMyEvents();
