@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EventService, EventItem } from '../../../core/services/event.service';
 import { EventSessionService, EventSession } from '../../../core/services/event-session.service';
 import { SpeakerService, Speaker } from '../../../core/services/speaker.service';
+import { TicketTypeService, TicketType } from '../../../core/services/ticket-type.service';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 
@@ -17,8 +18,12 @@ export class EventDetailComponent implements OnInit {
   eventId: string = '';
   event: EventItem | null = null;
   speakers: Speaker[] = [];
+  ticketTypes: TicketType[] = [];
   loading = true;
   error = '';
+
+  // Tab State: 1 = Overview, 2 = Sessions, 3 = Ticket Types
+  activeTabId = 1;
 
   // Session Modal State
   isSessionModalOpen = false;
@@ -32,6 +37,13 @@ export class EventDetailComponent implements OnInit {
   speakerForm!: FormGroup;
   submittingSpeaker = false;
 
+  // Ticket Type Modal State
+  isTicketModalOpen = false;
+  isEditingTicket = false;
+  editingTicketId: string | null = null;
+  ticketForm!: FormGroup;
+  submittingTicket = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -39,7 +51,8 @@ export class EventDetailComponent implements OnInit {
     private eventService: EventService,
     private eventSessionService: EventSessionService,
     private speakerService: SpeakerService,
-  ) {}
+    private ticketTypeService: TicketTypeService,
+  ) { }
 
   ngOnInit(): void {
     this.eventId = this.route.snapshot.params['id'];
@@ -67,13 +80,25 @@ export class EventDetailComponent implements OnInit {
       company: [''],
       bio: [''],
     });
+
+    this.ticketForm = this.fb.group({
+      name: ['', [Validators.required, Validators.maxLength(100)]],
+      price: [0, [Validators.required, Validators.min(0)]],
+      quota: [100, [Validators.required, Validators.min(1)]],
+      saleStartDate: [''],
+      saleEndDate: [''],
+    });
   }
 
   async loadData(): Promise<void> {
     this.loading = true;
     this.error = '';
     try {
-      await Promise.all([this.loadEventDetail(), this.loadSpeakers()]);
+      await Promise.all([
+        this.loadEventDetail(),
+        this.loadSpeakers(),
+        this.loadTicketTypes(),
+      ]);
     } catch (err: any) {
       console.error('Error loading detail data:', err);
     } finally {
@@ -85,6 +110,9 @@ export class EventDetailComponent implements OnInit {
     const res = await this.eventService.findOne(this.eventId);
     if (res && res.data) {
       this.event = res.data;
+      if (res.data.ticketTypes && (!this.ticketTypes || this.ticketTypes.length === 0)) {
+        this.ticketTypes = res.data.ticketTypes;
+      }
     } else {
       this.error = 'Data event tidak ditemukan.';
     }
@@ -98,6 +126,17 @@ export class EventDetailComponent implements OnInit {
       }
     } catch (err) {
       console.error('Gagal memuat master speakers:', err);
+    }
+  }
+
+  async loadTicketTypes(): Promise<void> {
+    try {
+      const res = await this.ticketTypeService.findByEventId(this.eventId);
+      if (res && res.data) {
+        this.ticketTypes = res.data;
+      }
+    } catch (err) {
+      console.error('Gagal memuat daftar jenis tiket:', err);
     }
   }
 
@@ -135,12 +174,27 @@ export class EventDetailComponent implements OnInit {
     this.isEditingSession = false;
     this.editingSessionId = null;
 
-    const defaultStart = this.event?.startDatetime
-      ? this.formatDatetimeLocal(this.event.startDatetime)
-      : '';
-    const defaultEnd = this.event?.endDatetime
-      ? this.formatDatetimeLocal(this.event.endDatetime)
-      : '';
+    const sessions = this.event?.sessions;
+    let defaultStart = '';
+    let defaultEnd = '';
+
+
+    if (!sessions || sessions?.length === 0) {
+      defaultStart = this.event?.startDatetime
+        ? this.formatDatetimeLocal(this.event.startDatetime)
+        : '';
+      defaultEnd = this.event?.endDatetime
+        ? this.formatDatetimeLocal(this.event.endDatetime)
+        : '';
+    } else {
+      const lastSession = sessions[sessions.length - 1];
+      defaultStart = lastSession.endTime
+        ? this.formatDatetimeLocal(lastSession.endTime)
+        : '';
+      defaultEnd = this.event?.endDatetime
+        ? this.formatDatetimeLocal(this.event.endDatetime)
+        : defaultStart;
+    }
 
     this.sessionForm.reset({
       title: '',
@@ -319,5 +373,173 @@ export class EventDetailComponent implements OnInit {
     } finally {
       this.submittingSpeaker = false;
     }
+  }
+
+  // --- Ticket Type Handlers ---
+
+  openAddTicketModal(): void {
+    this.isEditingTicket = false;
+    this.editingTicketId = null;
+
+    const defaultStart = this.formatDatetimeLocal(new Date().toISOString());
+    const defaultEnd = this.event?.startDatetime
+      ? this.formatDatetimeLocal(this.event.startDatetime)
+      : '';
+
+    this.ticketForm.reset({
+      name: '',
+      price: 0,
+      quota: 100,
+      saleStartDate: defaultStart,
+      saleEndDate: defaultEnd,
+    });
+
+    this.isTicketModalOpen = true;
+  }
+
+  openEditTicketModal(ticket: TicketType): void {
+    this.isEditingTicket = true;
+    this.editingTicketId = ticket.id;
+
+    this.ticketForm.patchValue({
+      name: ticket.name,
+      price: Number(ticket.price),
+      quota: ticket.quota,
+      saleStartDate: this.formatDatetimeLocal(ticket.saleStartDate),
+      saleEndDate: this.formatDatetimeLocal(ticket.saleEndDate),
+    });
+
+    this.isTicketModalOpen = true;
+  }
+
+  closeTicketModal(): void {
+    this.isTicketModalOpen = false;
+    this.submittingTicket = false;
+  }
+
+  async submitTicket(): Promise<void> {
+    if (this.ticketForm.invalid) {
+      this.ticketForm.markAllAsTouched();
+      return;
+    }
+
+    const val = this.ticketForm.value;
+    if (val.saleStartDate && val.saleEndDate) {
+      const start = new Date(val.saleStartDate);
+      const end = new Date(val.saleEndDate);
+      if (start >= end) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Periode Tidak Valid',
+          text: 'Waktu mulai penjualan tiket harus lebih awal dari waktu berakhir.',
+        });
+        return;
+      }
+    }
+
+    const payload = {
+      eventId: this.eventId,
+      name: val.name,
+      price: Number(val.price),
+      quota: Number(val.quota),
+      saleStartDate: val.saleStartDate ? new Date(val.saleStartDate).toISOString() : undefined,
+      saleEndDate: val.saleEndDate ? new Date(val.saleEndDate).toISOString() : undefined,
+    };
+
+    this.submittingTicket = true;
+    try {
+      if (this.isEditingTicket && this.editingTicketId) {
+        await this.ticketTypeService.update(this.editingTicketId, payload);
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil',
+          text: 'Jenis tiket berhasil diperbarui.',
+          timer: 1800,
+          showConfirmButton: false,
+        });
+      } else {
+        await this.ticketTypeService.create(payload);
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil',
+          text: 'Jenis tiket baru berhasil ditambahkan.',
+          timer: 1800,
+          showConfirmButton: false,
+        });
+      }
+
+      this.closeTicketModal();
+      await Promise.all([this.loadTicketTypes(), this.loadEventDetail()]);
+    } catch (err: any) {
+      console.error('Error saving ticket type:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal Menyimpan Tiket',
+        text: err.error?.message || 'Terjadi kesalahan saat menyimpan jenis tiket.',
+      });
+    } finally {
+      this.submittingTicket = false;
+    }
+  }
+
+  async deleteTicket(ticket: TicketType): Promise<void> {
+    const confirm = await Swal.fire({
+      title: 'Hapus Jenis Tiket?',
+      text: `Apakah Anda yakin ingin menghapus tiket "${ticket.name}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#f46a6a',
+      cancelButtonColor: '#74788d',
+      confirmButtonText: 'Ya, Hapus',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      await this.ticketTypeService.delete(ticket.id);
+      Swal.fire({
+        icon: 'success',
+        title: 'Terhapus',
+        text: 'Jenis tiket berhasil dihapus.',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      await Promise.all([this.loadTicketTypes(), this.loadEventDetail()]);
+    } catch (err: any) {
+      console.error('Error deleting ticket type:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal Menghapus Tiket',
+        text: err.error?.message || 'Terjadi kesalahan saat menghapus jenis tiket.',
+      });
+    }
+  }
+
+  getTicketSaleStatus(ticket: TicketType): { label: string; badgeClass: string } {
+    const now = new Date().getTime();
+    if (ticket.soldCount >= ticket.quota) {
+      return { label: 'Habis (Sold Out)', badgeClass: 'badge bg-danger' };
+    }
+    if (ticket.saleStartDate && new Date(ticket.saleStartDate).getTime() > now) {
+      return { label: 'Belum Dibuka', badgeClass: 'badge bg-warning' };
+    }
+    if (ticket.saleEndDate && new Date(ticket.saleEndDate).getTime() < now) {
+      return { label: 'Penjualan Berakhir', badgeClass: 'badge bg-secondary' };
+    }
+    return { label: 'Tersedia', badgeClass: 'badge bg-success' };
+  }
+
+  getSoldPercentage(sold: number, quota: number): number {
+    if (!quota || quota <= 0) return 0;
+    return Math.min(100, Math.round((sold / quota) * 100));
+  }
+
+  getTotalTicketQuota(): number {
+    return this.ticketTypes.reduce((acc, t) => acc + (t.quota || 0), 0);
+  }
+
+  getTotalTicketSold(): number {
+    return this.ticketTypes.reduce((acc, t) => acc + (t.soldCount || 0), 0);
   }
 }

@@ -75,6 +75,7 @@ export interface EventItem {
   venue?: Venue;
   category?: EventCategory;
   sessions?: EventSessionItem[];
+  ticketTypes?: any[];
 }
 
 export interface CreateEventRequest {

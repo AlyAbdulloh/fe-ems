@@ -1,3 +1,41 @@
+.vertical-nav-pills {
+  .nav-link {
+    color: #495057;
+    background-color: #f3f6f9;
+    border: 1px solid #eff2f7;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 10px;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #eef0f7;
+      color: #405189;
+    }
+
+    &.active {
+      background-color: #405189;
+      color: #fff !important;
+      border-color: #405189;
+      box-shadow: 0 4px 12px rgba(64, 81, 137, 0.25);
+
+      .text-muted {
+        color: rgba(255, 255, 255, 0.75) !important;
+      }
+
+      .avatar-xs {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        color: #fff !important;
+      }
+
+      .badge {
+        background-color: rgba(255, 255, 255, 0.25) !important;
+        color: #fff !important;
+      }
+    }
+  }
+}
+
 .timeline-sessions {
   .session-card {
     border-radius: 8px;
@@ -9,6 +47,18 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
     }
+  }
+}
+
+.ticket-card {
+  border-radius: 8px;
+  border-color: #eff2f7 !important;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    border-color: #0ab39c !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06) !important;
   }
 }
 

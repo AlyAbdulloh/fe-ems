@@ -163,7 +163,6 @@ export class VenueManageComponent implements OnInit, OnDestroy {
   }
 
   changePage(newPage: number) {
-    if (newPage < 1 || newPage > this.meta.totalPages) return;
     this.page = newPage;
     this.loadVenues();
   }
