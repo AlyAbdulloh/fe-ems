@@ -73,6 +73,9 @@ const routes: Routes = [
     {
       path: 'events', loadChildren: () => import('./events/events.module').then(m => m.EventsModule)
     },
+    {
+      path: 'discover', loadChildren: () => import('./discover/discover.module').then(m => m.DiscoverModule)
+    },
 ];
 
 @NgModule({

@@ -64,6 +64,12 @@ export const MENU: MenuItem[] = [
     ]
   },
   {
+    id: 50,
+    label: 'Discover',
+    icon: 'ri-compass-3-line',
+    link: '/discover',
+  },
+  {
     id: 1000,
     label: 'Organizer',
     isTitle: true

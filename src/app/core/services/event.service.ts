@@ -15,6 +15,7 @@ interface LayoutEvent {
 }
 
 export type EventStatusType = 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'COMPLETED';
+export type EventPricingType = 'FREE' | 'PAID';
 
 export interface SpeakerItem {
   id: string;
@@ -60,6 +61,7 @@ export interface EventItem {
   startDatetime: string;
   endDatetime: string;
   status: EventStatusType;
+  pricingType: EventPricingType;
   createdAt: string;
   updatedAt: string;
   organizer?: {
@@ -87,12 +89,16 @@ export interface CreateEventRequest {
   startDatetime: string;
   endDatetime: string;
   status?: EventStatusType;
+  pricingType?: EventPricingType;
 }
 
 export interface QueryEventParams {
   page?: number;
   limit?: number;
   status?: EventStatusType;
+  pricingType?: EventPricingType;
+  venueType?: 'ONLINE' | 'OFFLINE' | 'HYBRID';
+  city?: string;
   categoryId?: string;
   venueId?: string;
   search?: string;
@@ -141,6 +147,9 @@ export class EventService {
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
       if (params.status) httpParams = httpParams.set('status', params.status);
+      if (params.pricingType) httpParams = httpParams.set('pricingType', params.pricingType);
+      if (params.venueType) httpParams = httpParams.set('venueType', params.venueType);
+      if (params.city) httpParams = httpParams.set('city', params.city);
       if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId);
       if (params.search) httpParams = httpParams.set('search', params.search);
     }
@@ -161,6 +170,9 @@ export class EventService {
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
       if (params.status) httpParams = httpParams.set('status', params.status);
+      if (params.pricingType) httpParams = httpParams.set('pricingType', params.pricingType);
+      if (params.venueType) httpParams = httpParams.set('venueType', params.venueType);
+      if (params.city) httpParams = httpParams.set('city', params.city);
       if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId);
       if (params.venueId) httpParams = httpParams.set('venueId', params.venueId);
       if (params.search) httpParams = httpParams.set('search', params.search);

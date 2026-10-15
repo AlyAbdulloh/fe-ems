@@ -5,6 +5,7 @@ import { EventService, EventItem } from '../../../core/services/event.service';
 import { EventSessionService, EventSession } from '../../../core/services/event-session.service';
 import { SpeakerService, Speaker } from '../../../core/services/speaker.service';
 import { TicketTypeService, TicketType } from '../../../core/services/ticket-type.service';
+import { PromoCodeService, PromoCode, DiscountType } from '../../../core/services/promo-code.service';
 import { environment } from 'src/environments/environment';
 import Swal from 'sweetalert2';
 
@@ -19,10 +20,11 @@ export class EventDetailComponent implements OnInit {
   event: EventItem | null = null;
   speakers: Speaker[] = [];
   ticketTypes: TicketType[] = [];
+  promoCodes: PromoCode[] = [];
   loading = true;
   error = '';
 
-  // Tab State: 1 = Overview, 2 = Sessions, 3 = Ticket Types
+  // Tab State: 1 = Overview, 2 = Sessions, 3 = Ticket Types, 4 = Kode Promo
   activeTabId = 1;
 
   // Session Modal State
@@ -44,6 +46,13 @@ export class EventDetailComponent implements OnInit {
   ticketForm!: FormGroup;
   submittingTicket = false;
 
+  // Promo Code Modal State
+  isPromoModalOpen = false;
+  isEditingPromo = false;
+  editingPromoId: string | null = null;
+  promoCodeForm!: FormGroup;
+  submittingPromo = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -52,6 +61,7 @@ export class EventDetailComponent implements OnInit {
     private eventSessionService: EventSessionService,
     private speakerService: SpeakerService,
     private ticketTypeService: TicketTypeService,
+    private promoCodeService: PromoCodeService,
   ) { }
 
   ngOnInit(): void {
@@ -88,6 +98,15 @@ export class EventDetailComponent implements OnInit {
       saleStartDate: [''],
       saleEndDate: [''],
     });
+
+    this.promoCodeForm = this.fb.group({
+      code: ['', [Validators.required, Validators.maxLength(50)]],
+      discountType: ['PERCENTAGE', [Validators.required]],
+      discountValue: [10, [Validators.required, Validators.min(1)]],
+      maxUsage: [100, [Validators.required, Validators.min(1)]],
+      validFrom: [''],
+      validUntil: [''],
+    });
   }
 
   async loadData(): Promise<void> {
@@ -98,6 +117,7 @@ export class EventDetailComponent implements OnInit {
         this.loadEventDetail(),
         this.loadSpeakers(),
         this.loadTicketTypes(),
+        this.loadPromoCodes(),
       ]);
     } catch (err: any) {
       console.error('Error loading detail data:', err);
@@ -140,6 +160,17 @@ export class EventDetailComponent implements OnInit {
     }
   }
 
+  async loadPromoCodes(): Promise<void> {
+    try {
+      const res = await this.promoCodeService.findByEventId(this.eventId);
+      if (res && res.data) {
+        this.promoCodes = res.data;
+      }
+    } catch (err) {
+      console.error('Gagal memuat daftar kode promo:', err);
+    }
+  }
+
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'DRAFT':
@@ -177,7 +208,6 @@ export class EventDetailComponent implements OnInit {
     const sessions = this.event?.sessions;
     let defaultStart = '';
     let defaultEnd = '';
-
 
     if (!sessions || sessions?.length === 0) {
       defaultStart = this.event?.startDatetime
@@ -401,9 +431,11 @@ export class EventDetailComponent implements OnInit {
     this.isEditingTicket = true;
     this.editingTicketId = ticket.id;
 
+    const ticketPrice = this.event?.pricingType === 'FREE' ? 0 : Number(ticket.price);
+
     this.ticketForm.patchValue({
       name: ticket.name,
-      price: Number(ticket.price),
+      price: ticketPrice,
       quota: ticket.quota,
       saleStartDate: this.formatDatetimeLocal(ticket.saleStartDate),
       saleEndDate: this.formatDatetimeLocal(ticket.saleEndDate),
@@ -424,6 +456,17 @@ export class EventDetailComponent implements OnInit {
     }
 
     const val = this.ticketForm.value;
+
+    if (this.event?.pricingType === 'FREE' && Number(val.price) !== 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Harga Tiket Tidak Valid',
+        text: 'Harga harus 0 karena event gratis.',
+        confirmButtonColor: '#3577f1',
+      });
+      return;
+    }
+
     if (val.saleStartDate && val.saleEndDate) {
       const start = new Date(val.saleStartDate);
       const end = new Date(val.saleEndDate);
@@ -431,16 +474,18 @@ export class EventDetailComponent implements OnInit {
         Swal.fire({
           icon: 'error',
           title: 'Periode Tidak Valid',
-          text: 'Waktu mulai penjualan tiket harus lebih awal dari waktu berakhir.',
+          text: 'Waktu mulai penjualan tiket harus lebih awal dari waktu selesai.',
         });
         return;
       }
     }
 
+    const ticketPrice = this.event?.pricingType === 'FREE' ? 0 : Number(val.price);
+
     const payload = {
       eventId: this.eventId,
       name: val.name,
-      price: Number(val.price),
+      price: ticketPrice,
       quota: Number(val.quota),
       saleStartDate: val.saleStartDate ? new Date(val.saleStartDate).toISOString() : undefined,
       saleEndDate: val.saleEndDate ? new Date(val.saleEndDate).toISOString() : undefined,
@@ -541,5 +586,197 @@ export class EventDetailComponent implements OnInit {
 
   getTotalTicketSold(): number {
     return this.ticketTypes.reduce((acc, t) => acc + (t.soldCount || 0), 0);
+  }
+
+  // --- Promo Code Handlers ---
+
+  openAddPromoModal(): void {
+    if (this.event?.pricingType === 'FREE') {
+      Swal.fire({
+        icon: 'info',
+        title: 'Event Gratis',
+        text: 'Event gratis tidak dapat menambahkan kode promo.',
+        confirmButtonColor: '#3577f1',
+      });
+      return;
+    }
+
+    this.isEditingPromo = false;
+    this.editingPromoId = null;
+
+    const defaultStart = this.formatDatetimeLocal(new Date().toISOString());
+    const defaultEnd = this.event?.endDatetime
+      ? this.formatDatetimeLocal(this.event.endDatetime)
+      : '';
+
+    this.promoCodeForm.reset({
+      code: '',
+      discountType: 'PERCENTAGE',
+      discountValue: 10,
+      maxUsage: 100,
+      validFrom: defaultStart,
+      validUntil: defaultEnd,
+    });
+
+    this.isPromoModalOpen = true;
+  }
+
+  openEditPromoModal(promo: PromoCode): void {
+    this.isEditingPromo = true;
+    this.editingPromoId = promo.id;
+
+    this.promoCodeForm.patchValue({
+      code: promo.code,
+      discountType: promo.discountType || 'PERCENTAGE',
+      discountValue: Number(promo.discountValue),
+      maxUsage: promo.maxUsage,
+      validFrom: this.formatDatetimeLocal(promo.validFrom),
+      validUntil: this.formatDatetimeLocal(promo.validUntil),
+    });
+
+    this.isPromoModalOpen = true;
+  }
+
+  closePromoModal(): void {
+    this.isPromoModalOpen = false;
+    this.submittingPromo = false;
+  }
+
+  async submitPromo(): Promise<void> {
+    if (this.event?.pricingType === 'FREE') {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Event Gratis',
+        text: 'Event gratis tidak dapat menambahkan kode promo.',
+        confirmButtonColor: '#3577f1',
+      });
+      return;
+    }
+
+    if (this.promoCodeForm.invalid) {
+      this.promoCodeForm.markAllAsTouched();
+      return;
+    }
+
+    const val = this.promoCodeForm.value;
+    if (val.validFrom && val.validUntil) {
+      const start = new Date(val.validFrom);
+      const end = new Date(val.validUntil);
+      if (start >= end) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Periode Tidak Valid',
+          text: 'Waktu mulai promo harus lebih awal dari waktu berakhir.',
+        });
+        return;
+      }
+    }
+
+    if (val.discountType === 'PERCENTAGE' && Number(val.discountValue) > 100) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Diskon Tidak Valid',
+        text: 'Diskon persentase tidak boleh lebih dari 100%.',
+      });
+      return;
+    }
+
+    const payload = {
+      eventId: this.eventId,
+      code: val.code.toUpperCase().trim(),
+      discountType: val.discountType as DiscountType,
+      discountValue: Number(val.discountValue),
+      maxUsage: Number(val.maxUsage),
+      validFrom: val.validFrom ? new Date(val.validFrom).toISOString() : undefined,
+      validUntil: val.validUntil ? new Date(val.validUntil).toISOString() : undefined,
+    };
+
+    this.submittingPromo = true;
+    try {
+      if (this.isEditingPromo && this.editingPromoId) {
+        await this.promoCodeService.update(this.editingPromoId, payload);
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil',
+          text: 'Kode promo berhasil diperbarui.',
+          timer: 1800,
+          showConfirmButton: false,
+        });
+      } else {
+        await this.promoCodeService.create(payload);
+        Swal.fire({
+          icon: 'success',
+          title: 'Berhasil',
+          text: 'Kode promo baru berhasil ditambahkan.',
+          timer: 1800,
+          showConfirmButton: false,
+        });
+      }
+
+      this.closePromoModal();
+      await this.loadPromoCodes();
+    } catch (err: any) {
+      console.error('Error saving promo code:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal Menyimpan Kode Promo',
+        text: err.error?.message || 'Terjadi kesalahan saat menyimpan kode promo.',
+      });
+    } finally {
+      this.submittingPromo = false;
+    }
+  }
+
+  async deletePromo(promo: PromoCode): Promise<void> {
+    const confirm = await Swal.fire({
+      title: 'Hapus Kode Promo?',
+      text: `Apakah Anda yakin ingin menghapus kode promo "${promo.code}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#f46a6a',
+      cancelButtonColor: '#74788d',
+      confirmButtonText: 'Ya, Hapus',
+      cancelButtonText: 'Batal',
+    });
+
+    if (!confirm.isConfirmed) return;
+
+    try {
+      await this.promoCodeService.delete(promo.id);
+      Swal.fire({
+        icon: 'success',
+        title: 'Terhapus',
+        text: 'Kode promo berhasil dihapus.',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      await this.loadPromoCodes();
+    } catch (err: any) {
+      console.error('Error deleting promo code:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Gagal Menghapus Kode Promo',
+        text: err.error?.message || 'Terjadi kesalahan saat menghapus kode promo.',
+      });
+    }
+  }
+
+  getPromoStatus(promo: PromoCode): { label: string; badgeClass: string } {
+    const now = new Date().getTime();
+    if (promo.maxUsage && promo.usedCount !== undefined && promo.usedCount >= promo.maxUsage) {
+      return { label: 'Batas Pemakaian Tercapai', badgeClass: 'badge bg-danger' };
+    }
+    if (promo.validFrom && new Date(promo.validFrom).getTime() > now) {
+      return { label: 'Belum Berlaku', badgeClass: 'badge bg-warning' };
+    }
+    if (promo.validUntil && new Date(promo.validUntil).getTime() < now) {
+      return { label: 'Kedaluwarsa', badgeClass: 'badge bg-secondary' };
+    }
+    return { label: 'Aktif', badgeClass: 'badge bg-success' };
+  }
+
+  getPromoUsagePercentage(used: number = 0, max: number): number {
+    if (!max || max <= 0) return 0;
+    return Math.min(100, Math.round((used / max) * 100));
   }
 }

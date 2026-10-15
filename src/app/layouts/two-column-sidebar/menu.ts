@@ -63,6 +63,12 @@ export const MENU: MenuItem[] = [
     ]
   },
   {
+    id: 50,
+    label: 'Discover',
+    icon: 'compass',
+    link: '/discover',
+  },
+  {
     id: 1000,
     label: 'Organizer',
     collapseid: 'sidebarOrganizer',

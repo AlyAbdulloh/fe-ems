@@ -66,6 +66,12 @@ export const MENU: MenuItem[] = [
     ]
   },
   {
+    id: 50,
+    label: 'Discover',
+    icon: 'bx bx-compass',
+    link: '/discover',
+  },
+  {
     id: 1000,
     label: 'Organizer',
     icon: 'bx bx-user-check',

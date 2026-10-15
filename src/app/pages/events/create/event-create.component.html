@@ -17,7 +17,7 @@
     <div class="card">
       <div class="card-header align-items-center d-flex">
         <h4 class="card-title mb-0 flex-grow-1">
-          {{ isEditMode ? 'Formulir Perubahan Event' : 'Formulir Informasi Event' }}
+          {{ isEditMode ? 'Formulir Event' : 'Formulir Event' }}
         </h4>
       </div>
 
@@ -32,14 +32,9 @@
               <label for="eventTitle" class="form-label">
                 Judul Event <span class="text-danger">*</span>
               </label>
-              <input
-                type="text"
-                class="form-control"
-                id="eventTitle"
-                placeholder="Masukkan judul event Anda (contoh: Java Web Summit 2026)"
-                formControlName="title"
-                [ngClass]="{ 'is-invalid': submitted && f['title'].errors }"
-              />
+              <input type="text" class="form-control" id="eventTitle"
+                placeholder="Masukkan judul event Anda (contoh: Java Web Summit 2026)" formControlName="title"
+                [ngClass]="{ 'is-invalid': submitted && f['title'].errors }" />
               <div class="invalid-feedback" *ngIf="f['title'].errors?.['required']">
                 Judul event wajib diisi.
               </div>
@@ -60,12 +55,7 @@
 
             <div class="col-md-6">
               <label for="venueId" class="form-label">Venue / Lokasi Event</label>
-              <select
-                class="form-select"
-                id="venueId"
-                formControlName="venueId"
-                (change)="checkVenueAvailability()"
-              >
+              <select class="form-select" id="venueId" formControlName="venueId" (change)="checkVenueAvailability()">
                 <option value="">-- Pilih Venue / Lokasi --</option>
                 <option *ngFor="let v of venues" [value]="v.id">
                   {{ v.name }} ({{ v.type }} - {{ v.city || 'Online' }})
@@ -77,14 +67,9 @@
               <label for="startDatetime" class="form-label">
                 Waktu Mulai <span class="text-danger">*</span>
               </label>
-              <input
-                type="datetime-local"
-                class="form-control"
-                id="startDatetime"
-                formControlName="startDatetime"
+              <input type="datetime-local" class="form-control" id="startDatetime" formControlName="startDatetime"
                 (change)="checkVenueAvailability()"
-                [ngClass]="{ 'is-invalid': submitted && f['startDatetime'].errors }"
-              />
+                [ngClass]="{ 'is-invalid': submitted && f['startDatetime'].errors }" />
               <div class="invalid-feedback" *ngIf="f['startDatetime'].errors?.['required']">
                 Waktu mulai event wajib diisi.
               </div>
@@ -94,14 +79,9 @@
               <label for="endDatetime" class="form-label">
                 Waktu Selesai <span class="text-danger">*</span>
               </label>
-              <input
-                type="datetime-local"
-                class="form-control"
-                id="endDatetime"
-                formControlName="endDatetime"
+              <input type="datetime-local" class="form-control" id="endDatetime" formControlName="endDatetime"
                 (change)="checkVenueAvailability()"
-                [ngClass]="{ 'is-invalid': submitted && f['endDatetime'].errors }"
-              />
+                [ngClass]="{ 'is-invalid': submitted && f['endDatetime'].errors }" />
               <div class="invalid-feedback" *ngIf="f['endDatetime'].errors?.['required']">
                 Waktu selesai event wajib diisi.
               </div>
@@ -109,31 +89,42 @@
 
             <div class="col-12">
               <label for="bannerFile" class="form-label">Gambar Banner Event</label>
-              <input
-                type="file"
-                class="form-control"
-                id="bannerFile"
-                accept=".jpg,.jpeg,.png"
-                (change)="onFileSelected($event)"
-              />
+              <input #bannerFileInput type="file" class="form-control" id="bannerFile" accept=".jpg,.jpeg,.png"
+                (change)="onFileSelected($event)" />
               <div class="form-text text-muted">
                 Format yang didukung: <strong>JPG, JPEG, PNG</strong>. Ukuran maksimal file: <strong>5 MB</strong>.
               </div>
               <div *ngIf="bannerPreviewUrl" class="mt-2">
-                <label class="form-label d-block text-muted small">Pratinjau Banner:</label>
-                <img [src]="bannerPreviewUrl" alt="Banner Preview" class="img-thumbnail rounded" style="max-height: 180px; object-fit: cover;" />
+                <label class="form-label d-block text-muted small mb-1">Pratinjau Banner:</label>
+                <div class="banner-preview-container position-relative rounded border overflow-hidden shadow-sm">
+                  <img [src]="bannerPreviewUrl" alt="Banner Preview" class="img-fluid d-block banner-preview-img" />
+                  <div class="banner-overlay d-flex align-items-center justify-content-center">
+                    <button type="button" class="btn btn-danger btn-sm shadow" (click)="removeBanner(bannerFileInput)">
+                      <i class="ri-delete-bin-line me-1"></i> Hapus Banner
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="col-12">
               <label for="eventDescription" class="form-label">Deskripsi Event</label>
-              <textarea
-                class="form-control"
-                id="eventDescription"
-                rows="5"
+              <textarea class="form-control" id="eventDescription" rows="5"
                 placeholder="Jelaskan mengenai informasi detail event, topik pembicaraan, atau instruksi peserta..."
-                formControlName="description"
-              ></textarea>
+                formControlName="description"></textarea>
+            </div>
+
+            <div class="col-md-6">
+              <label for="eventPricingType" class="form-label">
+                Tipe Tiket Event <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" id="eventPricingType" formControlName="pricingType">
+                <option value="FREE">Gratis (Free Event)</option>
+                <option value="PAID">Berbayar (Paid Event)</option>
+              </select>
+              <div class="form-text text-muted">
+                Pilih apakah event ini gratis atau memerlukan tiket berbayar.
+              </div>
             </div>
 
             <div class="col-md-6">

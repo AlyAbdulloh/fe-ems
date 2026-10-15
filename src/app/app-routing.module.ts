@@ -7,6 +7,7 @@ import { LayoutComponent } from './layouts/layout.component';
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
+  { path: 'discover', component: LayoutComponent, loadChildren: () => import('./pages/discover/discover.module').then(m => m.DiscoverModule) },
   { path: '', component: LayoutComponent, loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule), canActivate: [AuthGuard] },
   { path: 'auth', loadChildren: () => import('./account/account.module').then(m => m.AccountModule)  },
   { path: 'pages', loadChildren: () => import('./extraspages/extraspages.module').then(m => m.ExtraspagesModule), canActivate: [AuthGuard] },

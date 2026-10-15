@@ -62,6 +62,18 @@
   }
 }
 
+.promo-card {
+  border-radius: 8px;
+  border-color: #eff2f7 !important;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    border-color: #f7b84b !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06) !important;
+  }
+}
+
 .modal-backdrop.show {
   opacity: 0.5;
 }

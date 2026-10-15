@@ -39,7 +39,7 @@
 <div *ngIf="!loading && event" class="row">
 
   <!-- Header Card Summary -->
-  <div class="col-12 mb-4">
+  <div class="col-12 mb-2">
     <div class="card card-height-100 overflow-hidden border-0 shadow-sm">
       <div class="card-body p-4">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
@@ -47,6 +47,11 @@
             <div class="d-flex align-items-center gap-2 mb-2">
               <span [class]="getStatusBadgeClass(event.status)" class="px-2 py-1 fs-12">
                 {{ event.status }}
+              </span>
+              <span class="badge px-2 py-1"
+                [ngClass]="event.pricingType === 'PAID' ? 'bg-soft-warning text-warning' : 'bg-soft-success text-success'">
+                <i [ngClass]="event.pricingType === 'PAID' ? 'ri-money-dollar-circle-line me-1' : 'ri-gift-line me-1'"></i>
+                {{ event.pricingType === 'PAID' ? 'BERBAYAR' : 'GRATIS' }}
               </span>
               <span class="badge bg-soft-primary text-primary px-2 py-1" *ngIf="event.category">
                 <i class="ri-price-tag-3-line me-1"></i> {{ event.category.name }}
@@ -88,12 +93,14 @@
           <!-- Left Column: Vertical Nav Tabs -->
           <div class="col-lg-3 col-md-4 mb-4 mb-md-0 border-end-md">
             <h6 class="text-uppercase text-muted fw-bold fs-11 mb-3">Menu Detail Event</h6>
-            <ul ngbNav #verticalNav="ngbNav" [(activeId)]="activeTabId" class="nav flex-column nav-pills vertical-nav-pills">
+            <ul ngbNav #verticalNav="ngbNav" [(activeId)]="activeTabId"
+              class="nav flex-column nav-pills vertical-nav-pills">
 
               <!-- Tab 1: Overview -->
               <li [ngbNavItem]="1">
                 <a ngbNavLink class="d-flex align-items-center p-3 text-start">
-                  <div class="avatar-xs d-flex align-items-center justify-content-center bg-soft-primary text-primary rounded me-3">
+                  <div
+                    class="avatar-xs d-flex align-items-center justify-content-center bg-soft-primary text-primary rounded me-3">
                     <i class="ri-dashboard-line fs-18"></i>
                   </div>
                   <div class="flex-grow-1">
@@ -107,12 +114,8 @@
 
                     <!-- Banner Image -->
                     <div *ngIf="event.bannerImage" class="mb-4 rounded overflow-hidden text-center bg-light border">
-                      <img
-                        [src]="apiUrl + event.bannerImage"
-                        alt="Banner Event"
-                        class="img-fluid rounded"
-                        style="max-height: 380px; width: 100%; object-fit: cover;"
-                      />
+                      <img [src]="apiUrl + event.bannerImage" alt="Banner Event" class="img-fluid rounded"
+                        style="max-height: 380px; width: 100%; object-fit: cover;" />
                     </div>
 
                     <!-- Description -->
@@ -148,7 +151,8 @@
                             <small class="text-muted d-block mb-1">Tipe & Kapasitas</small>
                             <div class="fw-medium text-dark">
                               <span class="badge bg-light text-dark me-1">{{ event.venue.type }}</span>
-                              <span *ngIf="event.venue.capacity">Kapasitas: {{ event.venue.capacity | number }} orang</span>
+                              <span *ngIf="event.venue.capacity">Kapasitas: {{ event.venue.capacity | number }}
+                                orang</span>
                             </div>
                           </div>
                           <div class="col-12" *ngIf="event.venue.address">
@@ -174,21 +178,25 @@
                       <div class="card-body p-4">
                         <div class="row g-3 fs-14">
                           <div class="col-md-6">
-                            <small class="text-muted d-block mb-1"><i class="ri-user-star-line me-1"></i> Penyelenggara</small>
+                            <small class="text-muted d-block mb-1"><i class="ri-user-star-line me-1"></i>
+                              Penyelenggara</small>
                             <div class="fw-semibold text-dark" *ngIf="event.organizer">
                               {{ event.organizer.organizationName }}
                             </div>
                           </div>
                           <div class="col-md-6" *ngIf="event.organizer?.user">
-                            <small class="text-muted d-block mb-1"><i class="ri-mail-line me-1"></i> Email Pemilik</small>
+                            <small class="text-muted d-block mb-1"><i class="ri-mail-line me-1"></i> Email
+                              Pemilik</small>
                             <div class="fw-medium text-dark">{{ event.organizer?.user?.email }}</div>
                           </div>
                           <div class="col-md-6">
-                            <small class="text-muted d-block mb-1"><i class="ri-global-line me-1"></i> Event Slug</small>
+                            <small class="text-muted d-block mb-1"><i class="ri-global-line me-1"></i> Event
+                              Slug</small>
                             <span class="badge bg-light text-dark font-monospace fs-12">{{ event.slug }}</span>
                           </div>
                           <div class="col-md-6">
-                            <small class="text-muted d-block mb-1"><i class="ri-calendar-check-line me-1"></i> Dibuat Pada</small>
+                            <small class="text-muted d-block mb-1"><i class="ri-calendar-check-line me-1"></i> Dibuat
+                              Pada</small>
                             <span class="text-dark">{{ event.createdAt | date:'dd MMM yyyy, HH:mm' }}</span>
                           </div>
                         </div>
@@ -202,7 +210,8 @@
               <!-- Tab 2: Sessions -->
               <li [ngbNavItem]="2">
                 <a ngbNavLink class="d-flex align-items-center p-3 text-start">
-                  <div class="avatar-xs d-flex align-items-center justify-content-center bg-soft-info text-info rounded me-3">
+                  <div
+                    class="avatar-xs d-flex align-items-center justify-content-center bg-soft-info text-info rounded me-3">
                     <i class="ri-calendar-event-line fs-18"></i>
                   </div>
                   <div class="flex-grow-1">
@@ -218,7 +227,8 @@
                   <div class="tab-pane-content">
 
                     <!-- Header & Add Button -->
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+                    <div
+                      class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
                       <div>
                         <h5 class="fw-bold text-dark mb-1">
                           <i class="ri-time-line text-success me-2 align-middle"></i>
@@ -234,7 +244,8 @@
                     </div>
 
                     <!-- Empty State -->
-                    <div *ngIf="!event.sessions || event.sessions.length === 0" class="text-center py-5 bg-light rounded-3 border border-dashed">
+                    <div *ngIf="!event.sessions || event.sessions.length === 0"
+                      class="text-center py-5 bg-light rounded-3 border border-dashed">
                       <div class="avatar-md mx-auto mb-3 text-success">
                         <div class="avatar-title bg-soft-success rounded-circle fs-24">
                           <i class="ri-calendar-todo-line"></i>
@@ -242,7 +253,8 @@
                       </div>
                       <h6 class="fw-bold text-dark">Belum Ada Sesi Event</h6>
                       <p class="text-muted fs-13 mb-3 mx-auto" style="max-width: 420px;">
-                        Susun jadwal dan rundown acara Anda dengan menambahkan sesi event (misal: Sesi Pembukaan, Keynote Speech, Break, dsb).
+                        Susun jadwal dan rundown acara Anda dengan menambahkan sesi event (misal: Sesi Pembukaan,
+                        Keynote Speech, Break, dsb).
                       </p>
                       <button class="btn btn-sm btn-success px-3" (click)="openAddSessionModal()">
                         <i class="ri-add-line align-middle me-1"></i> Tambah Sesi Pertama
@@ -250,16 +262,16 @@
                     </div>
 
                     <!-- Sessions List -->
-                    <div *ngIf="event.sessions && event.sessions.length > 0" class="timeline-sessions position-relative">
-                      <div
-                        *ngFor="let session of event.sessions; let i = index"
-                        class="session-card card border mb-3 shadow-none hover-shadow transition"
-                      >
+                    <div *ngIf="event.sessions && event.sessions.length > 0"
+                      class="timeline-sessions position-relative">
+                      <div *ngFor="let session of event.sessions; let i = index"
+                        class="session-card card border mb-3 shadow-none hover-shadow transition">
                         <div class="card-body p-3">
                           <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
                             <div class="d-flex align-items-start gap-3">
                               <!-- Time Badge -->
-                              <div class="bg-soft-primary text-primary px-3 py-2 rounded text-center" style="min-width: 140px;">
+                              <div class="bg-soft-primary text-primary px-3 py-2 rounded text-center"
+                                style="min-width: 140px;">
                                 <i class="ri-time-line me-1"></i>
                                 <span class="fw-bold fs-14">
                                   {{ session.startTime | date:'HH:mm' }} - {{ session.endTime | date:'HH:mm' }}
@@ -285,7 +297,8 @@
                                 </p>
 
                                 <!-- Speaker Info Card -->
-                                <div *ngIf="session.speaker" class="bg-light rounded p-2 d-inline-flex align-items-center gap-2 mt-1">
+                                <div *ngIf="session.speaker"
+                                  class="bg-light rounded p-2 d-inline-flex align-items-center gap-2 mt-1">
                                   <div class="avatar-xs">
                                     <span class="avatar-title bg-soft-primary text-primary rounded-circle fw-bold">
                                       {{ session.speaker.name.charAt(0).toUpperCase() }}
@@ -293,8 +306,10 @@
                                   </div>
                                   <div class="fs-12">
                                     <span class="fw-semibold text-dark">{{ session.speaker.name }}</span>
-                                    <span class="text-muted ms-1" *ngIf="session.speaker.company">({{ session.speaker.company }})</span>
-                                    <small class="d-block text-muted" *ngIf="session.speaker.bio">{{ session.speaker.bio }}</small>
+                                    <span class="text-muted ms-1" *ngIf="session.speaker.company">({{
+                                      session.speaker.company }})</span>
+                                    <small class="d-block text-muted" *ngIf="session.speaker.bio">{{ session.speaker.bio
+                                      }}</small>
                                   </div>
                                 </div>
                               </div>
@@ -302,7 +317,8 @@
 
                             <!-- Session Actions -->
                             <div class="btn-group btn-group-sm ms-auto">
-                              <button class="btn btn-soft-warning" title="Edit Sesi" (click)="openEditSessionModal(session)">
+                              <button class="btn btn-soft-warning" title="Edit Sesi"
+                                (click)="openEditSessionModal(session)">
                                 <i class="ri-pencil-line"></i> Edit
                               </button>
                               <button class="btn btn-soft-danger" title="Hapus Sesi" (click)="deleteSession(session)">
@@ -321,7 +337,8 @@
               <!-- Tab 3: Ticket Types -->
               <li [ngbNavItem]="3">
                 <a ngbNavLink class="d-flex align-items-center p-3 text-start">
-                  <div class="avatar-xs d-flex align-items-center justify-content-center bg-soft-success text-success rounded me-3">
+                  <div
+                    class="avatar-xs d-flex align-items-center justify-content-center bg-soft-success text-success rounded me-3">
                     <i class="ri-ticket-2-line fs-18"></i>
                   </div>
                   <div class="flex-grow-1">
@@ -337,14 +354,16 @@
                   <div class="tab-pane-content">
 
                     <!-- Header & Add Button -->
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+                    <div
+                      class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
                       <div>
                         <h5 class="fw-bold text-dark mb-1">
                           <i class="ri-ticket-2-line text-primary me-2 align-middle"></i>
                           Jenis Tiket Event (Ticket Types)
                         </h5>
                         <p class="text-muted fs-13 mb-0">
-                          Tambahkan kategori tiket (misal: Early Bird, Presale, VIP) beserta harga, kuota, dan jadwal penjualannya.
+                          Tambahkan kategori tiket (misal: Early Bird, Presale, VIP) beserta harga, kuota, dan jadwal
+                          penjualannya.
                         </p>
                       </div>
                       <button class="btn btn-primary" (click)="openAddTicketModal()">
@@ -357,7 +376,8 @@
                       <div class="col-md-4">
                         <div class="card border shadow-none mb-0 bg-light">
                           <div class="card-body p-3 d-flex align-items-center">
-                            <div class="avatar-sm bg-soft-primary text-primary rounded d-flex align-items-center justify-content-center me-3">
+                            <div
+                              class="avatar-sm bg-soft-primary text-primary rounded d-flex align-items-center justify-content-center me-3">
                               <i class="ri-ticket-line fs-20"></i>
                             </div>
                             <div>
@@ -370,7 +390,8 @@
                       <div class="col-md-4">
                         <div class="card border shadow-none mb-0 bg-light">
                           <div class="card-body p-3 d-flex align-items-center">
-                            <div class="avatar-sm bg-soft-info text-info rounded d-flex align-items-center justify-content-center me-3">
+                            <div
+                              class="avatar-sm bg-soft-info text-info rounded d-flex align-items-center justify-content-center me-3">
                               <i class="ri-group-line fs-20"></i>
                             </div>
                             <div>
@@ -383,7 +404,8 @@
                       <div class="col-md-4">
                         <div class="card border shadow-none mb-0 bg-light">
                           <div class="card-body p-3 d-flex align-items-center">
-                            <div class="avatar-sm bg-soft-success text-success rounded d-flex align-items-center justify-content-center me-3">
+                            <div
+                              class="avatar-sm bg-soft-success text-success rounded d-flex align-items-center justify-content-center me-3">
                               <i class="ri-shopping-cart-2-line fs-20"></i>
                             </div>
                             <div>
@@ -396,7 +418,8 @@
                     </div>
 
                     <!-- Empty State -->
-                    <div *ngIf="!ticketTypes || ticketTypes.length === 0" class="text-center py-5 bg-light rounded-3 border border-dashed">
+                    <div *ngIf="!ticketTypes || ticketTypes.length === 0"
+                      class="text-center py-5 bg-light rounded-3 border border-dashed">
                       <div class="avatar-md mx-auto mb-3 text-primary">
                         <div class="avatar-title bg-soft-primary rounded-circle fs-24">
                           <i class="ri-ticket-2-line"></i>
@@ -404,7 +427,8 @@
                       </div>
                       <h6 class="fw-bold text-dark">Belum Ada Jenis Tiket</h6>
                       <p class="text-muted fs-13 mb-3 mx-auto" style="max-width: 420px;">
-                        Buat jenis tiket untuk event ini (seperti Early Bird, Presale, Regular, VIP) agar calon peserta dapat memilih dan mendaftar ke acara Anda.
+                        Buat jenis tiket untuk event ini (seperti Early Bird, Presale, Regular, VIP) agar calon peserta
+                        dapat memilih dan mendaftar ke acara Anda.
                       </p>
                       <button class="btn btn-sm btn-primary px-3" (click)="openAddTicketModal()">
                         <i class="ri-add-line align-middle me-1"></i> Tambah Tiket Pertama
@@ -436,18 +460,16 @@
                             <!-- Quota Progress Bar -->
                             <div class="bg-light p-2 rounded mb-3 mt-2">
                               <div class="d-flex justify-content-between fs-12 mb-1">
-                                <span class="text-muted">Terjual: <b class="text-dark">{{ ticket.soldCount }}</b> / {{ ticket.quota }}</span>
-                                <span class="fw-semibold text-dark">{{ getSoldPercentage(ticket.soldCount, ticket.quota) }}%</span>
+                                <span class="text-muted">Terjual: <b class="text-dark">{{ ticket.soldCount }}</b> / {{
+                                  ticket.quota }}</span>
+                                <span class="fw-semibold text-dark">{{ getSoldPercentage(ticket.soldCount, ticket.quota)
+                                  }}%</span>
                               </div>
                               <div class="progress" style="height: 6px;">
-                                <div
-                                  class="progress-bar bg-success"
-                                  role="progressbar"
+                                <div class="progress-bar bg-success" role="progressbar"
                                   [style.width.%]="getSoldPercentage(ticket.soldCount, ticket.quota)"
-                                  [attr.aria-valuenow]="ticket.soldCount"
-                                  aria-valuemin="0"
-                                  [attr.aria-valuemax]="ticket.quota"
-                                ></div>
+                                  [attr.aria-valuenow]="ticket.soldCount" aria-valuemin="0"
+                                  [attr.aria-valuemax]="ticket.quota"></div>
                               </div>
                               <div class="d-flex justify-content-between fs-11 text-muted mt-1">
                                 <span>Sisa: {{ ticket.quota - ticket.soldCount }} tiket</span>
@@ -494,6 +516,151 @@
                 </ng-template>
               </li>
 
+              <!-- Tab 4: Kode Promo -->
+              <li [ngbNavItem]="4">
+                <a ngbNavLink class="d-flex align-items-center p-3 text-start">
+                  <div
+                    class="avatar-xs d-flex align-items-center justify-content-center bg-soft-warning text-warning rounded me-3">
+                    <i class="ri-coupon-3-line fs-18"></i>
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold fs-14">Kode Promo</div>
+                    <small class="text-muted fs-12">Diskon & Voucher</small>
+                  </div>
+                  <span class="badge bg-soft-warning text-warning rounded-pill ms-auto" *ngIf="promoCodes.length">
+                    {{ promoCodes.length }}
+                  </span>
+                </a>
+                <ng-template ngbNavContent>
+                  <!-- PROMO CODES CONTENT -->
+                  <div class="tab-pane-content">
+
+                    <!-- Info Alert for FREE Event -->
+                    <div *ngIf="event.pricingType === 'FREE'" class="alert alert-info border-0 mb-4 d-flex align-items-center">
+                      <i class="ri-information-line fs-18 me-2"></i>
+                      <div>
+                        Event ini bertipe <strong>Gratis</strong>. Kode promo diskon tidak berlaku dan tidak dapat ditambahkan pada event gratis.
+                      </div>
+                    </div>
+
+                    <!-- Header & Add Button -->
+                    <div
+                      class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom">
+                      <div>
+                        <h5 class="fw-bold text-dark mb-1">
+                          <i class="ri-coupon-3-line text-warning me-2 align-middle"></i>
+                          Kode Promo Event (Promo Codes)
+                        </h5>
+                        <p class="text-muted fs-13 mb-0">
+                          Daftar kode promo dan voucher diskon yang tersedia untuk event ini.
+                        </p>
+                      </div>
+                      <button class="btn btn-warning" [disabled]="event.pricingType === 'FREE'" (click)="openAddPromoModal()">
+                        <i class="ri-add-line align-middle me-1"></i> Tambah Kode Promo
+                      </button>
+                    </div>
+
+                    <!-- Table of Promo Codes -->
+                    <div class="table-responsive">
+                      <table class="table table-hover align-middle table-nowrap mb-0 border">
+                        <thead class="table-light text-muted">
+                          <tr>
+                            <th scope="col" style="width: 50px;" class="text-center">#</th>
+                            <th scope="col">Kode Promo</th>
+                            <th scope="col">Diskon</th>
+                            <th scope="col">Penggunaan / Kuota</th>
+                            <th scope="col">Periode Berlaku</th>
+                            <th scope="col">Status</th>
+                            <th scope="col" style="width: 120px;" class="text-center">Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!-- Empty Row -->
+                          <tr *ngIf="!promoCodes || promoCodes.length === 0">
+                            <td colspan="7" class="text-center py-5">
+                              <div class="avatar-md mx-auto mb-3" [ngClass]="event.pricingType === 'FREE' ? 'text-muted' : 'text-warning'">
+                                <div class="avatar-title rounded-circle fs-24"
+                                  [ngClass]="event.pricingType === 'FREE' ? 'bg-soft-secondary text-secondary' : 'bg-soft-warning text-warning'">
+                                  <i class="ri-coupon-3-line"></i>
+                                </div>
+                              </div>
+                              <h6 class="fw-bold text-dark mb-1">
+                                {{ event.pricingType === 'FREE' ? 'Kode Promo Tidak Berlaku' : 'Belum Ada Kode Promo' }}
+                              </h6>
+                              <p class="text-muted fs-13 mb-3 mx-auto" style="max-width: 420px;">
+                                {{ event.pricingType === 'FREE'
+                                  ? 'Event ini gratis untuk semua peserta, sehingga tidak memerlukan kode promo diskon.'
+                                  : 'Belum ada kode promo yang dibuat untuk event ini. Klik tombol di bawah untuk menambahkan kode promo pertama.' }}
+                              </p>
+                              <button *ngIf="event.pricingType !== 'FREE'" class="btn btn-sm btn-warning px-3" (click)="openAddPromoModal()">
+                                <i class="ri-add-line align-middle me-1"></i> Tambah Kode Promo Pertama
+                              </button>
+                            </td>
+                          </tr>
+
+                          <!-- Data Rows -->
+                          <tr *ngFor="let promo of promoCodes; let i = index">
+                            <td class="text-center fw-medium text-muted">{{ i + 1 }}</td>
+                            <td>
+                              <span
+                                class="badge bg-soft-primary text-primary font-monospace fs-13 px-2 py-1 border border-primary border-dashed">
+                                <i class="ri-coupon-line me-1"></i> {{ promo.code }}
+                              </span>
+                            </td>
+                            <td>
+                              <div class="fw-bold fs-14">
+                                <span *ngIf="promo.discountType === 'PERCENTAGE'" class="text-warning">{{
+                                  promo.discountValue }}% OFF</span>
+                                <span *ngIf="promo.discountType === 'FIXED'" class="text-success">Rp {{
+                                  +promo.discountValue | number }} OFF</span>
+                              </div>
+                              <small class="text-muted fs-11">
+                                {{ promo.discountType === 'PERCENTAGE' ? 'Persentase' : 'Nominal Tetap' }}
+                              </small>
+                            </td>
+                            <td>
+                              <div class="fw-semibold text-dark">
+                                {{ promo.usedCount || 0 }} / {{ promo.maxUsage }} kali
+                              </div>
+                              <small class="text-muted fs-11">
+                                Sisa: {{ promo.maxUsage - (promo.usedCount || 0) }} kuota
+                              </small>
+                            </td>
+                            <td>
+                              <div class="fs-12 text-dark">
+                                <span *ngIf="promo.validFrom">{{ promo.validFrom | date:'dd MMM yyyy, HH:mm' }}</span>
+                                <span *ngIf="!promo.validFrom" class="text-muted">Langsung Aktif</span>
+                                <span class="mx-1 text-muted">s/d</span>
+                                <span *ngIf="promo.validUntil">{{ promo.validUntil | date:'dd MMM yyyy, HH:mm' }}</span>
+                                <span *ngIf="!promo.validUntil" class="text-muted">Tanpa Batas</span>
+                              </div>
+                            </td>
+                            <td>
+                              <span [class]="getPromoStatus(promo).badgeClass" class="px-2 py-1 fs-11">
+                                {{ getPromoStatus(promo).label }}
+                              </span>
+                            </td>
+                            <td class="text-center">
+                              <div class="btn-group btn-group-sm">
+                                <button class="btn btn-soft-warning" title="Edit Kode Promo"
+                                  (click)="openEditPromoModal(promo)">
+                                  <i class="ri-pencil-line"></i> Edit
+                                </button>
+                                <button class="btn btn-soft-danger" title="Hapus Kode Promo"
+                                  (click)="deletePromo(promo)">
+                                  <i class="ri-delete-bin-line"></i>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                  </div>
+                </ng-template>
+              </li>
+
             </ul>
           </div>
 
@@ -511,13 +678,7 @@
 
 <!-- Modal Dialog Add / Edit Session -->
 <div *ngIf="isSessionModalOpen" class="modal-backdrop fade show"></div>
-<div
-  *ngIf="isSessionModalOpen"
-  class="modal fade show d-block"
-  tabindex="-1"
-  role="dialog"
-  aria-modal="true"
->
+<div *ngIf="isSessionModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0 shadow">
       <div class="modal-header bg-light">
@@ -535,14 +696,11 @@
             <!-- Judul Sesi -->
             <div class="col-12">
               <label class="form-label fw-medium text-dark">Judul Sesi <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Contoh: Keynote Speech: Masa Depan AI"
+              <input type="text" class="form-control" placeholder="Contoh: Keynote Speech: Masa Depan AI"
                 formControlName="title"
-                [ngClass]="{ 'is-invalid': sessionForm.get('title')?.touched && sessionForm.get('title')?.invalid }"
-              />
-              <div *ngIf="sessionForm.get('title')?.touched && sessionForm.get('title')?.invalid" class="invalid-feedback">
+                [ngClass]="{ 'is-invalid': sessionForm.get('title')?.touched && sessionForm.get('title')?.invalid }" />
+              <div *ngIf="sessionForm.get('title')?.touched && sessionForm.get('title')?.invalid"
+                class="invalid-feedback">
                 Judul sesi wajib diisi (maksimal 200 karakter).
               </div>
             </div>
@@ -550,37 +708,27 @@
             <!-- Room / Track -->
             <div class="col-12">
               <label class="form-label fw-medium text-dark">Ruangan / Track (Opsional)</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Contoh: Main Hall / Track A / Room 102"
-                formControlName="roomOrTrack"
-              />
+              <input type="text" class="form-control" placeholder="Contoh: Main Hall / Track A / Room 102"
+                formControlName="roomOrTrack" />
             </div>
 
             <!-- Datetime Start & End -->
             <div class="col-md-6">
               <label class="form-label fw-medium text-dark">Waktu Mulai <span class="text-danger">*</span></label>
-              <input
-                type="datetime-local"
-                class="form-control"
-                formControlName="startTime"
-                [ngClass]="{ 'is-invalid': sessionForm.get('startTime')?.touched && sessionForm.get('startTime')?.invalid }"
-              />
-              <div *ngIf="sessionForm.get('startTime')?.touched && sessionForm.get('startTime')?.invalid" class="invalid-feedback">
+              <input type="datetime-local" class="form-control" formControlName="startTime"
+                [ngClass]="{ 'is-invalid': sessionForm.get('startTime')?.touched && sessionForm.get('startTime')?.invalid }" />
+              <div *ngIf="sessionForm.get('startTime')?.touched && sessionForm.get('startTime')?.invalid"
+                class="invalid-feedback">
                 Waktu mulai sesi wajib diisi.
               </div>
             </div>
 
             <div class="col-md-6">
               <label class="form-label fw-medium text-dark">Waktu Selesai <span class="text-danger">*</span></label>
-              <input
-                type="datetime-local"
-                class="form-control"
-                formControlName="endTime"
-                [ngClass]="{ 'is-invalid': sessionForm.get('endTime')?.touched && sessionForm.get('endTime')?.invalid }"
-              />
-              <div *ngIf="sessionForm.get('endTime')?.touched && sessionForm.get('endTime')?.invalid" class="invalid-feedback">
+              <input type="datetime-local" class="form-control" formControlName="endTime"
+                [ngClass]="{ 'is-invalid': sessionForm.get('endTime')?.touched && sessionForm.get('endTime')?.invalid }" />
+              <div *ngIf="sessionForm.get('endTime')?.touched && sessionForm.get('endTime')?.invalid"
+                class="invalid-feedback">
                 Waktu selesai sesi wajib diisi.
               </div>
             </div>
@@ -588,12 +736,9 @@
             <!-- Deskripsi Sesi -->
             <div class="col-12">
               <label class="form-label fw-medium text-dark">Deskripsi Sesi (Opsional)</label>
-              <textarea
-                class="form-control"
-                rows="3"
+              <textarea class="form-control" rows="3"
                 placeholder="Penjelasan singkat mengenai topik atau kegiatan pada sesi ini..."
-                formControlName="description"
-              ></textarea>
+                formControlName="description"></textarea>
             </div>
 
             <!-- Master Speaker Selection -->
@@ -629,7 +774,8 @@
             Batal
           </button>
           <button type="submit" class="btn btn-primary" [disabled]="submittingSession">
-            <span *ngIf="submittingSession" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            <span *ngIf="submittingSession" class="spinner-border spinner-border-sm me-1" role="status"
+              aria-hidden="true"></span>
             {{ submittingSession ? 'Menyimpan...' : (isEditingSession ? 'Simpan Perubahan' : 'Tambah Sesi') }}
           </button>
         </div>
@@ -640,13 +786,7 @@
 
 <!-- Modal Quick Add Master Speaker -->
 <div *ngIf="isSpeakerModalOpen" class="modal-backdrop fade show" style="z-index: 1055;"></div>
-<div
-  *ngIf="isSpeakerModalOpen"
-  class="modal fade show d-block"
-  tabindex="-1"
-  role="dialog"
-  style="z-index: 1056;"
->
+<div *ngIf="isSpeakerModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog" style="z-index: 1056;">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
       <div class="modal-header bg-light">
@@ -661,13 +801,8 @@
         <div class="modal-body p-4">
           <div class="mb-3">
             <label class="form-label fw-medium text-dark">Nama Speaker <span class="text-danger">*</span></label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Contoh: Dr. Budi Santoso"
-              formControlName="name"
-              [ngClass]="{ 'is-invalid': speakerForm.get('name')?.touched && speakerForm.get('name')?.invalid }"
-            />
+            <input type="text" class="form-control" placeholder="Contoh: Dr. Budi Santoso" formControlName="name"
+              [ngClass]="{ 'is-invalid': speakerForm.get('name')?.touched && speakerForm.get('name')?.invalid }" />
             <div *ngIf="speakerForm.get('name')?.touched && speakerForm.get('name')?.invalid" class="invalid-feedback">
               Nama speaker wajib diisi.
             </div>
@@ -675,22 +810,14 @@
 
           <div class="mb-3">
             <label class="form-label fw-medium text-dark">Perusahaan / Institusi (Opsional)</label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Contoh: PT Technology Indonesia"
-              formControlName="company"
-            />
+            <input type="text" class="form-control" placeholder="Contoh: PT Technology Indonesia"
+              formControlName="company" />
           </div>
 
           <div class="mb-3">
             <label class="form-label fw-medium text-dark">Bio Singkat (Opsional)</label>
-            <textarea
-              class="form-control"
-              rows="3"
-              placeholder="Profil singkat atau keahlian pembicara..."
-              formControlName="bio"
-            ></textarea>
+            <textarea class="form-control" rows="3" placeholder="Profil singkat atau keahlian pembicara..."
+              formControlName="bio"></textarea>
           </div>
         </div>
 
@@ -699,7 +826,8 @@
             Batal
           </button>
           <button type="submit" class="btn btn-success" [disabled]="submittingSpeaker">
-            <span *ngIf="submittingSpeaker" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            <span *ngIf="submittingSpeaker" class="spinner-border spinner-border-sm me-1" role="status"
+              aria-hidden="true"></span>
             Simpan Speaker
           </button>
         </div>
@@ -710,13 +838,7 @@
 
 <!-- Modal Dialog Add / Edit Ticket Type -->
 <div *ngIf="isTicketModalOpen" class="modal-backdrop fade show"></div>
-<div
-  *ngIf="isTicketModalOpen"
-  class="modal fade show d-block"
-  tabindex="-1"
-  role="dialog"
-  aria-modal="true"
->
+<div *ngIf="isTicketModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow">
       <div class="modal-header bg-light">
@@ -734,13 +856,9 @@
             <!-- Nama Tiket -->
             <div class="col-12">
               <label class="form-label fw-medium text-dark">Nama Jenis Tiket <span class="text-danger">*</span></label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Contoh: Early Bird / Regular Pass / VIP"
+              <input type="text" class="form-control" placeholder="Contoh: Early Bird / Regular Pass / VIP"
                 formControlName="name"
-                [ngClass]="{ 'is-invalid': ticketForm.get('name')?.touched && ticketForm.get('name')?.invalid }"
-              />
+                [ngClass]="{ 'is-invalid': ticketForm.get('name')?.touched && ticketForm.get('name')?.invalid }" />
               <div *ngIf="ticketForm.get('name')?.touched && ticketForm.get('name')?.invalid" class="invalid-feedback">
                 Nama jenis tiket wajib diisi (maksimal 100 karakter).
               </div>
@@ -751,18 +869,18 @@
               <label class="form-label fw-medium text-dark">Harga Tiket (Rp) <span class="text-danger">*</span></label>
               <div class="input-group">
                 <span class="input-group-text bg-light text-muted">Rp</span>
-                <input
-                  type="number"
-                  min="0"
-                  step="1000"
-                  class="form-control"
-                  placeholder="0"
-                  formControlName="price"
-                  [ngClass]="{ 'is-invalid': ticketForm.get('price')?.touched && ticketForm.get('price')?.invalid }"
-                />
+                <input type="number" min="0" step="1000" class="form-control" placeholder="0" formControlName="price"
+                  [readonly]="event?.pricingType === 'FREE'"
+                  [ngClass]="{ 'is-invalid': ticketForm.get('price')?.touched && ticketForm.get('price')?.invalid }" />
               </div>
-              <small class="text-muted d-block mt-1">Masukkan 0 jika tiket gratis.</small>
-              <div *ngIf="ticketForm.get('price')?.touched && ticketForm.get('price')?.invalid" class="invalid-feedback d-block">
+              <small class="text-info d-block mt-1" *ngIf="event?.pricingType === 'FREE'">
+                Event ini bertipe <strong>Gratis</strong>, harga tiket otomatis Rp 0.
+              </small>
+              <small class="text-muted d-block mt-1" *ngIf="event?.pricingType !== 'FREE'">
+                Masukkan 0 jika tiket gratis.
+              </small>
+              <div *ngIf="ticketForm.get('price')?.touched && ticketForm.get('price')?.invalid"
+                class="invalid-feedback d-block">
                 Harga tiket wajib diisi minimal 0.
               </div>
             </div>
@@ -770,16 +888,11 @@
             <!-- Kuota Tiket -->
             <div class="col-md-6">
               <label class="form-label fw-medium text-dark">Kuota Tiket <span class="text-danger">*</span></label>
-              <input
-                type="number"
-                min="1"
-                class="form-control"
-                placeholder="Contoh: 100"
-                formControlName="quota"
-                [ngClass]="{ 'is-invalid': ticketForm.get('quota')?.touched && ticketForm.get('quota')?.invalid }"
-              />
+              <input type="number" min="1" class="form-control" placeholder="Contoh: 100" formControlName="quota"
+                [ngClass]="{ 'is-invalid': ticketForm.get('quota')?.touched && ticketForm.get('quota')?.invalid }" />
               <small class="text-muted d-block mt-1">Jumlah ketersediaan tiket.</small>
-              <div *ngIf="ticketForm.get('quota')?.touched && ticketForm.get('quota')?.invalid" class="invalid-feedback d-block">
+              <div *ngIf="ticketForm.get('quota')?.touched && ticketForm.get('quota')?.invalid"
+                class="invalid-feedback d-block">
                 Kuota tiket minimal 1.
               </div>
             </div>
@@ -787,22 +900,14 @@
             <!-- Tanggal Mulai Penjualan -->
             <div class="col-md-6">
               <label class="form-label fw-medium text-dark">Mulai Penjualan (Opsional)</label>
-              <input
-                type="datetime-local"
-                class="form-control"
-                formControlName="saleStartDate"
-              />
+              <input type="datetime-local" class="form-control" formControlName="saleStartDate" />
               <small class="text-muted d-block mt-1">Kosongkan jika langsung dibuka.</small>
             </div>
 
             <!-- Tanggal Akhir Penjualan -->
             <div class="col-md-6">
               <label class="form-label fw-medium text-dark">Selesai Penjualan (Opsional)</label>
-              <input
-                type="datetime-local"
-                class="form-control"
-                formControlName="saleEndDate"
-              />
+              <input type="datetime-local" class="form-control" formControlName="saleEndDate" />
               <small class="text-muted d-block mt-1">Kosongkan jika hingga event selesai.</small>
             </div>
 
@@ -814,8 +919,114 @@
             Batal
           </button>
           <button type="submit" class="btn btn-primary" [disabled]="submittingTicket">
-            <span *ngIf="submittingTicket" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+            <span *ngIf="submittingTicket" class="spinner-border spinner-border-sm me-1" role="status"
+              aria-hidden="true"></span>
             {{ submittingTicket ? 'Menyimpan...' : (isEditingTicket ? 'Simpan Perubahan' : 'Tambah Tiket') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Dialog Add / Edit Promo Code -->
+<div *ngIf="isPromoModalOpen" class="modal-backdrop fade show"></div>
+<div *ngIf="isPromoModalOpen" class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-light">
+        <h5 class="modal-header-title fw-bold text-dark m-0">
+          <i class="ri-coupon-3-line text-warning me-2 align-middle"></i>
+          {{ isEditingPromo ? 'Edit Kode Promo' : 'Tambah Kode Promo Baru' }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closePromoModal()"></button>
+      </div>
+
+      <form [formGroup]="promoCodeForm" (ngSubmit)="submitPromo()">
+        <div class="modal-body p-4">
+          <div class="row g-3">
+
+            <!-- Kode Promo -->
+            <div class="col-12">
+              <label class="form-label fw-medium text-dark">Kode Promo <span class="text-danger">*</span></label>
+              <input type="text" class="form-control text-uppercase font-monospace"
+                placeholder="Contoh: HEMAT50 / FLASHDEAL" formControlName="code"
+                [ngClass]="{ 'is-invalid': promoCodeForm.get('code')?.touched && promoCodeForm.get('code')?.invalid }" />
+              <div *ngIf="promoCodeForm.get('code')?.touched && promoCodeForm.get('code')?.invalid"
+                class="invalid-feedback">
+                Kode promo wajib diisi (maksimal 50 karakter).
+              </div>
+            </div>
+
+            <!-- Tipe Diskon -->
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-dark">Tipe Diskon <span class="text-danger">*</span></label>
+              <select class="form-select" formControlName="discountType">
+                <option value="PERCENTAGE">Persentase (%)</option>
+                <option value="FIXED">Nominal Tetap (Rp)</option>
+              </select>
+            </div>
+
+            <!-- Nilai Diskon -->
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-dark">
+                {{ promoCodeForm.get('discountType')?.value === 'PERCENTAGE' ? 'Diskon (%)' : 'Diskon (Rp)' }}
+                <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted"
+                  *ngIf="promoCodeForm.get('discountType')?.value === 'FIXED'">Rp</span>
+                <input type="number" min="1"
+                  [max]="promoCodeForm.get('discountType')?.value === 'PERCENTAGE' ? 100 : 999999999"
+                  class="form-control" placeholder="Contoh: 20" formControlName="discountValue"
+                  [ngClass]="{ 'is-invalid': promoCodeForm.get('discountValue')?.touched && promoCodeForm.get('discountValue')?.invalid }" />
+                <span class="input-group-text bg-light text-muted"
+                  *ngIf="promoCodeForm.get('discountType')?.value === 'PERCENTAGE'">%</span>
+              </div>
+              <div *ngIf="promoCodeForm.get('discountValue')?.touched && promoCodeForm.get('discountValue')?.invalid"
+                class="invalid-feedback d-block">
+                Nilai diskon wajib diisi minimal 1.
+              </div>
+            </div>
+
+            <!-- Batas Maksimal Penggunaan -->
+            <div class="col-12">
+              <label class="form-label fw-medium text-dark">Batas Maksimal Penggunaan (Kuota Kupon) <span
+                  class="text-danger">*</span></label>
+              <input type="number" min="1" class="form-control" placeholder="Contoh: 100" formControlName="maxUsage"
+                [ngClass]="{ 'is-invalid': promoCodeForm.get('maxUsage')?.touched && promoCodeForm.get('maxUsage')?.invalid }" />
+              <small class="text-muted d-block mt-1">Berapa kali kode promo ini dapat digunakan oleh peserta.</small>
+              <div *ngIf="promoCodeForm.get('maxUsage')?.touched && promoCodeForm.get('maxUsage')?.invalid"
+                class="invalid-feedback d-block">
+                Batas maksimal penggunaan wajib diisi minimal 1.
+              </div>
+            </div>
+
+            <!-- Tanggal Mulai Berlaku -->
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-dark">Mulai Berlaku (Opsional)</label>
+              <input type="datetime-local" class="form-control" formControlName="validFrom" />
+              <small class="text-muted d-block mt-1">Kosongkan jika langsung aktif.</small>
+            </div>
+
+            <!-- Tanggal Akhir Berlaku -->
+            <div class="col-md-6">
+              <label class="form-label fw-medium text-dark">Selesai Berlaku (Opsional)</label>
+              <input type="datetime-local" class="form-control" formControlName="validUntil" />
+              <small class="text-muted d-block mt-1">Kosongkan jika tanpa batas waktu.</small>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light p-3">
+          <button type="button" class="btn btn-light" (click)="closePromoModal()" [disabled]="submittingPromo">
+            Batal
+          </button>
+          <button type="submit" class="btn btn-warning" [disabled]="submittingPromo">
+            <span *ngIf="submittingPromo" class="spinner-border spinner-border-sm me-1" role="status"
+              aria-hidden="true"></span>
+            {{ submittingPromo ? 'Menyimpan...' : (isEditingPromo ? 'Simpan Perubahan' : 'Tambah Promo') }}
           </button>
         </div>
       </form>

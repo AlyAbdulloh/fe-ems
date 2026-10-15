@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
@@ -13,6 +13,8 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./event-create.component.scss'],
 })
 export class EventCreateComponent implements OnInit {
+  @ViewChild('bannerFileInput') bannerFileInput?: ElementRef<HTMLInputElement>;
+
   apiUrl = environment.url;
 
   eventForm!: UntypedFormGroup;
@@ -53,6 +55,7 @@ export class EventCreateComponent implements OnInit {
       startDatetime: ['', Validators.required],
       endDatetime: ['', Validators.required],
       description: [''],
+      pricingType: ['FREE', Validators.required],
       status: ['DRAFT', Validators.required],
     });
   }
@@ -94,6 +97,7 @@ export class EventCreateComponent implements OnInit {
           startDatetime: this.formatDatetimeLocal(ev.startDatetime),
           endDatetime: this.formatDatetimeLocal(ev.endDatetime),
           description: ev.description || '',
+          pricingType: ev.pricingType || 'FREE',
           status: ev.status || 'DRAFT',
         });
 
@@ -111,8 +115,6 @@ export class EventCreateComponent implements OnInit {
   onFileSelected(event: any) {
     const file: File = event.target.files?.[0];
     if (!file) {
-      this.selectedFile = null;
-      this.bannerPreviewUrl = this.eventForm.value.bannerImage || '';
       return;
     }
 
@@ -129,7 +131,6 @@ export class EventCreateComponent implements OnInit {
       });
       event.target.value = '';
       this.selectedFile = null;
-      this.bannerPreviewUrl = this.eventForm.value.bannerImage || '';
       return;
     }
 
@@ -140,6 +141,16 @@ export class EventCreateComponent implements OnInit {
       this.bannerPreviewUrl = reader.result as string;
     };
     reader.readAsDataURL(file);
+  }
+
+  removeBanner(fileInput?: HTMLInputElement) {
+    this.selectedFile = null;
+    this.bannerPreviewUrl = '';
+    this.eventForm.patchValue({ bannerImage: '' });
+    const inputEl = fileInput || this.bannerFileInput?.nativeElement;
+    if (inputEl) {
+      inputEl.value = '';
+    }
   }
 
   async loadDropdownOptions() {
@@ -239,10 +250,11 @@ export class EventCreateComponent implements OnInit {
         title: this.eventForm.value.title.trim(),
         categoryId: this.eventForm.value.categoryId || undefined,
         venueId: this.eventForm.value.venueId || undefined,
-        bannerImage: bannerUrl || undefined,
+        bannerImage: bannerUrl ? bannerUrl : (this.isEditMode ? null : undefined),
         startDatetime: new Date(this.eventForm.value.startDatetime).toISOString(),
         endDatetime: new Date(this.eventForm.value.endDatetime).toISOString(),
         description: this.eventForm.value.description || undefined,
+        pricingType: this.eventForm.value.pricingType || 'FREE',
         status: this.eventForm.value.status,
       };
 

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { EventItem, EventService, EventStatusType } from '../../../core/services/event.service';
+import { EventItem, EventPricingType, EventService, EventStatusType } from '../../../core/services/event.service';
 import { PaginationMeta } from '../../../core/models/api-response.model';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -21,8 +21,13 @@ export class EventManageComponent implements OnInit, OnDestroy {
   page = 1;
   limit = 10;
   statusFilter = '';
+  pricingTypeFilter = '';
   searchQuery = '';
   meta: PaginationMeta = { total: 0, page: 1, limit: 10, totalPages: 1 };
+
+  isPublishModalOpen = false;
+  selectedEventForPublish: EventItem | null = null;
+  publishing = false;
 
   private searchSubject = new Subject<string>();
   private searchSub!: Subscription;
@@ -61,6 +66,7 @@ export class EventManageComponent implements OnInit, OnDestroy {
         page: this.page,
         limit: this.limit,
         status: (this.statusFilter as EventStatusType) || undefined,
+        pricingType: (this.pricingTypeFilter as EventPricingType) || undefined,
         search: this.searchQuery || undefined,
       });
 
@@ -90,7 +96,49 @@ export class EventManageComponent implements OnInit, OnDestroy {
     this.loadMyEvents();
   }
 
+  openPublishModal(eventItem: EventItem) {
+    this.selectedEventForPublish = eventItem;
+    this.isPublishModalOpen = true;
+  }
+
+  closePublishModal() {
+    this.isPublishModalOpen = false;
+    this.selectedEventForPublish = null;
+    this.publishing = false;
+  }
+
+  async confirmPublish() {
+    if (!this.selectedEventForPublish) return;
+
+    this.publishing = true;
+    try {
+      await this.eventService.updateStatus(this.selectedEventForPublish.id, 'PUBLISHED');
+      this.closePublishModal();
+      Swal.fire({
+        title: 'Event Berhasil Dipublikasikan!',
+        text: 'Event Anda sekarang telah aktif dan dapat dilihat oleh publik.',
+        icon: 'success',
+        confirmButtonColor: '#3577f1',
+      });
+      await this.loadMyEvents();
+    } catch (err: any) {
+      Swal.fire({
+        title: 'Gagal Mempublikasikan!',
+        text: err?.error?.message || err?.message || 'Gagal mengubah status event.',
+        icon: 'error',
+        confirmButtonColor: '#f06548',
+      });
+    } finally {
+      this.publishing = false;
+    }
+  }
+
   async updateStatus(eventItem: EventItem, newStatus: EventStatusType) {
+    if (newStatus === 'PUBLISHED') {
+      this.openPublishModal(eventItem);
+      return;
+    }
+
     const statusLabels: Record<EventStatusType, string> = {
       DRAFT: 'Draf',
       PUBLISHED: 'Publikasikan',
@@ -123,7 +171,7 @@ export class EventManageComponent implements OnInit, OnDestroy {
     } catch (err: any) {
       Swal.fire({
         title: 'Gagal!',
-        text: err?.message || 'Gagal mengubah status event.',
+        text: err?.error?.message || err?.message || 'Gagal mengubah status event.',
         icon: 'error',
         confirmButtonColor: '#f06548',
       });
