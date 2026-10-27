@@ -1,0 +1,272 @@
+<div class="modal-backdrop-custom" (click)="close()">
+  <div class="modal-dialog-custom modal-md" role="dialog" aria-modal="true"
+    [attr.aria-label]="'Pendaftaran event: ' + event.title" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom">
+      <div class="modal-header-custom p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h5 class="modal-title fs-16 fw-bold mb-0">Pendaftaran & Pemesanan Tiket</h5>
+        <button class="btn-close-sm" (click)="close()">
+          <i class="ri-close-line"></i>
+        </button>
+      </div>
+
+      <div class="modal-scrollable-body p-4">
+        <!-- Event Brief Card -->
+        <div class="p-3 bg-light rounded-3 border mb-3">
+          <h6 class="fw-bold text-dark mb-1">{{ event.title }}</h6>
+          <div class="text-muted fs-12 mb-1">
+            <i class="ri-calendar-line me-1 text-primary"></i> {{ display.formatEventDate(event.startDatetime) }}
+          </div>
+          <div class="text-muted fs-12">
+            <i
+              [ngClass]="event.eventType === 'ONLINE' ? 'ri-global-line me-1 text-info' : 'ri-map-pin-line me-1 text-danger'"></i>
+            {{ event.eventType === 'ONLINE' ? 'Virtual (Online Event)' : (event.eventType === 'HYBRID' ? ('Hybrid: ' + (event.venue?.name || 'Onsite')) : (event.venue?.name || 'Offline Event')) }}
+          </div>
+        </div>
+
+        <!-- Attendee Account Info -->
+        <div class="mb-3">
+          <label class="form-label fs-13 fw-semibold text-dark">Data Pemesan (Akun Aktif)</label>
+          <div class="bg-white p-2.5 px-3 rounded-3 border d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <i class="ri-user-smile-line fs-18 text-primary"></i>
+              <div>
+                <div class="fw-bold text-dark fs-13">{{ currentUser?.name }}</div>
+                <div class="text-muted fs-12">{{ currentUser?.email }}</div>
+              </div>
+            </div>
+            <span class="badge bg-light text-muted border fs-11">Pemesan</span>
+          </div>
+        </div>
+
+        <!-- Ticket Selection -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <label class="form-label fs-13 fw-semibold text-dark mb-0">Pilih Tiket</label>
+            <span class="badge bg-soft-primary text-primary fs-11" *ngIf="event.pricingType === 'PAID'">
+              Bisa Beli Lebih dari 1 Jenis Tiket
+            </span>
+            <span class="badge bg-soft-info text-info fs-11" *ngIf="event.pricingType === 'FREE'">
+              Maksimal 1 Tiket
+            </span>
+          </div>
+
+          <ng-container *ngIf="event.ticketTypes && event.ticketTypes.length > 0; else noTicketTypesTpl">
+            <div class="d-flex flex-column gap-2 mb-3">
+              <div class="ticket-type-card-interactive" *ngFor="let t of event.ticketTypes"
+                (click)="selectFreeTicket(t)"
+                [ngClass]="{'has-quantity': getTicketQuantity(t.id) > 0, 'is-soldout': (t.quota - (t.soldCount || 0)) <= 0, 'cursor-pointer': event.pricingType === 'FREE'}">
+                <div class="ticket-info-col">
+                  <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="fw-bold fs-13 text-dark">{{ t.name }}</span>
+                    <span class="badge bg-danger-subtle text-danger fs-10"
+                      *ngIf="(t.quota - (t.soldCount || 0)) <= 0">Habis</span>
+                  </div>
+                  <div class="fw-bold fs-13 text-primary">{{ display.formatRupiah(t.price) }}</div>
+                  <div class="text-muted fs-11 mt-1">
+                    <span *ngIf="(t.quota - (t.soldCount || 0)) > 0">
+                      <i class="ri-ticket-line me-1"></i>Sisa kuota: {{ t.quota - (t.soldCount || 0) }} tiket
+                    </span>
+                    <span *ngIf="(t.quota - (t.soldCount || 0)) <= 0" class="text-danger">
+                      Kuota tiket ini sudah habis
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Quantity Stepper Controls -->
+                <div class="ticket-qty-control">
+                  <button type="button" class="btn-qty btn-qty-minus"
+                    [disabled]="getTicketQuantity(t.id) <= 0 || (t.quota - (t.soldCount || 0)) <= 0"
+                    (click)="$event.stopPropagation(); decrementTicketQuantity(t)" aria-label="Kurangi tiket">
+                    <i class="ri-subtract-line"></i>
+                  </button>
+                  <span class="qty-display">{{ getTicketQuantity(t.id) }}</span>
+                  <button type="button" class="btn-qty btn-qty-plus"
+                    [disabled]="(event.pricingType === 'FREE' && getTicketQuantity(t.id) >= 1) || getTicketQuantity(t.id) >= (t.quota - (t.soldCount || 0)) || getTicketQuantity(t.id) >= 10 || (t.quota - (t.soldCount || 0)) <= 0"
+                    (click)="$event.stopPropagation(); incrementTicketQuantity(t)" aria-label="Tambah tiket"
+                    [title]="event.pricingType === 'FREE' && getTicketQuantity(t.id) >= 1 ? 'Maksimal 1 tiket untuk event gratis' : ''">
+                    <i class="ri-add-line"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ticket Attendees Information -->
+            <div *ngIf="totalSelectedTicketsCount > 0" class="mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <label class="form-label fs-13 fw-semibold text-dark mb-0 d-flex align-items-center gap-1">
+                  <i class="ri-user-3-line text-primary"></i>
+                  <span>Data Peserta Tiket ({{ totalSelectedTicketsCount }} Peserta)</span>
+                </label>
+                <span class="fs-11 text-muted">Diisi untuk setiap tiket</span>
+              </div>
+
+              <div class="d-flex flex-column gap-2 mb-2">
+                <div class="attendee-card-item" *ngFor="let a of ticketAttendees; let idx = index">
+                  <div class="attendee-card-header">
+                    <span class="fw-semibold fs-12 text-dark d-flex align-items-center gap-1">
+                      <span class="badge bg-dark text-white rounded-pill px-2 py-0.5 fs-10">#{{ a.ticketIndex }}</span>
+                      <span>{{ a.ticketTypeName }}</span>
+                    </span>
+                    <button *ngIf="idx === 0 && currentUser" type="button"
+                      class="btn btn-sm btn-link p-0 text-decoration-none fs-11 text-primary d-flex align-items-center gap-1"
+                      (click)="useMyAccountForTicket(a)">
+                      <i class="ri-user-shared-line"></i>
+                      <span>Gunakan data akun saya</span>
+                    </button>
+                  </div>
+
+                  <div class="row g-2">
+                    <div class="col-md-6">
+                      <label class="form-label fs-12 text-muted mb-1">Nama Lengkap Peserta <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control form-control-sm" [(ngModel)]="a.attendeeName"
+                        placeholder="Nama lengkap peserta" required>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fs-12 text-muted mb-1">Email Peserta <span class="text-danger">*</span></label>
+                      <input type="email" class="form-control form-control-sm" [(ngModel)]="a.attendeeEmail"
+                        placeholder="email.peserta@contoh.com" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Validation hint -->
+              <div *ngIf="!isAttendeesValid" class="text-danger fs-12 d-flex align-items-center gap-1 mt-1">
+                <i class="ri-error-warning-line"></i>
+                <span>Harap lengkapi nama dan format email yang valid untuk semua peserta tiket.</span>
+              </div>
+            </div>
+
+            <!-- Promo Code Selection (Paid Event Only) -->
+            <div *ngIf="event.pricingType === 'PAID'" class="promo-box-container p-3 rounded-3 border mb-3">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <label class="form-label fs-13 fw-semibold text-dark mb-0 d-flex align-items-center gap-1">
+                  <i class="ri-coupon-3-line text-muted fs-15"></i>
+                  <span>Kode Promo</span>
+                </label>
+              </div>
+
+              <div *ngIf="!appliedPromo">
+                <div class="input-group promo-input-group">
+                  <span class="input-group-text bg-white border-end-0 text-muted">
+                    <i class="ri-ticket-2-line fs-14"></i>
+                  </span>
+                  <input type="text" class="form-control border-start-0 text-uppercase fw-semibold" id="promoCode"
+                    placeholder="Masukkan kode promo" [(ngModel)]="promoCodeInput" (keyup.enter)="applyPromoCode()"
+                    [disabled]="isApplyingPromo || totalSelectedTicketsCount === 0" maxlength="20">
+                  <button class="btn btn-dark px-3 fw-semibold fs-13 d-inline-flex align-items-center gap-1"
+                    type="button" (click)="applyPromoCode()"
+                    [disabled]="isApplyingPromo || !promoCodeInput.trim() || totalSelectedTicketsCount === 0">
+                    <span *ngIf="isApplyingPromo" class="spinner-border spinner-border-sm"></span>
+                    <i *ngIf="!isApplyingPromo" class="ri-check-line"></i>
+                    <span>Gunakan</span>
+                  </button>
+                </div>
+
+                <div *ngIf="promoError" class="text-danger fs-12 mt-1 d-flex align-items-center gap-1">
+                  <i class="ri-error-warning-line"></i>
+                  <span>{{ promoError }}</span>
+                </div>
+              </div>
+
+              <!-- Applied Promo Card -->
+              <div *ngIf="appliedPromo"
+                class="applied-promo-card p-2 px-3 rounded-2 border d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="promo-icon-badge">
+                    <i class="ri-coupon-3-line"></i>
+                  </div>
+                  <div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="fw-bold text-dark fs-13 text-uppercase">{{ appliedPromo.code }}</span>
+                      <span class="badge bg-secondary-subtle text-dark border fs-11 fw-normal">Hemat {{
+                        display.formatRupiah(discountAmount) }}</span>
+                    </div>
+                  </div>
+                </div>
+                <button type="button"
+                  class="btn btn-sm btn-link p-0 text-decoration-none fs-12 d-flex align-items-center gap-1 btn-remove-promo"
+                  (click)="removePromoCode()" title="Hapus promo">
+                  <i class="ri-close-line fs-16"></i> Hapus
+                </button>
+              </div>
+            </div>
+
+            <!-- Order Summary Breakdown -->
+            <div *ngIf="totalSelectedTicketsCount > 0" class="order-summary-box p-3 bg-light rounded-3 border mb-3">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fs-12 fw-bold text-uppercase text-muted">Rincian Pemesanan</span>
+                <span class="badge bg-dark text-white rounded-pill px-2">{{ totalSelectedTicketsCount }} Tiket
+                  Dipilih</span>
+              </div>
+              <div class="summary-items-list mb-2 border-bottom pb-2">
+                <div class="d-flex justify-content-between align-items-center py-1 fs-13"
+                  *ngFor="let item of selectedTicketsList">
+                  <span class="text-dark">
+                    {{ item.ticket.name }} <span class="text-muted fs-12">x {{ item.quantity }}</span>
+                  </span>
+                  <span class="fw-semibold text-dark">{{ display.formatRupiah(item.subtotal) }}</span>
+                </div>
+              </div>
+
+              <ng-container *ngIf="appliedPromo">
+                <div class="d-flex justify-content-between align-items-center py-1 fs-13 text-muted">
+                  <span>Subtotal Tiket:</span>
+                  <span>{{ display.formatRupiah(totalSelectedTicketsAmount) }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center py-1 fs-13 text-danger">
+                  <span class="d-flex align-items-center gap-1">
+                    <i class="ri-coupon-3-line"></i>
+                    Diskon Promo ({{ appliedPromo.code }}):
+                  </span>
+                  <span class="fw-semibold">- {{ display.formatRupiah(discountAmount) }}</span>
+                </div>
+              </ng-container>
+
+              <div class="d-flex justify-content-between align-items-center pt-2" [class.border-top]="appliedPromo">
+                <span class="fw-bold fs-14 text-dark">Total Pembayaran:</span>
+                <span class="fw-bold fs-16 text-primary">{{ display.formatRupiah(finalTotalAmount) }}</span>
+              </div>
+            </div>
+
+            <!-- Warning if no tickets selected yet -->
+            <div *ngIf="totalSelectedTicketsCount === 0"
+              class="alert alert-soft-secondary border fs-12 py-2 px-3 mb-3 text-muted d-flex align-items-center gap-2">
+              <i class="ri-information-line fs-16 text-primary"></i>
+              <span>Silakan pilih jenis tiket yang ingin Anda pesan.</span>
+            </div>
+          </ng-container>
+
+          <ng-template #noTicketTypesTpl>
+            <div class="alert alert-warning fs-13 py-2 px-3">
+              Belum ada tiket yang dibuka untuk publik saat ini.
+            </div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-footer-custom p-3 border-top d-flex justify-content-end gap-2">
+        <button class="btn btn-outline-secondary px-3 py-2 rounded-3" (click)="close()">
+          Batal
+        </button>
+        <button class="btn btn-dark px-4 py-2 rounded-3"
+          [disabled]="isSubmittingRegistration || !isAttendeesValid || totalSelectedTicketsCount === 0"
+          (click)="confirmRegistration()">
+          <span *ngIf="!isSubmittingRegistration">
+            <ng-container *ngIf="event.pricingType === 'FREE'">
+              Konfirmasi Pendaftaran (1 Tiket Gratis)
+            </ng-container>
+            <ng-container *ngIf="event.pricingType === 'PAID'">
+              {{ totalSelectedTicketsCount > 0 ? ('Beli ' + totalSelectedTicketsCount + ' Tiket • ' +
+              display.formatRupiah(finalTotalAmount)) : 'Pilih Tiket Terlebih Dahulu' }}
+            </ng-container>
+          </span>
+          <span *ngIf="isSubmittingRegistration">
+            <span class="spinner-border spinner-border-sm me-1"></span> Memproses...
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

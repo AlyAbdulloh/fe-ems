@@ -1,0 +1,91 @@
+<div class="spotlight-card">
+  <div class="row g-0 align-items-stretch">
+    <!-- Left: Banner Image with Featured Badge -->
+    <div class="col-lg-6 col-md-5 spotlight-image-col">
+      <div class="spotlight-image-wrap">
+        <img [src]="display.getEventImage(event, 0)" [alt]="event.title" class="spotlight-image" loading="lazy" />
+        <!-- Featured Badge Overlay -->
+        <div class="badge-featured-overlay">
+          <span class="badge-featured-pill bg-danger text-white" *ngIf="isPast">
+            <i class="ri-time-line me-1"></i> Event Berakhir
+          </span>
+          <span class="badge-featured-pill bg-primary text-white" *ngIf="!isPast && isMine">
+            <i class="ri-user-star-line me-1"></i> Event Anda
+          </span>
+          <span class="badge-featured-pill" *ngIf="!isPast && !isMine">
+            Featured Event
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Event Info & Action Buttons -->
+    <div class="col-lg-6 col-md-7 spotlight-content-col">
+      <div class="spotlight-content-body">
+        <!-- Date & Location Row -->
+        <div class="spotlight-meta-row">
+          <span class="meta-item">
+            <i class="ri-calendar-line meta-icon"></i>
+            {{ display.formatEventDate(event.startDatetime) }}
+          </span>
+          <span class="meta-separator">•</span>
+          <span class="meta-item">
+            <i [ngClass]="display.getEventTypeIcon(event) + ' meta-icon'"></i>
+            {{ display.getVenueLabel(event) }}
+          </span>
+        </div>
+
+        <!-- Big Bold Title -->
+        <h3 class="spotlight-event-title" role="button" tabindex="0" (click)="openDetail.emit(event)"
+          (keydown)="openDetailFromKey($event)">
+          {{ event.title }}
+        </h3>
+
+        <!-- Event Description Snippet -->
+        <p class="spotlight-event-desc">
+          {{ event.description || 'Saksikan dan ikuti keseruan sesi diskusi inspiratif bersama para pakar terkemuka di bidangnya.' }}
+        </p>
+
+        <!-- Pill Badges Row -->
+        <div class="spotlight-tags-row">
+          <span class="tag-pill category-tag" *ngIf="event.category?.name">
+            {{ event.category?.name }}
+          </span>
+          <span class="tag-pill mode-tag">
+            <i [ngClass]="display.getEventTypeIcon(event) + ' me-1'"></i>
+            {{ event.eventType || 'Offline' }}
+          </span>
+          <span class="tag-pill price-tag" [ngClass]="event.pricingType === 'FREE' ? 'tag-free' : 'tag-paid'">
+            {{ event.pricingType === 'FREE' ? 'Free' : 'Paid' }}
+          </span>
+          <span class="tag-pill organizer-tag" *ngIf="event.organizer?.organizationName">
+            <i class="ri-building-line me-1"></i> {{ event.organizer?.organizationName }}
+          </span>
+        </div>
+
+        <!-- Actions: Register Now & View Details -->
+        <div class="spotlight-actions-row">
+          <button *ngIf="isPast" class="btn-spotlight-register btn-disabled" disabled>
+            <i class="ri-time-line me-1"></i>
+            <span>Event Telah Berakhir</span>
+          </button>
+
+          <a *ngIf="!isPast && isMine" [routerLink]="['/events/detail', event.id]"
+            class="btn-spotlight-register btn-my-event">
+            <i class="ri-dashboard-line me-1"></i>
+            <span>Kelola Event Anda</span>
+          </a>
+
+          <button *ngIf="!isPast && !isMine" class="btn-spotlight-register" (click)="register.emit(event)">
+            <span>Register Now</span>
+            <i class="ri-arrow-right-line ms-1"></i>
+          </button>
+
+          <button class="btn-spotlight-details" (click)="openDetail.emit(event)">
+            View Details
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

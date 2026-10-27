@@ -5,6 +5,12 @@
   color: #1e293b;
   display: flex;
   flex-direction: column;
+
+  :focus-visible {
+    outline: 2px solid rgba(15, 23, 42, 0.55);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
 }
 
 // ----------------------------------------------------
@@ -41,7 +47,7 @@
 }
 
 // ----------------------------------------------------
-// 3. MULTI-FILTER SEARCH BAR
+// MULTI-FILTER SEARCH BAR
 // ----------------------------------------------------
 .discover-filter-section {
   margin-bottom: 2.75rem;
@@ -158,7 +164,7 @@
 }
 
 // ----------------------------------------------------
-// 4. SECTION HEADINGS
+// SECTION HEADINGS
 // ----------------------------------------------------
 .section-title-wrap {
   margin-bottom: 1.25rem;
@@ -181,200 +187,7 @@
 }
 
 // ----------------------------------------------------
-// 5. SPOTLIGHT CARD
-// ----------------------------------------------------
-.spotlight-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 20px;
-  box-shadow: 0 6px 24px -4px rgba(15, 23, 42, 0.06);
-  overflow: hidden;
-  transition: box-shadow 0.25s ease;
-
-  &:hover {
-    box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.1);
-  }
-}
-
-.spotlight-image-col {
-  background-color: #0f172a;
-  position: relative;
-  overflow: hidden;
-}
-
-.spotlight-image-wrap {
-  width: 100%;
-  height: 100%;
-  min-height: 340px;
-  max-height: 460px;
-  position: relative;
-  overflow: hidden;
-
-  .spotlight-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.4s ease;
-
-    &:hover {
-      transform: scale(1.03);
-    }
-  }
-
-  .badge-featured-overlay {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    z-index: 2;
-
-    .badge-featured-pill {
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(8px);
-      color: #ffffff;
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-      padding: 0.35rem 0.85rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-    }
-  }
-}
-
-.spotlight-content-body {
-  padding: 2.25rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
-
-  .spotlight-meta-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: #475569;
-    margin-bottom: 0.85rem;
-
-    .meta-icon {
-      color: #0f172a;
-      margin-right: 0.25rem;
-    }
-
-    .meta-separator {
-      color: #cbd5e1;
-    }
-  }
-
-  .spotlight-event-title {
-    font-size: 1.95rem;
-    font-weight: 800;
-    color: #0f172a;
-    line-height: 1.25;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.85rem;
-    cursor: pointer;
-    transition: color 0.15s ease;
-
-    &:hover {
-      color: #3b82f6;
-    }
-  }
-
-  .spotlight-event-desc {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    color: #64748b;
-    margin-bottom: 1.35rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .spotlight-tags-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1.75rem;
-  }
-
-  .spotlight-actions-row {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-
-    .btn-spotlight-register {
-      background: #0f172a;
-      color: #ffffff;
-      border: 1px solid #0f172a;
-      border-radius: 10px;
-      padding: 0.75rem 1.65rem;
-      font-size: 0.925rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
-
-      &:hover {
-        background: #1e293b;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
-      }
-
-      &.btn-disabled {
-        background: #f1f5f9 !important;
-        color: #94a3b8 !important;
-        border-color: #e2e8f0 !important;
-        cursor: not-allowed !important;
-        box-shadow: none !important;
-        transform: none !important;
-      }
-
-      &.btn-my-event {
-        background: #eff6ff !important;
-        color: #2563eb !important;
-        border-color: #bfdbfe !important;
-        text-decoration: none;
-
-        &:hover {
-          background: #dbeafe !important;
-          color: #1d4ed8 !important;
-          border-color: #93c5fd !important;
-        }
-      }
-    }
-
-    .btn-spotlight-details {
-      background: #ffffff;
-      color: #1e293b;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      padding: 0.75rem 1.4rem;
-      font-size: 0.925rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        background: #f8fafc;
-        border-color: #94a3b8;
-        color: #0f172a;
-      }
-    }
-  }
-}
-
-// ----------------------------------------------------
-// 6. ALL EVENTS GRID
+// ALL EVENTS GRID
 // ----------------------------------------------------
 .events-grid {
   display: grid;
@@ -382,272 +195,98 @@
   gap: 1.5rem;
 }
 
-.event-grid-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.09);
-
-    .card-image {
-      transform: scale(1.05);
-    }
-  }
-
-  .card-image-wrap {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    position: relative;
-    overflow: hidden;
-    background-color: #0f172a;
-    cursor: pointer;
-
-    .card-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.35s ease;
-    }
-
-    .card-badges-container {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      display: flex;
-      gap: 0.4rem;
-      z-index: 2;
-    }
-
-    .card-badge-pill {
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.02em;
-      padding: 0.25rem 0.65rem;
-      border-radius: 999px;
-      text-transform: capitalize;
-
-      &.badge-price-free {
-        background-color: #dcfce7;
-        color: #15803d;
-        border: 1px solid rgba(22, 163, 74, 0.2);
-      }
-
-      &.badge-price-paid {
-        background-color: #0f172a;
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-      }
-
-      &.badge-past {
-        background-color: #fee2e2;
-        color: #b91c1c;
-        border: 1px solid rgba(239, 68, 68, 0.25);
-      }
-
-      &.badge-my-event {
-        background-color: #dbeafe;
-        color: #1d4ed8;
-        border: 1px solid rgba(59, 130, 246, 0.25);
-      }
-    }
-  }
-
-  .card-content-body {
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-
-    .card-meta-line {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-      font-size: 0.775rem;
-      color: #64748b;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-
-      i {
-        margin-right: 0.2rem;
-      }
-
-      .meta-dot {
-        color: #cbd5e1;
-      }
-    }
-
-    .card-event-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #0f172a;
-      line-height: 1.35;
-      letter-spacing: -0.01em;
-      margin-bottom: 0.45rem;
-      cursor: pointer;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      transition: color 0.15s ease;
-
-      &:hover {
-        color: #2563eb;
-      }
-    }
-
-    .card-event-desc {
-      font-size: 0.85rem;
-      line-height: 1.5;
-      color: #64748b;
-      margin-bottom: 0.85rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .card-tags-row {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-bottom: 1.15rem;
-      margin-top: auto;
-
-      .tag-chip {
-        font-size: 0.725rem;
-        font-weight: 500;
-        background-color: #f1f5f9;
-        color: #475569;
-        padding: 0.2rem 0.55rem;
-        border-radius: 6px;
-      }
-
-      .price-indicator {
-        font-size: 0.825rem;
-        font-weight: 700;
-        color: #0f172a;
-      }
-    }
-
-    .card-actions-footer {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      .btn-card-register {
-        flex: 1;
-        background-color: #0f172a;
-        color: #ffffff;
-        border: 1px solid #0f172a;
-        border-radius: 8px;
-        padding: 0.55rem 0.85rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &:hover {
-          background-color: #1e293b;
-        }
-
-        &.btn-disabled {
-          background-color: #f1f5f9 !important;
-          color: #94a3b8 !important;
-          border-color: #e2e8f0 !important;
-          cursor: not-allowed !important;
-          box-shadow: none !important;
-        }
-
-        &.btn-my-event {
-          background-color: #eff6ff !important;
-          color: #2563eb !important;
-          border-color: #bfdbfe !important;
-          text-decoration: none;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-
-          &:hover {
-            background-color: #dbeafe !important;
-            color: #1d4ed8 !important;
-            border-color: #93c5fd !important;
-          }
-        }
-      }
-
-      .btn-card-details {
-        width: 38px;
-        height: 38px;
-        border-radius: 8px;
-        border: 1px solid #e2e8f0;
-        background: #ffffff;
-        color: #475569;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &:hover {
-          background-color: #f8fafc;
-          border-color: #cbd5e1;
-          color: #0f172a;
-        }
-      }
-    }
-  }
-}
-
 // ----------------------------------------------------
-// 7. PILL TAGS & CHIPS
+// LOADING SKELETON
 // ----------------------------------------------------
-.tag-pill {
-  font-size: 0.75rem;
-  font-weight: 600;
-  padding: 0.3rem 0.75rem;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-
-  &.category-tag {
-    background-color: #f1f5f9;
-    color: #334155;
+.discover-skeleton {
+  .skeleton-block {
+    background: linear-gradient(90deg, #eef2f7 25%, #f7f9fc 37%, #eef2f7 63%);
+    background-size: 400% 100%;
+    animation: skeletonShimmer 1.4s ease infinite;
+    border-radius: 12px;
   }
 
-  &.mode-tag {
-    background-color: #f1f5f9;
-    color: #334155;
-  }
-
-  &.organizer-tag {
-    background-color: #f8fafc;
-    color: #64748b;
+  .skeleton-spotlight {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    background: #ffffff;
     border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+
+    .skeleton-image {
+      min-height: 340px;
+      border-radius: 0;
+    }
+
+    .skeleton-content {
+      padding: 2.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+
+      .skeleton-line {
+        height: 14px;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #eef2f7 25%, #f7f9fc 37%, #eef2f7 63%);
+        background-size: 400% 100%;
+        animation: skeletonShimmer 1.4s ease infinite;
+
+        &.w-40 { width: 40%; }
+        &.w-50 { width: 50%; }
+        &.w-60 { width: 60%; }
+        &.w-70 { width: 70%; }
+        &.w-80 { width: 80%; }
+        &.w-90 { width: 90%; }
+        &.w-100 { width: 100%; }
+        &.h-lg { height: 28px; }
+      }
+    }
   }
 
-  &.tag-free {
-    background-color: #dcfce7;
-    color: #15803d;
-  }
+  .skeleton-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 1.5rem;
 
-  &.tag-paid {
-    background-color: #0f172a;
-    color: #ffffff;
+    .skeleton-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      overflow: hidden;
+
+      .skeleton-card-image {
+        aspect-ratio: 16 / 9;
+        border-radius: 0;
+      }
+
+      .skeleton-card-body {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+
+        .skeleton-line {
+          height: 12px;
+          border-radius: 8px;
+          background: linear-gradient(90deg, #eef2f7 25%, #f7f9fc 37%, #eef2f7 63%);
+          background-size: 400% 100%;
+          animation: skeletonShimmer 1.4s ease infinite;
+
+          &.w-60 { width: 60%; }
+          &.w-80 { width: 80%; }
+          &.w-90 { width: 90%; }
+          &.w-100 { width: 100%; }
+          &.h-lg { height: 20px; }
+        }
+      }
+    }
   }
 }
 
 // ----------------------------------------------------
-// 8. EMPTY STATE
+// EMPTY / ERROR STATE
 // ----------------------------------------------------
 .empty-events-card {
   background: #ffffff;
@@ -667,6 +306,11 @@
     align-items: center;
     justify-content: center;
     margin-bottom: 1rem;
+
+    &.icon-error {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
   }
 
   .empty-title {
@@ -685,543 +329,25 @@
 }
 
 // ----------------------------------------------------
-// 9. MODALS
+// ANIMATIONS
 // ----------------------------------------------------
-.modal-backdrop-custom {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(4px);
-  z-index: 1060;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  overflow-y: auto;
-  animation: fadeIn 0.2s ease;
-}
-
-.modal-dialog-custom {
-  width: 100%;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-
-  &.modal-lg {
-    max-width: 760px;
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 100% 0;
   }
 
-  &.modal-md {
-    max-width: 560px;
-  }
-}
-
-.modal-content-custom {
-  background: #ffffff;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25);
-  display: flex;
-  flex-direction: column;
-  max-height: 88vh;
-  animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.modal-header-custom {
-  flex-shrink: 0;
-  background-color: #ffffff;
-  z-index: 10;
-}
-
-.modal-footer-custom {
-  flex-shrink: 0;
-  background-color: #ffffff;
-  z-index: 10;
-  box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.04);
-}
-
-.modal-banner-wrap {
-  position: relative;
-  width: 100%;
-  height: 240px;
-  background-color: #0f172a;
-  overflow: hidden;
-
-  .modal-banner-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .modal-close-btn {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(8px);
-    border: none;
-    color: #ffffff;
-    font-size: 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.2s;
-
-    &:hover {
-      background: rgba(15, 23, 42, 0.85);
-    }
-  }
-
-  .modal-banner-overlay-badges {
-    position: absolute;
-    bottom: 14px;
-    left: 16px;
-    display: flex;
-    align-items: center;
-    z-index: 2;
-  }
-}
-
-.modal-scrollable-body {
-  overflow-y: auto;
-  flex: 1 1 auto;
-  min-height: 0;
-  -webkit-overflow-scrolling: touch;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f8fafc;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 999px;
-
-    &:hover {
-      background: #94a3b8;
-    }
-  }
-
-  .modal-event-title {
-    font-size: 1.7rem;
-    font-weight: 800;
-    color: #0f172a;
-    line-height: 1.25;
-  }
-
-  .section-subheading {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 0.6rem;
-  }
-
-  .modal-desc-text {
-    line-height: 1.6;
-    font-size: 0.95rem;
-  }
-}
-
-.info-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  padding: 0.85rem 1rem;
-  border-radius: 12px;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-
-  .info-card-icon {
-    font-size: 1.35rem;
-    color: #0f172a;
-    margin-top: 2px;
-  }
-
-  .info-card-content {
-    .info-card-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: #64748b;
-      font-weight: 600;
-      display: block;
-    }
-
-    .info-card-val {
-      font-size: 0.9rem;
-      color: #0f172a;
-    }
-
-    .info-card-sub {
-      font-size: 0.8rem;
-    }
-  }
-}
-
-.timeline-sessions {
-  border-left: 2px solid #e2e8f0;
-  padding-left: 1.25rem;
-  margin-left: 0.5rem;
-
-  .timeline-session-item {
-    position: relative;
-    margin-bottom: 1.25rem;
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: -1.65rem;
-      top: 5px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #0f172a;
-      border: 2px solid #ffffff;
-    }
-
-    .timeline-session-time {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #475569;
-      margin-bottom: 0.25rem;
-
-      .timeline-room {
-        background: #f1f5f9;
-        padding: 0.15rem 0.45rem;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        margin-left: 0.4rem;
-        color: #0f172a;
-      }
-    }
-
-    .session-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 0.2rem;
-    }
-
-    .session-speaker {
-      font-size: 0.825rem;
-      color: #334155;
-    }
-  }
-}
-
-.ticket-type-card {
-  padding: 0.85rem 1rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-}
-
-.ticket-option-radio {
-  display: flex;
-  align-items: center;
-  padding: 0.85rem 1rem;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: #cbd5e1;
-    background: #f8fafc;
-  }
-
-  &.active {
-    border-color: #0f172a;
-    background: #f8fafc;
-  }
-}
-
-.ticket-type-card-interactive {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.85rem 1rem;
-  background: #ffffff;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: #cbd5e1;
-  }
-
-  &.has-quantity {
-    border-color: #0f172a;
-    background: #f8fafc;
-    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
-  }
-
-  &.is-soldout {
-    opacity: 0.55;
-    background: #f1f5f9;
-    border-color: #e2e8f0;
-  }
-
-  .ticket-info-col {
-    flex: 1;
-    min-width: 0;
-    padding-right: 0.75rem;
-  }
-
-  .ticket-qty-control {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: #f1f5f9;
-    padding: 0.25rem 0.35rem;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-
-    .btn-qty {
-      width: 28px;
-      height: 28px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      background: #ffffff;
-      color: #0f172a;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      transition: all 0.15s ease;
-
-      &:hover:not(:disabled) {
-        background: #0f172a;
-        color: #ffffff;
-      }
-
-      &:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-        background: transparent;
-        box-shadow: none;
-      }
-    }
-
-    .qty-display {
-      min-width: 26px;
-      text-align: center;
-      font-weight: 700;
-      font-size: 0.875rem;
-      color: #0f172a;
-    }
+  100% {
+    background-position: 0 0;
   }
 }
 
 // ----------------------------------------------------
-// TICKET ATTENDEES FORM
+// RESPONSIVE BREAKPOINTS
 // ----------------------------------------------------
-.attendee-card-item {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 0.85rem 1rem;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
-  transition: all 0.15s ease;
-
-  &:focus-within {
-    border-color: #0f172a;
-    box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.05);
-  }
-
-  .attendee-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px dashed #e2e8f0;
-  }
-
-  .form-control-sm {
-    height: 36px;
-    font-size: 0.85rem;
-    border-color: #cbd5e1;
-    border-radius: 6px;
-
-    &:focus {
-      border-color: #0f172a;
-      box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.08);
-    }
-  }
-}
-
-// ----------------------------------------------------
-// PROMO CODE SELECTION
-// ----------------------------------------------------
-.promo-box-container {
-  background: #ffffff;
-  border-color: #e2e8f0;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
-  transition: all 0.2s ease;
-
-  .promo-input-group {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-
-    .input-group-text {
-      border-color: #e2e8f0;
-      color: #94a3b8;
-      padding-left: 0.85rem;
-      padding-right: 0.5rem;
-    }
-
-    .form-control {
-      border-color: #e2e8f0;
-      font-size: 0.875rem;
-      letter-spacing: 0.03em;
-      color: #0f172a;
-
-      &:focus {
-        border-color: #0f172a;
-        box-shadow: none;
-      }
-
-      &::placeholder {
-        text-transform: none;
-        letter-spacing: normal;
-        color: #94a3b8;
-        font-weight: normal;
-      }
-    }
-
-    .btn {
-      font-size: 0.85rem;
-      border-radius: 0;
-      padding: 0.5rem 1rem;
-      transition: all 0.15s ease;
-
-      &:hover:not(:disabled) {
-        background: #1e293b;
-      }
-    }
-  }
-
-
-  .applied-promo-card {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0 !important;
-    animation: fadeIn 0.15s ease-in-out;
-
-    .promo-icon-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      background: #0f172a;
-      color: #ffffff;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.95rem;
-      flex-shrink: 0;
-    }
-
-    .btn-remove-promo {
-      color: #64748b;
-      font-weight: 500;
-      transition: color 0.15s ease;
-
-      &:hover {
-        color: #ef4444;
-      }
-    }
-  }
-}
-
-.order-summary-box {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-
-  .summary-items-list {
-    border-color: #e2e8f0 !important;
-  }
-}
-
-.btn-close-sm {
-  background: transparent;
-  border: none;
-  font-size: 1.25rem;
-  color: #64748b;
-  cursor: pointer;
-
-  &:hover {
-    color: #0f172a;
-  }
-}
-
-// ----------------------------------------------------
-// ANIMATIONS & RESPONSIVE BREAKPOINTS
-// ----------------------------------------------------
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes scaleUp {
-  from {
-    opacity: 0;
-    transform: scale(0.96);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 @media (max-width: 991.98px) {
   .discover-header-section {
     .discover-main-title {
       font-size: 2rem;
-    }
-  }
-
-  .spotlight-image-wrap {
-    min-height: 280px;
-  }
-
-  .spotlight-content-body {
-    padding: 1.75rem;
-
-    .spotlight-event-title {
-      font-size: 1.6rem;
     }
   }
 }
@@ -1243,24 +369,16 @@
     }
   }
 
-  .spotlight-image-wrap {
-    min-height: 220px;
-    max-height: 260px;
-  }
+  .discover-skeleton {
+    .skeleton-spotlight {
+      grid-template-columns: 1fr;
 
-  .spotlight-content-body {
-    padding: 1.35rem;
+      .skeleton-image {
+        min-height: 200px;
+      }
 
-    .spotlight-event-title {
-      font-size: 1.35rem;
-    }
-
-    .spotlight-actions-row {
-
-      .btn-spotlight-register,
-      .btn-spotlight-details {
-        width: 100%;
-        justify-content: center;
+      .skeleton-content {
+        padding: 1.35rem;
       }
     }
   }

@@ -1,0 +1,168 @@
+@import '../styles/_discover-shared.scss';
+
+:host {
+  :focus-visible {
+    outline: 2px solid rgba(15, 23, 42, 0.55);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+.modal-banner-wrap {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  background-color: #0f172a;
+  overflow: hidden;
+
+  .modal-banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .modal-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    border: none;
+    color: #ffffff;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+      background: rgba(15, 23, 42, 0.85);
+    }
+  }
+
+  .modal-banner-overlay-badges {
+    position: absolute;
+    bottom: 14px;
+    left: 16px;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+  }
+}
+
+.modal-event-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.25;
+}
+
+.section-subheading {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.6rem;
+}
+
+.modal-desc-text {
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+
+  .info-card-icon {
+    font-size: 1.35rem;
+    color: #0f172a;
+    margin-top: 2px;
+  }
+
+  .info-card-content {
+    .info-card-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #64748b;
+      font-weight: 600;
+      display: block;
+    }
+
+    .info-card-val {
+      font-size: 0.9rem;
+      color: #0f172a;
+    }
+
+    .info-card-sub {
+      font-size: 0.8rem;
+    }
+  }
+}
+
+.timeline-sessions {
+  border-left: 2px solid #e2e8f0;
+  padding-left: 1.25rem;
+  margin-left: 0.5rem;
+
+  .timeline-session-item {
+    position: relative;
+    margin-bottom: 1.25rem;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -1.65rem;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #0f172a;
+      border: 2px solid #ffffff;
+    }
+
+    .timeline-session-time {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 0.25rem;
+
+      .timeline-room {
+        background: #f1f5f9;
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 0.4rem;
+        color: #0f172a;
+      }
+    }
+
+    .session-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 0.2rem;
+    }
+
+    .session-speaker {
+      font-size: 0.825rem;
+      color: #334155;
+    }
+  }
+}
+
+.ticket-type-card {
+  padding: 0.85rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}

@@ -1,0 +1,179 @@
+<div class="modal-backdrop-custom" (click)="close.emit()">
+  <div class="modal-dialog-custom modal-lg" role="dialog" aria-modal="true"
+    [attr.aria-label]="'Detail event: ' + event.title" (click)="$event.stopPropagation()">
+    <div class="modal-content-custom">
+      <!-- Modal Header with Image Banner -->
+      <div class="modal-banner-wrap">
+        <img [src]="display.getEventImage(event, 0)" [alt]="event.title" class="modal-banner-image" />
+        <button class="modal-close-btn" (click)="close.emit()" aria-label="Close">
+          <i class="ri-close-line"></i>
+        </button>
+        <div class="modal-banner-overlay-badges">
+          <span class="tag-pill" [ngClass]="event.pricingType === 'FREE' ? 'tag-free' : 'tag-paid'">
+            {{ event.pricingType === 'FREE' ? 'Free Event' : 'Paid Event' }}
+          </span>
+          <span class="tag-pill mode-tag ms-1">
+            {{ event.eventType || 'OFFLINE' }}
+          </span>
+          <span class="tag-pill bg-danger text-white ms-1" *ngIf="isPast">
+            <i class="ri-time-line me-1"></i> Event Berakhir
+          </span>
+          <span class="tag-pill bg-primary text-white ms-1" *ngIf="!isPast && isMine">
+            <i class="ri-user-star-line me-1"></i> Event Anda
+          </span>
+          <span class="tag-pill category-tag ms-1" *ngIf="event.category?.name">
+            {{ event.category?.name }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Modal Body Content -->
+      <div class="modal-scrollable-body p-4">
+        <!-- Title & Organizer -->
+        <h2 class="modal-event-title mb-2">{{ event.title }}</h2>
+        <div class="d-flex align-items-center gap-2 mb-3 text-muted fs-13">
+          <span *ngIf="event.organizer?.organizationName">
+            <i class="ri-building-line me-1 text-primary"></i> Diselenggarakan oleh: <strong>{{
+              event.organizer?.organizationName }}</strong>
+          </span>
+        </div>
+
+        <!-- Date, Time & Venue Quick Cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <div class="info-card">
+              <div class="info-card-icon">
+                <i class="ri-calendar-check-line"></i>
+              </div>
+              <div class="info-card-content">
+                <span class="info-card-label">Waktu & Tanggal</span>
+                <div class="info-card-val fw-bold">{{ display.formatEventDate(event.startDatetime) }}</div>
+                <div class="info-card-sub text-muted">{{ display.formatEventTime(event.startDatetime, event.endDatetime) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="info-card">
+              <div class="info-card-icon" [ngClass]="event.eventType === 'ONLINE' ? 'text-info' : 'text-danger'">
+                <i [ngClass]="display.getEventTypeIcon(event)"></i>
+              </div>
+              <div class="info-card-content">
+                <span class="info-card-label">Lokasi / Format Event</span>
+                <div class="info-card-val fw-bold">
+                  <ng-container *ngIf="event.eventType === 'ONLINE'">
+                    Virtual (Online Event)
+                  </ng-container>
+                  <ng-container *ngIf="event.eventType === 'HYBRID'">
+                    Hybrid (Onsite & Online)
+                  </ng-container>
+                  <ng-container *ngIf="event.eventType === 'OFFLINE' || !event.eventType">
+                    {{ event.venue?.name || 'Onsite Venue' }}
+                  </ng-container>
+                </div>
+                <div class="info-card-sub text-muted">
+                  <ng-container *ngIf="event.eventType === 'ONLINE'">
+                    <span *ngIf="event.meetingUrl">
+                      <a [href]="event.meetingUrl" target="_blank" rel="noopener noreferrer"
+                        class="text-primary text-decoration-underline">
+                        <i class="ri-video-chat-line me-1"></i>Buka Link Meeting
+                      </a>
+                    </span>
+                    <span *ngIf="!event.meetingUrl">Link virtual meeting via platform online</span>
+                  </ng-container>
+                  <ng-container *ngIf="event.eventType !== 'ONLINE'">
+                    {{ event.venue?.name ? (event.venue?.name + (event.venue?.city ? ', ' + event.venue?.city : '')) : 'Lokasi Fisik' }}
+                    <span *ngIf="event.eventType === 'HYBRID' && event.meetingUrl" class="d-block mt-1">
+                      <a [href]="event.meetingUrl" target="_blank" rel="noopener noreferrer"
+                        class="text-primary text-decoration-underline">
+                        <i class="ri-video-chat-line me-1"></i>Tautan Sesi Online
+                      </a>
+                    </span>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Description Section -->
+        <div class="mb-4">
+          <h5 class="section-subheading">Tentang Event</h5>
+          <p class="text-secondary modal-desc-text">
+            {{ event.description || 'Tidak ada deskripsi detail untuk event ini.' }}
+          </p>
+        </div>
+
+        <!-- Sessions / Rundown Section (If Available) -->
+        <div class="mb-4" *ngIf="event.sessions && event.sessions.length > 0">
+          <h5 class="section-subheading">Agenda & Pembicara ({{ event.sessions.length }} Sesi)</h5>
+          <div class="timeline-sessions mt-3">
+            <div class="timeline-session-item" *ngFor="let s of event.sessions">
+              <div class="timeline-session-time">
+                {{ display.formatEventTime(s.startTime, s.endTime) }}
+                <span class="timeline-room" *ngIf="s.roomOrTrack">{{ s.roomOrTrack }}</span>
+              </div>
+              <div class="timeline-session-content">
+                <h6 class="session-title">{{ s.title }}</h6>
+                <p class="session-desc text-muted mb-1" *ngIf="s.description">{{ s.description }}</p>
+                <div class="session-speaker" *ngIf="s.speaker">
+                  <i class="ri-user-star-line me-1 text-warning"></i>
+                  <strong>{{ s.speaker.name }}</strong>
+                  <span class="text-muted ms-1" *ngIf="s.speaker.company">({{ s.speaker.company }})</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ticket Types Section -->
+        <div class="mb-3" *ngIf="event.ticketTypes && event.ticketTypes.length > 0">
+          <h5 class="section-subheading">Pilihan Tiket</h5>
+          <div class="row g-2 mt-2">
+            <div class="col-sm-6" *ngFor="let t of event.ticketTypes">
+              <div class="ticket-type-card">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <span class="ticket-name fw-bold">{{ t.name }}</span>
+                  <span class="ticket-price fw-bold text-dark">{{ display.formatRupiah(t.price) }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-muted fs-12">
+                  <span>Kuota: {{ t.quota }} tiket</span>
+                  <span class="text-success" *ngIf="t.quota > t.soldCount">Tersedia</span>
+                  <span class="text-danger" *ngIf="t.quota <= t.soldCount">Habis</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer Actions -->
+      <div class="modal-footer-custom d-flex justify-content-between align-items-center p-3 border-top">
+        <div class="footer-price-info">
+          <span class="text-muted fs-12 d-block">Harga Tiket:</span>
+          <span class="fw-bold fs-16 text-dark">{{ display.getStartingPrice(event) }}</span>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-secondary px-3 py-2 rounded-3" (click)="close.emit()">
+            Tutup
+          </button>
+
+          <button *ngIf="isPast" class="btn btn-secondary px-4 py-2 rounded-3" disabled>
+            <i class="ri-time-line me-1"></i> Event Telah Berakhir
+          </button>
+
+          <a *ngIf="!isPast && isMine" [routerLink]="['/events/detail', event.id]" (click)="close.emit()"
+            class="btn btn-primary px-4 py-2 rounded-3">
+            <i class="ri-dashboard-line me-1"></i> Buka Kelola Event
+          </a>
+
+          <button *ngIf="!isPast && !isMine" class="btn btn-dark px-4 py-2 rounded-3"
+            (click)="register.emit(event)">
+            <span>Register Now</span>
+            <i class="ri-arrow-right-line ms-1"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -22,35 +22,34 @@
       <!-- MULTI-FILTER SEARCH BAR -->
       <section class="discover-filter-section">
         <div class="filter-card-bar">
-          <!-- Input 1: Search Events -->
           <div class="filter-col search-col">
             <div class="input-with-icon">
               <i class="ri-search-line input-icon"></i>
               <input type="text" class="form-control filter-input" placeholder="Search events..."
                 [(ngModel)]="searchQuery" (input)="onSearchInput()" />
               <button *ngIf="searchQuery" (click)="searchQuery = ''; onSearchInput()" class="btn-clear-input"
-                type="button">
+                type="button" aria-label="Bersihkan pencarian">
                 <i class="ri-close-circle-fill"></i>
               </button>
             </div>
           </div>
 
-          <!-- Input 2: City / Location -->
           <div class="filter-col location-col">
             <div class="input-with-icon">
               <i class="ri-map-pin-2-line input-icon"></i>
               <input type="text" class="form-control filter-input" placeholder="City or location..."
                 [(ngModel)]="cityQuery" (input)="onSearchInput()" />
-              <button *ngIf="cityQuery" (click)="cityQuery = ''; onSearchInput()" class="btn-clear-input" type="button">
+              <button *ngIf="cityQuery" (click)="cityQuery = ''; onSearchInput()" class="btn-clear-input"
+                type="button" aria-label="Bersihkan lokasi">
                 <i class="ri-close-circle-fill"></i>
               </button>
             </div>
           </div>
 
-          <!-- Select 1: Venue Mode -->
           <div class="filter-col select-col">
             <div class="select-wrapper">
-              <select class="form-select filter-select" [(ngModel)]="selectedMode" (change)="onFilterChange()">
+              <select class="form-select filter-select" [(ngModel)]="selectedMode" (change)="onFilterChange()"
+                aria-label="Filter mode acara">
                 <option value="ALL">All Modes</option>
                 <option value="OFFLINE">Offline (In-Person)</option>
                 <option value="ONLINE">Online (Virtual)</option>
@@ -59,10 +58,10 @@
             </div>
           </div>
 
-          <!-- Select 2: Pricing Type -->
           <div class="filter-col select-col">
             <div class="select-wrapper">
-              <select class="form-select filter-select" [(ngModel)]="selectedPricing" (change)="onFilterChange()">
+              <select class="form-select filter-select" [(ngModel)]="selectedPricing" (change)="onFilterChange()"
+                aria-label="Filter harga">
                 <option value="ALL">Any Price</option>
                 <option value="FREE">Free Events</option>
                 <option value="PAID">Paid Events</option>
@@ -70,7 +69,16 @@
             </div>
           </div>
 
-          <!-- Reset Filter Button (Shown when filters active) -->
+          <div class="filter-col select-col">
+            <div class="select-wrapper">
+              <select class="form-select filter-select" [(ngModel)]="selectedCategoryId" (change)="onFilterChange()"
+                aria-label="Filter kategori">
+                <option value="ALL">All Categories</option>
+                <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+              </select>
+            </div>
+          </div>
+
           <div class="filter-col action-col" *ngIf="hasActiveFilters">
             <button class="btn-reset-filters" (click)="resetFilters()" title="Reset Semua Filter">
               <i class="ri-restart-line me-1"></i> Reset
@@ -80,11 +88,28 @@
       </section>
 
       <!-- LOADING SKELETON STATE -->
-      <div *ngIf="loading" class="text-center py-5">
-        <div class="spinner-border text-dark" role="status" style="width: 2.5rem; height: 2.5rem;">
-          <span class="visually-hidden">Loading events...</span>
+      <div *ngIf="loading" class="discover-skeleton" aria-busy="true" aria-label="Memuat daftar event">
+        <div class="skeleton-spotlight">
+          <div class="skeleton-block skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line w-40"></div>
+            <div class="skeleton-line w-80 h-lg"></div>
+            <div class="skeleton-line w-100"></div>
+            <div class="skeleton-line w-70"></div>
+            <div class="skeleton-line w-50"></div>
+          </div>
         </div>
-        <p class="text-muted mt-3 fs-14">Memuat daftar event...</p>
+        <div class="skeleton-grid">
+          <div class="skeleton-card" *ngFor="let _ of [1,2,3,4,5,6]">
+            <div class="skeleton-block skeleton-card-image"></div>
+            <div class="skeleton-card-body">
+              <div class="skeleton-line w-60"></div>
+              <div class="skeleton-line w-90 h-lg"></div>
+              <div class="skeleton-line w-100"></div>
+              <div class="skeleton-line w-80"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <ng-container *ngIf="!loading">
@@ -96,112 +121,9 @@
             </h2>
           </div>
 
-          <div class="spotlight-card">
-            <div class="row g-0 align-items-stretch">
-              <!-- Left: Banner Image with Featured Badge -->
-              <div class="col-lg-6 col-md-5 spotlight-image-col">
-                <div class="spotlight-image-wrap">
-                  <img [src]="getEventImage(spotlightEvent, 0)" [alt]="spotlightEvent.title" class="spotlight-image"
-                    loading="lazy" />
-                  <!-- Featured Badge Overlay -->
-                  <div class="badge-featured-overlay">
-                    <span class="badge-featured-pill bg-danger text-white" *ngIf="isEventPast(spotlightEvent)">
-                      <i class="ri-time-line me-1"></i> Event Berakhir
-                    </span>
-                    <span class="badge-featured-pill bg-primary text-white"
-                      *ngIf="!isEventPast(spotlightEvent) && isMyEvent(spotlightEvent)">
-                      <i class="ri-user-star-line me-1"></i> Event Anda
-                    </span>
-                    <span class="badge-featured-pill"
-                      *ngIf="!isEventPast(spotlightEvent) && !isMyEvent(spotlightEvent)">
-                      Featured Event
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Right: Event Info & Action Buttons -->
-              <div class="col-lg-6 col-md-7 spotlight-content-col">
-                <div class="spotlight-content-body">
-                  <!-- Date & Location Row -->
-                  <div class="spotlight-meta-row">
-                    <span class="meta-item">
-                      <i class="ri-calendar-line meta-icon"></i>
-                      {{ formatEventDate(spotlightEvent.startDatetime) }}
-                    </span>
-                    <span class="meta-separator">•</span>
-                    <span class="meta-item">
-                      <i
-                        [ngClass]="spotlightEvent.eventType === 'ONLINE' ? 'ri-global-line meta-icon' : 'ri-map-pin-2-line meta-icon'"></i>
-                      {{ spotlightEvent.eventType === 'ONLINE' ? 'Virtual (Online)' : (spotlightEvent.eventType ===
-                      'HYBRID' ? ('Hybrid: ' + (spotlightEvent.venue?.name || 'Onsite')) : (spotlightEvent.venue?.city
-                      || spotlightEvent.venue?.name || 'Offline')) }}
-                    </span>
-                  </div>
-
-                  <!-- Big Bold Title -->
-                  <h3 class="spotlight-event-title" (click)="openDetailModal(spotlightEvent)">
-                    {{ spotlightEvent.title }}
-                  </h3>
-
-                  <!-- Event Description Snippet -->
-                  <p class="spotlight-event-desc">
-                    {{ spotlightEvent.description || 'Saksikan dan ikuti keseruan sesi diskusi inspiratif bersama para
-                    pakar terkemuka di bidangnya.' }}
-                  </p>
-
-                  <!-- Pill Badges Row -->
-                  <div class="spotlight-tags-row">
-                    <span class="tag-pill category-tag" *ngIf="spotlightEvent.category?.name">
-                      {{ spotlightEvent.category?.name }}
-                    </span>
-                    <span class="tag-pill mode-tag">
-                      <i [ngClass]="{
-                        'ri-global-line me-1': spotlightEvent.eventType === 'ONLINE',
-                        'ri-shuffle-line me-1': spotlightEvent.eventType === 'HYBRID',
-                        'ri-building-line me-1': spotlightEvent.eventType === 'OFFLINE' || !spotlightEvent.eventType
-                      }"></i>
-                      {{ spotlightEvent.eventType || 'Offline' }}
-                    </span>
-                    <span class="tag-pill price-tag"
-                      [ngClass]="spotlightEvent.pricingType === 'FREE' ? 'tag-free' : 'tag-paid'">
-                      {{ spotlightEvent.pricingType === 'FREE' ? 'Free' : 'Paid' }}
-                    </span>
-                    <span class="tag-pill organizer-tag" *ngIf="spotlightEvent.organizer?.organizationName">
-                      <i class="ri-building-line me-1"></i> {{ spotlightEvent.organizer?.organizationName }}
-                    </span>
-                  </div>
-
-                  <!-- Actions: Register Now & View Details -->
-                  <div class="spotlight-actions-row">
-                    <!-- Case 1: Event Sudah Berakhir -->
-                    <button *ngIf="isEventPast(spotlightEvent)" class="btn-spotlight-register btn-disabled" disabled>
-                      <i class="ri-time-line me-1"></i>
-                      <span>Event Telah Berakhir</span>
-                    </button>
-
-                    <!-- Case 2: Event Milik Sendiri (Penyelenggara) -->
-                    <a *ngIf="!isEventPast(spotlightEvent) && isMyEvent(spotlightEvent)"
-                      [routerLink]="['/events/detail', spotlightEvent.id]" class="btn-spotlight-register btn-my-event">
-                      <i class="ri-dashboard-line me-1"></i>
-                      <span>Kelola Event Anda</span>
-                    </a>
-
-                    <!-- Case 3: Event Aktif & Bukan Milik Sendiri -->
-                    <button *ngIf="!isEventPast(spotlightEvent) && !isMyEvent(spotlightEvent)"
-                      class="btn-spotlight-register" (click)="onRegisterEvent(spotlightEvent)">
-                      <span>Register Now</span>
-                      <i class="ri-arrow-right-line ms-1"></i>
-                    </button>
-
-                    <button class="btn-spotlight-details" (click)="openDetailModal(spotlightEvent)">
-                      View Details
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <app-event-spotlight [event]="spotlightEvent" [currentUser]="currentUser"
+            (openDetail)="openDetailModal($event)" (register)="onRegisterEvent($event)">
+          </app-event-spotlight>
         </section>
 
         <!-- ALL EVENTS SECTION -->
@@ -212,8 +134,22 @@
             </h2>
           </div>
 
+          <!-- Error State (Load Failed) -->
+          <div class="empty-events-card empty-error-card" *ngIf="loadError">
+            <div class="empty-icon-circle icon-error">
+              <i class="ri-error-warning-line"></i>
+            </div>
+            <h4 class="empty-title">Gagal memuat event</h4>
+            <p class="empty-desc">
+              Terjadi kesalahan saat mengambil data event. Silakan coba lagi.
+            </p>
+            <button class="btn btn-dark px-4 py-2 rounded-3 mt-2" (click)="loadEvents()">
+              <i class="ri-refresh-line me-1"></i> Coba Lagi
+            </button>
+          </div>
+
           <!-- Empty State (No Events Found) -->
-          <div class="empty-events-card" *ngIf="events.length === 0">
+          <div class="empty-events-card" *ngIf="!loadError && events.length === 0">
             <div class="empty-icon-circle">
               <i class="ri-calendar-close-line"></i>
             </div>
@@ -228,97 +164,10 @@
 
           <!-- Events Responsive Grid -->
           <div class="events-grid" *ngIf="events.length > 0">
-            <div class="event-grid-card" *ngFor="let item of events; let idx = index">
-              <!-- Card Image Container -->
-              <div class="card-image-wrap" (click)="openDetailModal(item)">
-                <img [src]="getEventImage(item, idx + 1)" [alt]="item.title" class="card-image" loading="lazy" />
-
-                <!-- Price & Featured Badges -->
-                <div class="card-badges-container">
-                  <span class="card-badge-pill badge-price-pill"
-                    [ngClass]="item.pricingType === 'FREE' ? 'badge-price-free' : 'badge-price-paid'">
-                    {{ item.pricingType === 'FREE' ? 'Free' : 'Paid' }}
-                  </span>
-                  <span class="card-badge-pill badge-past" *ngIf="isEventPast(item)">
-                    <i class="ri-time-line me-1"></i> Selesai
-                  </span>
-                  <span class="card-badge-pill badge-my-event" *ngIf="!isEventPast(item) && isMyEvent(item)">
-                    <i class="ri-user-star-line me-1"></i> Event Anda
-                  </span>
-                </div>
-              </div>
-
-              <!-- Card Body -->
-              <div class="card-content-body">
-                <!-- Meta: Date & Venue -->
-                <div class="card-meta-line">
-                  <span class="meta-date">
-                    <i class="ri-calendar-line"></i>
-                    {{ formatEventDate(item.startDatetime) }}
-                  </span>
-                  <span class="meta-dot">•</span>
-                  <span class="meta-venue text-truncate">
-                    <i [ngClass]="item.eventType === 'ONLINE' ? 'ri-global-line' : 'ri-map-pin-2-line'"></i>
-                    {{ item.eventType === 'ONLINE' ? 'Virtual (Online)' : (item.eventType === 'HYBRID' ? ('Hybrid: ' +
-                    (item.venue?.name || 'Onsite')) : (item.venue?.city || item.venue?.name || 'Offline')) }}
-                  </span>
-                </div>
-
-                <!-- Title -->
-                <h4 class="card-event-title" (click)="openDetailModal(item)" [title]="item.title">
-                  {{ item.title }}
-                </h4>
-
-                <!-- Description snippet -->
-                <p class="card-event-desc">
-                  {{ item.description || 'Peluang networking dan wawasan terkini bersama komunitas dan pembicara
-                  inspiratif.' }}
-                </p>
-
-                <!-- Tags / Category Row -->
-                <div class="card-tags-row">
-                  <span class="tag-chip" *ngIf="item.category?.name">
-                    {{ item.category?.name }}
-                  </span>
-                  <span class="tag-chip">
-                    <i [ngClass]="{
-                      'ri-global-line me-1': item.eventType === 'ONLINE',
-                      'ri-shuffle-line me-1': item.eventType === 'HYBRID',
-                      'ri-building-line me-1': item.eventType === 'OFFLINE' || !item.eventType
-                    }"></i>
-                    {{ item.eventType || 'Offline' }}
-                  </span>
-                  <span class="price-indicator ms-auto">
-                    {{ getStartingPrice(item) }}
-                  </span>
-                </div>
-
-                <!-- Action Buttons: Register Now & Details -->
-                <div class="card-actions-footer">
-                  <!-- Case 1: Event Sudah Berakhir -->
-                  <button *ngIf="isEventPast(item)" class="btn-card-register btn-disabled" disabled
-                    title="Event ini telah selesai">
-                    <i class="ri-time-line me-1"></i> Selesai
-                  </button>
-
-                  <!-- Case 2: Event Milik Sendiri (Penyelenggara) -->
-                  <a *ngIf="!isEventPast(item) && isMyEvent(item)" [routerLink]="['/events/detail', item.id]"
-                    class="btn-card-register btn-my-event" title="Buka Detail Kelola Event Anda">
-                    <i class="ri-dashboard-line me-1"></i> Event Anda
-                  </a>
-
-                  <!-- Case 3: Event Masih Aktif & Bukan Milik Sendiri -->
-                  <button *ngIf="!isEventPast(item) && !isMyEvent(item)" class="btn-card-register"
-                    (click)="onRegisterEvent(item)">
-                    Register Now
-                  </button>
-
-                  <button class="btn-card-details" (click)="openDetailModal(item)" title="Lihat Detail Lengkap">
-                    <i class="ri-information-line"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
+            <app-event-card *ngFor="let item of events; let idx = index" [event]="item"
+              [imageIndex]="idx + 1" [currentUser]="currentUser"
+              (openDetail)="openDetailModal($event)" (register)="onRegisterEvent($event)">
+            </app-event-card>
           </div>
         </section>
       </ng-container>
@@ -326,475 +175,12 @@
   </main>
 
   <!-- EVENT DETAIL MODAL -->
-  <div class="modal-backdrop-custom" *ngIf="isDetailModalOpen && selectedDetailEvent" (click)="closeDetailModal()">
-    <div class="modal-dialog-custom modal-lg" (click)="$event.stopPropagation()">
-      <div class="modal-content-custom">
-        <!-- Modal Header with Image Banner -->
-        <div class="modal-banner-wrap">
-          <img [src]="getEventImage(selectedDetailEvent, 0)" [alt]="selectedDetailEvent.title"
-            class="modal-banner-image" />
-          <button class="modal-close-btn" (click)="closeDetailModal()" aria-label="Close">
-            <i class="ri-close-line"></i>
-          </button>
-          <div class="modal-banner-overlay-badges">
-            <span class="tag-pill" [ngClass]="selectedDetailEvent.pricingType === 'FREE' ? 'tag-free' : 'tag-paid'">
-              {{ selectedDetailEvent.pricingType === 'FREE' ? 'Free Event' : 'Paid Event' }}
-            </span>
-            <span class="tag-pill mode-tag ms-1">
-              {{ selectedDetailEvent.eventType || 'OFFLINE' }}
-            </span>
-            <span class="tag-pill bg-danger text-white ms-1" *ngIf="isEventPast(selectedDetailEvent)">
-              <i class="ri-time-line me-1"></i> Event Berakhir
-            </span>
-            <span class="tag-pill bg-primary text-white ms-1"
-              *ngIf="!isEventPast(selectedDetailEvent) && isMyEvent(selectedDetailEvent)">
-              <i class="ri-user-star-line me-1"></i> Event Anda
-            </span>
-            <span class="tag-pill category-tag ms-1" *ngIf="selectedDetailEvent.category?.name">
-              {{ selectedDetailEvent.category?.name }}
-            </span>
-          </div>
-        </div>
-
-        <!-- Modal Body Content -->
-        <div class="modal-scrollable-body p-4">
-          <!-- Title & Organizer -->
-          <h2 class="modal-event-title mb-2">{{ selectedDetailEvent.title }}</h2>
-          <div class="d-flex align-items-center gap-2 mb-3 text-muted fs-13">
-            <span *ngIf="selectedDetailEvent.organizer?.organizationName">
-              <i class="ri-building-line me-1 text-primary"></i> Diselenggarakan oleh: <strong>{{
-                selectedDetailEvent.organizer?.organizationName }}</strong>
-            </span>
-          </div>
-
-          <!-- Date, Time & Venue Quick Cards -->
-          <div class="row g-3 mb-4">
-            <div class="col-md-6">
-              <div class="info-card">
-                <div class="info-card-icon">
-                  <i class="ri-calendar-check-line"></i>
-                </div>
-                <div class="info-card-content">
-                  <span class="info-card-label">Waktu & Tanggal</span>
-                  <div class="info-card-val fw-bold">{{ formatEventDate(selectedDetailEvent.startDatetime) }}</div>
-                  <div class="info-card-sub text-muted">{{ formatEventTime(selectedDetailEvent.startDatetime,
-                    selectedDetailEvent.endDatetime) }}</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-6">
-              <div class="info-card">
-                <div class="info-card-icon"
-                  [ngClass]="selectedDetailEvent.eventType === 'ONLINE' ? 'text-info' : 'text-danger'">
-                  <i
-                    [ngClass]="selectedDetailEvent.eventType === 'ONLINE' ? 'ri-global-line' : (selectedDetailEvent.eventType === 'HYBRID' ? 'ri-shuffle-line' : 'ri-map-pin-line')"></i>
-                </div>
-                <div class="info-card-content">
-                  <span class="info-card-label">Lokasi / Format Event</span>
-                  <div class="info-card-val fw-bold">
-                    <ng-container *ngIf="selectedDetailEvent.eventType === 'ONLINE'">
-                      Virtual (Online Event)
-                    </ng-container>
-                    <ng-container *ngIf="selectedDetailEvent.eventType === 'HYBRID'">
-                      Hybrid (Onsite & Online)
-                    </ng-container>
-                    <ng-container *ngIf="selectedDetailEvent.eventType === 'OFFLINE' || !selectedDetailEvent.eventType">
-                      {{ selectedDetailEvent.venue?.name || 'Onsite Venue' }}
-                    </ng-container>
-                  </div>
-                  <div class="info-card-sub text-muted">
-                    <ng-container *ngIf="selectedDetailEvent.eventType === 'ONLINE'">
-                      <span *ngIf="selectedDetailEvent.meetingUrl">
-                        <a [href]="selectedDetailEvent.meetingUrl" target="_blank" rel="noopener noreferrer"
-                          class="text-primary text-decoration-underline">
-                          <i class="ri-video-chat-line me-1"></i>Buka Link Meeting
-                        </a>
-                      </span>
-                      <span *ngIf="!selectedDetailEvent.meetingUrl">Link virtual meeting via platform online</span>
-                    </ng-container>
-                    <ng-container *ngIf="selectedDetailEvent.eventType !== 'ONLINE'">
-                      {{ selectedDetailEvent.venue?.name ? (selectedDetailEvent.venue?.name +
-                      (selectedDetailEvent.venue?.city ? ', ' + selectedDetailEvent.venue?.city : '')) : 'Lokasi Fisik'
-                      }}
-                      <span *ngIf="selectedDetailEvent.eventType === 'HYBRID' && selectedDetailEvent.meetingUrl"
-                        class="d-block mt-1">
-                        <a [href]="selectedDetailEvent.meetingUrl" target="_blank" rel="noopener noreferrer"
-                          class="text-primary text-decoration-underline">
-                          <i class="ri-video-chat-line me-1"></i>Tautan Sesi Online
-                        </a>
-                      </span>
-                    </ng-container>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Description Section -->
-          <div class="mb-4">
-            <h5 class="section-subheading">Tentang Event</h5>
-            <p class="text-secondary modal-desc-text">
-              {{ selectedDetailEvent.description || 'Tidak ada deskripsi detail untuk event ini.' }}
-            </p>
-          </div>
-
-          <!-- Sessions / Rundown Section (If Available) -->
-          <div class="mb-4" *ngIf="selectedDetailEvent.sessions && selectedDetailEvent.sessions.length > 0">
-            <h5 class="section-subheading">Agenda & Pembicara ({{ selectedDetailEvent.sessions.length }} Sesi)</h5>
-            <div class="timeline-sessions mt-3">
-              <div class="timeline-session-item" *ngFor="let s of selectedDetailEvent.sessions">
-                <div class="timeline-session-time">
-                  {{ formatEventTime(s.startTime, s.endTime) }}
-                  <span class="timeline-room" *ngIf="s.roomOrTrack">{{ s.roomOrTrack }}</span>
-                </div>
-                <div class="timeline-session-content">
-                  <h6 class="session-title">{{ s.title }}</h6>
-                  <p class="session-desc text-muted mb-1" *ngIf="s.description">{{ s.description }}</p>
-                  <div class="session-speaker" *ngIf="s.speaker">
-                    <i class="ri-user-star-line me-1 text-warning"></i>
-                    <strong>{{ s.speaker.name }}</strong>
-                    <span class="text-muted ms-1" *ngIf="s.speaker.company">({{ s.speaker.company }})</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Ticket Types Section -->
-          <div class="mb-3" *ngIf="selectedDetailEvent.ticketTypes && selectedDetailEvent.ticketTypes.length > 0">
-            <h5 class="section-subheading">Pilihan Tiket</h5>
-            <div class="row g-2 mt-2">
-              <div class="col-sm-6" *ngFor="let t of selectedDetailEvent.ticketTypes">
-                <div class="ticket-type-card">
-                  <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="ticket-name fw-bold">{{ t.name }}</span>
-                    <span class="ticket-price fw-bold text-dark">{{ formatRupiah(t.price) }}</span>
-                  </div>
-                  <div class="d-flex justify-content-between text-muted fs-12">
-                    <span>Kuota: {{ t.quota }} tiket</span>
-                    <span class="text-success" *ngIf="t.quota > t.soldCount">Tersedia</span>
-                    <span class="text-danger" *ngIf="t.quota <= t.soldCount">Habis</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Modal Footer Actions -->
-        <div class="modal-footer-custom d-flex justify-content-between align-items-center p-3 border-top">
-          <div class="footer-price-info">
-            <span class="text-muted fs-12 d-block">Harga Tiket:</span>
-            <span class="fw-bold fs-16 text-dark">{{ getStartingPrice(selectedDetailEvent) }}</span>
-          </div>
-          <div class="d-flex gap-2">
-            <button class="btn btn-outline-secondary px-3 py-2 rounded-3" (click)="closeDetailModal()">
-              Tutup
-            </button>
-
-            <!-- Case 1: Event Sudah Berakhir -->
-            <button *ngIf="isEventPast(selectedDetailEvent)" class="btn btn-secondary px-4 py-2 rounded-3" disabled>
-              <i class="ri-time-line me-1"></i> Event Telah Berakhir
-            </button>
-
-            <!-- Case 2: Event Milik Sendiri (Penyelenggara) -->
-            <a *ngIf="!isEventPast(selectedDetailEvent) && isMyEvent(selectedDetailEvent)"
-              [routerLink]="['/events/detail', selectedDetailEvent.id]" (click)="closeDetailModal()"
-              class="btn btn-primary px-4 py-2 rounded-3">
-              <i class="ri-dashboard-line me-1"></i> Buka Kelola Event
-            </a>
-
-            <!-- Case 3: Event Masih Aktif & Bukan Milik Sendiri -->
-            <button *ngIf="!isEventPast(selectedDetailEvent) && !isMyEvent(selectedDetailEvent)"
-              class="btn btn-dark px-4 py-2 rounded-3" (click)="onRegisterEvent(selectedDetailEvent)">
-              <span>Register Now</span>
-              <i class="ri-arrow-right-line ms-1"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <app-event-detail-modal *ngIf="isDetailModalOpen && selectedDetailEvent" [event]="selectedDetailEvent"
+    [currentUser]="currentUser" (close)="closeDetailModal()" (register)="onRegisterEvent($event)">
+  </app-event-detail-modal>
 
   <!-- REGISTRATION MODAL (FOR AUTHENTICATED USERS) -->
-  <div class="modal-backdrop-custom" *ngIf="isRegisterModalOpen && selectedRegisterEvent"
-    (click)="closeRegisterModal()">
-    <div class="modal-dialog-custom modal-md" (click)="$event.stopPropagation()">
-      <div class="modal-content-custom">
-        <div class="modal-header-custom p-3 border-bottom d-flex justify-content-between align-items-center">
-          <h5 class="modal-title fs-16 fw-bold mb-0">Pendaftaran & Pemesanan Tiket</h5>
-          <button class="btn-close-sm" (click)="closeRegisterModal()">
-            <i class="ri-close-line"></i>
-          </button>
-        </div>
-
-        <div class="modal-scrollable-body p-4">
-          <!-- Event Brief Card -->
-          <div class="p-3 bg-light rounded-3 border mb-3">
-            <h6 class="fw-bold text-dark mb-1">{{ selectedRegisterEvent.title }}</h6>
-            <div class="text-muted fs-12 mb-1">
-              <i class="ri-calendar-line me-1 text-primary"></i> {{ formatEventDate(selectedRegisterEvent.startDatetime)
-              }}
-            </div>
-            <div class="text-muted fs-12">
-              <i
-                [ngClass]="selectedRegisterEvent.eventType === 'ONLINE' ? 'ri-global-line me-1 text-info' : 'ri-map-pin-line me-1 text-danger'"></i>
-              {{ selectedRegisterEvent.eventType === 'ONLINE' ? 'Virtual (Online Event)' :
-              (selectedRegisterEvent.eventType === 'HYBRID' ? ('Hybrid: ' + (selectedRegisterEvent.venue?.name ||
-              'Onsite')) : (selectedRegisterEvent.venue?.name || 'Offline Event')) }}
-            </div>
-          </div>
-
-          <!-- Attendee Account Info -->
-          <div class="mb-3">
-            <label class="form-label fs-13 fw-semibold text-dark">Data Pemesan (Akun Aktif)</label>
-            <div class="bg-white p-2.5 px-3 rounded-3 border d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center gap-2">
-                <i class="ri-user-smile-line fs-18 text-primary"></i>
-                <div>
-                  <div class="fw-bold text-dark fs-13">{{ currentUser?.name }}</div>
-                  <div class="text-muted fs-12">{{ currentUser?.email }}</div>
-                </div>
-              </div>
-              <span class="badge bg-light text-muted border fs-11">Pemesan</span>
-            </div>
-          </div>
-
-          <!-- Ticket Selection (Supported for Both Paid & Free Events) -->
-          <div class="mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <label class="form-label fs-13 fw-semibold text-dark mb-0">Pilih Tiket</label>
-              <span class="badge bg-soft-primary text-primary fs-11" *ngIf="selectedRegisterEvent.pricingType === 'PAID'">
-                Bisa Beli Lebih dari 1 Jenis Tiket
-              </span>
-              <span class="badge bg-soft-info text-info fs-11" *ngIf="selectedRegisterEvent.pricingType === 'FREE'">
-                Maksimal 1 Tiket
-              </span>
-            </div>
-
-            <ng-container
-              *ngIf="selectedRegisterEvent.ticketTypes && selectedRegisterEvent.ticketTypes.length > 0; else noTicketTypesTpl">
-              <div class="d-flex flex-column gap-2 mb-3">
-                <div class="ticket-type-card-interactive" *ngFor="let t of selectedRegisterEvent.ticketTypes"
-                  (click)="selectFreeTicket(t)"
-                  [ngClass]="{'has-quantity': getTicketQuantity(t.id) > 0, 'is-soldout': (t.quota - (t.soldCount || 0)) <= 0, 'cursor-pointer': selectedRegisterEvent.pricingType === 'FREE'}">
-                  <div class="ticket-info-col">
-                    <div class="d-flex align-items-center gap-2 mb-1">
-                      <span class="fw-bold fs-13 text-dark">{{ t.name }}</span>
-                      <span class="badge bg-danger-subtle text-danger fs-10"
-                        *ngIf="(t.quota - (t.soldCount || 0)) <= 0">Habis</span>
-                    </div>
-                    <div class="fw-bold fs-13 text-primary">{{ formatRupiah(t.price) }}</div>
-                    <div class="text-muted fs-11 mt-1">
-                      <span *ngIf="(t.quota - (t.soldCount || 0)) > 0">
-                        <i class="ri-ticket-line me-1"></i>Sisa kuota: {{ t.quota - (t.soldCount || 0) }} tiket
-                      </span>
-                      <span *ngIf="(t.quota - (t.soldCount || 0)) <= 0" class="text-danger">
-                        Kuota tiket ini sudah habis
-                      </span>
-                    </div>
-                  </div>
-
-                  <!-- Quantity Stepper Controls -->
-                  <div class="ticket-qty-control">
-                    <button type="button" class="btn-qty btn-qty-minus"
-                      [disabled]="getTicketQuantity(t.id) <= 0 || (t.quota - (t.soldCount || 0)) <= 0"
-                      (click)="$event.stopPropagation(); decrementTicketQuantity(t)" aria-label="Kurangi tiket">
-                      <i class="ri-subtract-line"></i>
-                    </button>
-                    <span class="qty-display">{{ getTicketQuantity(t.id) }}</span>
-                    <button type="button" class="btn-qty btn-qty-plus"
-                      [disabled]="(selectedRegisterEvent.pricingType === 'FREE' && getTicketQuantity(t.id) >= 1) || getTicketQuantity(t.id) >= (t.quota - (t.soldCount || 0)) || getTicketQuantity(t.id) >= 10 || (t.quota - (t.soldCount || 0)) <= 0"
-                      (click)="$event.stopPropagation(); incrementTicketQuantity(t)" aria-label="Tambah tiket"
-                      [title]="selectedRegisterEvent.pricingType === 'FREE' && getTicketQuantity(t.id) >= 1 ? 'Maksimal 1 tiket untuk event gratis' : ''">
-                      <i class="ri-add-line"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Ticket Attendees Information -->
-              <div *ngIf="totalSelectedTicketsCount > 0" class="mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <label class="form-label fs-13 fw-semibold text-dark mb-0 d-flex align-items-center gap-1">
-                    <i class="ri-user-3-line text-primary"></i>
-                    <span>Data Peserta Tiket ({{ totalSelectedTicketsCount }} Peserta)</span>
-                  </label>
-                  <span class="fs-11 text-muted">Diisi untuk setiap tiket</span>
-                </div>
-
-                <div class="d-flex flex-column gap-2 mb-2">
-                  <div class="attendee-card-item" *ngFor="let a of ticketAttendees; let idx = index">
-                    <div class="attendee-card-header">
-                      <span class="fw-semibold fs-12 text-dark d-flex align-items-center gap-1">
-                        <span class="badge bg-dark text-white rounded-pill px-2 py-0.5 fs-10">#{{ a.ticketIndex }}</span>
-                        <span>{{ a.ticketTypeName }}</span>
-                      </span>
-                      <button *ngIf="idx === 0 && currentUser" type="button"
-                        class="btn btn-sm btn-link p-0 text-decoration-none fs-11 text-primary d-flex align-items-center gap-1"
-                        (click)="useMyAccountForTicket(a)">
-                        <i class="ri-user-shared-line"></i>
-                        <span>Gunakan data akun saya</span>
-                      </button>
-                    </div>
-
-                    <div class="row g-2">
-                      <div class="col-md-6">
-                        <label class="form-label fs-12 text-muted mb-1">Nama Lengkap Peserta <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-sm" [(ngModel)]="a.attendeeName"
-                          placeholder="Nama lengkap peserta" required>
-                      </div>
-                      <div class="col-md-6">
-                        <label class="form-label fs-12 text-muted mb-1">Email Peserta <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control form-control-sm" [(ngModel)]="a.attendeeEmail"
-                          placeholder="email.peserta@contoh.com" required>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Validation hint if attendees not yet valid -->
-                <div *ngIf="!isAttendeesValid" class="text-danger fs-12 d-flex align-items-center gap-1 mt-1">
-                  <i class="ri-error-warning-line"></i>
-                  <span>Harap lengkapi nama dan format email yang valid untuk semua peserta tiket.</span>
-                </div>
-              </div>
-
-              <!-- Promo Code Selection (Paid Event Only) -->
-              <div *ngIf="selectedRegisterEvent.pricingType === 'PAID'" class="promo-box-container p-3 rounded-3 border mb-3">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <label class="form-label fs-13 fw-semibold text-dark mb-0 d-flex align-items-center gap-1">
-                    <i class="ri-coupon-3-line text-muted fs-15"></i>
-                    <span>Kode Promo</span>
-                  </label>
-                </div>
-
-                <!-- Input group when not yet applied -->
-                <div *ngIf="!appliedPromo">
-                  <div class="input-group promo-input-group">
-                    <span class="input-group-text bg-white border-end-0 text-muted">
-                      <i class="ri-ticket-2-line fs-14"></i>
-                    </span>
-                    <input type="text" class="form-control border-start-0 text-uppercase fw-semibold" id="promoCode"
-                      placeholder="Masukkan kode promo" [(ngModel)]="promoCodeInput" (keyup.enter)="applyPromoCode()"
-                      [disabled]="isApplyingPromo || totalSelectedTicketsCount === 0" maxlength="20">
-                    <button class="btn btn-dark px-3 fw-semibold fs-13 d-inline-flex align-items-center gap-1"
-                      type="button" (click)="applyPromoCode()"
-                      [disabled]="isApplyingPromo || !promoCodeInput.trim() || totalSelectedTicketsCount === 0">
-                      <span *ngIf="isApplyingPromo" class="spinner-border spinner-border-sm"></span>
-                      <i *ngIf="!isApplyingPromo" class="ri-check-line"></i>
-                      <span>Gunakan</span>
-                    </button>
-                  </div>
-
-                  <!-- Error message if invalid -->
-                  <div *ngIf="promoError" class="text-danger fs-12 mt-1 d-flex align-items-center gap-1">
-                    <i class="ri-error-warning-line"></i>
-                    <span>{{ promoError }}</span>
-                  </div>
-                </div>
-
-                <!-- Applied Promo Card -->
-                <div *ngIf="appliedPromo"
-                  class="applied-promo-card p-2 px-3 rounded-2 border d-flex align-items-center justify-content-between">
-                  <div class="d-flex align-items-center gap-2">
-                    <div class="promo-icon-badge">
-                      <i class="ri-coupon-3-line"></i>
-                    </div>
-                    <div>
-                      <div class="d-flex align-items-center gap-2">
-                        <span class="fw-bold text-dark fs-13 text-uppercase">{{ appliedPromo.code }}</span>
-                        <span class="badge bg-secondary-subtle text-dark border fs-11 fw-normal">Hemat {{
-                          formatRupiah(discountAmount) }}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <button type="button"
-                    class="btn btn-sm btn-link p-0 text-decoration-none fs-12 d-flex align-items-center gap-1 btn-remove-promo"
-                    (click)="removePromoCode()" title="Hapus promo">
-                    <i class="ri-close-line fs-16"></i> Hapus
-                  </button>
-                </div>
-              </div>
-
-              <!-- Order Summary Breakdown (when at least 1 ticket selected) -->
-              <div *ngIf="totalSelectedTicketsCount > 0" class="order-summary-box p-3 bg-light rounded-3 border mb-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="fs-12 fw-bold text-uppercase text-muted">Rincian Pemesanan</span>
-                  <span class="badge bg-dark text-white rounded-pill px-2">{{ totalSelectedTicketsCount }} Tiket
-                    Dipilih</span>
-                </div>
-                <div class="summary-items-list mb-2 border-bottom pb-2">
-                  <div class="d-flex justify-content-between align-items-center py-1 fs-13"
-                    *ngFor="let item of selectedTicketsList">
-                    <span class="text-dark">
-                      {{ item.ticket.name }} <span class="text-muted fs-12">x {{ item.quantity }}</span>
-                    </span>
-                    <span class="fw-semibold text-dark">{{ formatRupiah(item.subtotal) }}</span>
-                  </div>
-                </div>
-
-                <!-- Subtotal & Discount rows if promo is applied -->
-                <ng-container *ngIf="appliedPromo">
-                  <div class="d-flex justify-content-between align-items-center py-1 fs-13 text-muted">
-                    <span>Subtotal Tiket:</span>
-                    <span>{{ formatRupiah(totalSelectedTicketsAmount) }}</span>
-                  </div>
-                  <div class="d-flex justify-content-between align-items-center py-1 fs-13 text-danger">
-                    <span class="d-flex align-items-center gap-1">
-                      <i class="ri-coupon-3-line"></i>
-                      Diskon Promo ({{ appliedPromo.code }}):
-                    </span>
-                    <span class="fw-semibold">- {{ formatRupiah(discountAmount) }}</span>
-                  </div>
-                </ng-container>
-
-                <div class="d-flex justify-content-between align-items-center pt-2" [class.border-top]="appliedPromo">
-                  <span class="fw-bold fs-14 text-dark">Total Pembayaran:</span>
-                  <span class="fw-bold fs-16 text-primary">{{ formatRupiah(finalTotalAmount) }}</span>
-                </div>
-              </div>
-
-              <!-- Warning if no tickets selected yet -->
-              <div *ngIf="totalSelectedTicketsCount === 0"
-                class="alert alert-soft-secondary border fs-12 py-2 px-3 mb-3 text-muted d-flex align-items-center gap-2">
-                <i class="ri-information-line fs-16 text-primary"></i>
-                <span>Silakan pilih jenis tiket yang ingin Anda pesan.</span>
-              </div>
-            </ng-container>
-
-            <ng-template #noTicketTypesTpl>
-              <div class="alert alert-warning fs-13 py-2 px-3">
-                Belum ada tiket yang dibuka untuk publik saat ini.
-              </div>
-            </ng-template>
-          </div>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="modal-footer-custom p-3 border-top d-flex justify-content-end gap-2">
-          <button class="btn btn-outline-secondary px-3 py-2 rounded-3" (click)="closeRegisterModal()">
-            Batal
-          </button>
-          <button class="btn btn-dark px-4 py-2 rounded-3"
-            [disabled]="isSubmittingRegistration || !isAttendeesValid || totalSelectedTicketsCount === 0"
-            (click)="confirmRegistration()">
-            <span *ngIf="!isSubmittingRegistration">
-              <ng-container *ngIf="selectedRegisterEvent.pricingType === 'FREE'">
-                Konfirmasi Pendaftaran (1 Tiket Gratis)
-              </ng-container>
-              <ng-container *ngIf="selectedRegisterEvent.pricingType === 'PAID'">
-                {{ totalSelectedTicketsCount > 0 ? ('Beli ' + totalSelectedTicketsCount + ' Tiket • ' +
-                formatRupiah(finalTotalAmount)) : 'Pilih Tiket Terlebih Dahulu' }}
-              </ng-container>
-            </span>
-            <span *ngIf="isSubmittingRegistration">
-              <span class="spinner-border spinner-border-sm me-1"></span> Memproses...
-            </span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <app-event-registration-modal *ngIf="isRegisterModalOpen && selectedRegisterEvent" [event]="selectedRegisterEvent"
+    [currentUser]="currentUser" (closed)="closeRegisterModal()" (registered)="loadEvents()">
+  </app-event-registration-modal>
 </div>

@@ -1,0 +1,246 @@
+@import '../styles/_discover-shared.scss';
+
+:host {
+  display: block;
+
+  :focus-visible {
+    outline: 2px solid rgba(15, 23, 42, 0.55);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+.spotlight-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 6px 24px -4px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+  transition: box-shadow 0.25s ease;
+
+  &:hover {
+    box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.1);
+  }
+}
+
+.spotlight-image-col {
+  background-color: #0f172a;
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-image-wrap {
+  width: 100%;
+  height: 100%;
+  min-height: 340px;
+  max-height: 460px;
+  position: relative;
+  overflow: hidden;
+
+  .spotlight-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+
+    &:hover {
+      transform: scale(1.03);
+    }
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.45), transparent 45%);
+    pointer-events: none;
+  }
+
+  .badge-featured-overlay {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 2;
+
+    .badge-featured-pill {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+  }
+}
+
+.spotlight-content-body {
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+
+  .spotlight-meta-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 0.85rem;
+
+    .meta-icon {
+      color: #0f172a;
+      margin-right: 0.25rem;
+    }
+
+    .meta-separator {
+      color: #cbd5e1;
+    }
+  }
+
+  .spotlight-event-title {
+    font-size: 1.95rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.85rem;
+    cursor: pointer;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: #3b82f6;
+    }
+  }
+
+  .spotlight-event-desc {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #64748b;
+    margin-bottom: 1.35rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .spotlight-tags-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .spotlight-actions-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+
+    .btn-spotlight-register {
+      background: #0f172a;
+      color: #ffffff;
+      border: 1px solid #0f172a;
+      border-radius: 10px;
+      padding: 0.75rem 1.65rem;
+      font-size: 0.925rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+
+      &:hover {
+        background: #1e293b;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
+      }
+
+      &.btn-disabled {
+        background: #f1f5f9 !important;
+        color: #94a3b8 !important;
+        border-color: #e2e8f0 !important;
+        cursor: not-allowed !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      &.btn-my-event {
+        background: #eff6ff !important;
+        color: #2563eb !important;
+        border-color: #bfdbfe !important;
+        text-decoration: none;
+
+        &:hover {
+          background: #dbeafe !important;
+          color: #1d4ed8 !important;
+          border-color: #93c5fd !important;
+        }
+      }
+    }
+
+    .btn-spotlight-details {
+      background: #ffffff;
+      color: #1e293b;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 0.75rem 1.4rem;
+      font-size: 0.925rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f8fafc;
+        border-color: #94a3b8;
+        color: #0f172a;
+      }
+    }
+  }
+}
+
+@media (max-width: 991.98px) {
+  .spotlight-image-wrap {
+    min-height: 280px;
+  }
+
+  .spotlight-content-body {
+    padding: 1.75rem;
+
+    .spotlight-event-title {
+      font-size: 1.6rem;
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .spotlight-image-wrap {
+    min-height: 220px;
+    max-height: 260px;
+  }
+
+  .spotlight-content-body {
+    padding: 1.35rem;
+
+    .spotlight-event-title {
+      font-size: 1.35rem;
+    }
+
+    .spotlight-actions-row {
+      .btn-spotlight-register,
+      .btn-spotlight-details {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

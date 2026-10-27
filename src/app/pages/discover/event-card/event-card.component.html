@@ -1,0 +1,83 @@
+<div class="event-grid-card">
+  <!-- Card Image Container -->
+  <div class="card-image-wrap" role="button" tabindex="0" (click)="openDetail.emit(event)"
+    (keydown)="openDetailFromKey($event)" [attr.aria-label]="'Lihat detail ' + event.title">
+    <img [src]="display.getEventImage(event, imageIndex)" [alt]="event.title" class="card-image" loading="lazy" />
+
+    <!-- Price & Featured Badges -->
+    <div class="card-badges-container">
+      <span class="card-badge-pill badge-price-pill"
+        [ngClass]="event.pricingType === 'FREE' ? 'badge-price-free' : 'badge-price-paid'">
+        {{ event.pricingType === 'FREE' ? 'Free' : 'Paid' }}
+      </span>
+      <span class="card-badge-pill badge-past" *ngIf="isPast">
+        <i class="ri-time-line me-1"></i> Selesai
+      </span>
+      <span class="card-badge-pill badge-my-event" *ngIf="!isPast && isMine">
+        <i class="ri-user-star-line me-1"></i> Event Anda
+      </span>
+    </div>
+  </div>
+
+  <!-- Card Body -->
+  <div class="card-content-body">
+    <!-- Meta: Date & Venue -->
+    <div class="card-meta-line">
+      <span class="meta-date">
+        <i class="ri-calendar-line"></i>
+        {{ display.formatEventDate(event.startDatetime) }}
+      </span>
+      <span class="meta-dot">•</span>
+      <span class="meta-venue text-truncate">
+        <i [ngClass]="display.getEventTypeIcon(event)"></i>
+        {{ display.getVenueLabel(event) }}
+      </span>
+    </div>
+
+    <!-- Title -->
+    <h4 class="card-event-title" role="button" tabindex="0" (click)="openDetail.emit(event)"
+      (keydown)="openDetailFromKey($event)" [title]="event.title">
+      {{ event.title }}
+    </h4>
+
+    <!-- Description snippet -->
+    <p class="card-event-desc">
+      {{ event.description || 'Peluang networking dan wawasan terkini bersama komunitas dan pembicara inspiratif.' }}
+    </p>
+
+    <!-- Tags / Category Row -->
+    <div class="card-tags-row">
+      <span class="tag-chip" *ngIf="event.category?.name">
+        {{ event.category?.name }}
+      </span>
+      <span class="tag-chip">
+        <i [ngClass]="display.getEventTypeIcon(event) + ' me-1'"></i>
+        {{ event.eventType || 'Offline' }}
+      </span>
+      <span class="price-indicator ms-auto">
+        {{ display.getStartingPrice(event) }}
+      </span>
+    </div>
+
+    <!-- Action Buttons: Register Now & Details -->
+    <div class="card-actions-footer">
+      <button *ngIf="isPast" class="btn-card-register btn-disabled" disabled title="Event ini telah selesai">
+        <i class="ri-time-line me-1"></i> Selesai
+      </button>
+
+      <a *ngIf="!isPast && isMine" [routerLink]="['/events/detail', event.id]"
+        class="btn-card-register btn-my-event" title="Buka Detail Kelola Event Anda">
+        <i class="ri-dashboard-line me-1"></i> Event Anda
+      </a>
+
+      <button *ngIf="!isPast && !isMine" class="btn-card-register" (click)="register.emit(event)">
+        Register Now
+      </button>
+
+      <button class="btn-card-details" (click)="openDetail.emit(event)" title="Lihat Detail Lengkap"
+        aria-label="Lihat detail lengkap">
+        <i class="ri-information-line"></i>
+      </button>
+    </div>
+  </div>
+</div>
