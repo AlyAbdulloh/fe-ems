@@ -20,7 +20,6 @@ export class VenueManageComponent implements OnInit, OnDestroy {
 
   page = 1;
   limit = 10;
-  typeFilter = '';
   searchQuery = '';
   meta: PaginationMeta = { total: 0, page: 1, limit: 10, totalPages: 1 };
 
@@ -88,7 +87,6 @@ export class VenueManageComponent implements OnInit, OnDestroy {
   initForm() {
     this.venueForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.maxLength(150)]],
-      type: ['OFFLINE', Validators.required],
       city: ['', [Validators.maxLength(100)]],
       address: [''],
       capacity: [null, [Validators.min(1)]],
@@ -137,7 +135,6 @@ export class VenueManageComponent implements OnInit, OnDestroy {
       const res = await this.venueService.findAll({
         page: this.page,
         limit: this.limit,
-        type: (this.typeFilter as any) || undefined,
         search: this.searchQuery || undefined,
       });
 
@@ -170,9 +167,7 @@ export class VenueManageComponent implements OnInit, OnDestroy {
   openCreateModal() {
     this.editingVenue = null;
     this.submitted = false;
-    this.venueForm.reset({
-      type: 'OFFLINE',
-    });
+    this.venueForm.reset();
     this.mapLayers = [];
     this.isModalOpen = true;
 
@@ -189,7 +184,6 @@ export class VenueManageComponent implements OnInit, OnDestroy {
     this.submitted = false;
     this.venueForm.patchValue({
       name: venue.name,
-      type: venue.type || 'OFFLINE',
       city: venue.city || '',
       address: venue.address || '',
       capacity: venue.capacity || null,

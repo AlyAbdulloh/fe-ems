@@ -14,7 +14,6 @@ export interface Venue {
   capacity?: number;
   latitude?: number;
   longitude?: number;
-  type: 'OFFLINE' | 'ONLINE' | 'HYBRID';
   meetingUrl?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -27,7 +26,6 @@ export interface CreateVenueRequest {
   capacity?: number;
   latitude?: number;
   longitude?: number;
-  type?: 'OFFLINE' | 'ONLINE' | 'HYBRID';
   meetingUrl?: string;
 }
 
@@ -35,7 +33,6 @@ export interface QueryVenueParams {
   page?: number;
   limit?: number;
   city?: string;
-  type?: 'OFFLINE' | 'ONLINE' | 'HYBRID';
   search?: string;
 }
 
@@ -49,7 +46,6 @@ export class VenueService {
       if (params.page) httpParams = httpParams.set('page', params.page.toString());
       if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
       if (params.city) httpParams = httpParams.set('city', params.city);
-      if (params.type) httpParams = httpParams.set('type', params.type);
       if (params.search) httpParams = httpParams.set('search', params.search);
     }
 

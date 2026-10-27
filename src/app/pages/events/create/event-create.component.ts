@@ -50,7 +50,9 @@ export class EventCreateComponent implements OnInit {
     this.eventForm = this.formBuilder.group({
       title: ['', [Validators.required, Validators.maxLength(200)]],
       categoryId: [''],
-      venueId: [''],
+      eventType: ['OFFLINE', Validators.required],
+      venueId: ['', Validators.required],
+      meetingUrl: [''],
       bannerImage: [''],
       startDatetime: ['', Validators.required],
       endDatetime: ['', Validators.required],
@@ -58,6 +60,33 @@ export class EventCreateComponent implements OnInit {
       pricingType: ['FREE', Validators.required],
       status: ['DRAFT', Validators.required],
     });
+
+    this.eventForm.get('eventType')?.valueChanges.subscribe((type: string) => {
+      this.handleEventTypeChange(type);
+    });
+  }
+
+  handleEventTypeChange(type: string) {
+    const venueControl = this.eventForm.get('venueId');
+    const meetingUrlControl = this.eventForm.get('meetingUrl');
+
+    if (!venueControl || !meetingUrlControl) return;
+
+    if (type === 'OFFLINE') {
+      venueControl.setValidators([Validators.required]);
+      meetingUrlControl.clearValidators();
+      meetingUrlControl.setValue('');
+    } else if (type === 'ONLINE') {
+      venueControl.clearValidators();
+      venueControl.setValue('');
+      meetingUrlControl.setValidators([Validators.required]);
+    } else if (type === 'HYBRID') {
+      venueControl.setValidators([Validators.required]);
+      meetingUrlControl.setValidators([Validators.required]);
+    }
+
+    venueControl.updateValueAndValidity();
+    meetingUrlControl.updateValueAndValidity();
   }
 
   get f() {
@@ -92,7 +121,9 @@ export class EventCreateComponent implements OnInit {
         this.eventForm.patchValue({
           title: ev.title,
           categoryId: ev.categoryId || '',
+          eventType: ev.eventType || 'OFFLINE',
           venueId: ev.venueId || '',
+          meetingUrl: ev.meetingUrl || '',
           bannerImage: ev.bannerImage || '',
           startDatetime: this.formatDatetimeLocal(ev.startDatetime),
           endDatetime: this.formatDatetimeLocal(ev.endDatetime),
@@ -100,6 +131,8 @@ export class EventCreateComponent implements OnInit {
           pricingType: ev.pricingType || 'FREE',
           status: ev.status || 'DRAFT',
         });
+
+        this.handleEventTypeChange(ev.eventType || 'OFFLINE');
 
         if (ev.bannerImage) {
           this.bannerPreviewUrl = this.apiUrl + ev.bannerImage;
@@ -171,6 +204,9 @@ export class EventCreateComponent implements OnInit {
   }
 
   async checkVenueAvailability(): Promise<boolean> {
+    const eventType = this.eventForm.value.eventType;
+    if (eventType === 'ONLINE') return true;
+
     const venueId = this.eventForm.value.venueId;
     const start = this.eventForm.value.startDatetime;
     const end = this.eventForm.value.endDatetime;
@@ -246,10 +282,16 @@ export class EventCreateComponent implements OnInit {
         bannerUrl = uploadRes.data?.url || (uploadRes as any).url || bannerUrl;
       }
 
+      const eventType = this.eventForm.value.eventType || 'OFFLINE';
+      const venueId = eventType !== 'ONLINE' ? (this.eventForm.value.venueId || undefined) : undefined;
+      const meetingUrl = eventType !== 'OFFLINE' ? (this.eventForm.value.meetingUrl?.trim() || undefined) : undefined;
+
       const payload = {
         title: this.eventForm.value.title.trim(),
         categoryId: this.eventForm.value.categoryId || undefined,
-        venueId: this.eventForm.value.venueId || undefined,
+        eventType,
+        venueId,
+        meetingUrl,
         bannerImage: bannerUrl ? bannerUrl : (this.isEditMode ? null : undefined),
         startDatetime: new Date(this.eventForm.value.startDatetime).toISOString(),
         endDatetime: new Date(this.eventForm.value.endDatetime).toISOString(),

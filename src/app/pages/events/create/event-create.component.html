@@ -54,14 +54,88 @@
             </div>
 
             <div class="col-md-6">
-              <label for="venueId" class="form-label">Venue / Lokasi Event</label>
-              <select class="form-select" id="venueId" formControlName="venueId" (change)="checkVenueAvailability()">
-                <option value="">-- Pilih Venue / Lokasi --</option>
+              <label for="eventType" class="form-label">
+                Tipe Pelaksanaan Event <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" id="eventType" formControlName="eventType">
+                <option value="OFFLINE">Offline (Tatap Muka di Lokasi/Venue)</option>
+                <option value="ONLINE">Online (Virtual / Daring)</option>
+                <option value="HYBRID">Hybrid (Tatap Muka & Daring)</option>
+              </select>
+              <div class="form-text text-muted">
+                Pilih format pelaksanaan acara Anda.
+              </div>
+            </div>
+
+            <!-- KONDISI 1: OFFLINE (Hanya Venue Fisik, Meeting URL Hilang) -->
+            <div class="col-12" *ngIf="f['eventType'].value === 'OFFLINE'">
+              <label for="venueId" class="form-label">
+                Venue / Lokasi Event <span class="text-danger">*</span>
+              </label>
+              <select class="form-select" id="venueId" formControlName="venueId" (change)="checkVenueAvailability()"
+                [ngClass]="{ 'is-invalid': submitted && f['venueId'].errors }">
+                <option value="">-- Pilih Venue / Lokasi Fisik --</option>
                 <option *ngFor="let v of venues" [value]="v.id">
-                  {{ v.name }} ({{ v.type }} - {{ v.city || 'Online' }})
+                  {{ v.name }}{{ v.city ? ' (' + v.city + ')' : '' }}
                 </option>
               </select>
+              <div class="invalid-feedback" *ngIf="f['venueId'].errors?.['required']">
+                Venue / lokasi fisik wajib dipilih untuk event offline.
+              </div>
             </div>
+
+            <!-- KONDISI 2: ONLINE (Hanya Meeting URL, Pilihan Venue Hilang) -->
+            <div class="col-12" *ngIf="f['eventType'].value === 'ONLINE'">
+              <label for="meetingUrl" class="form-label">
+                Link Pertemuan Online (Meeting URL) <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text"><i class="ri-video-chat-line"></i></span>
+                <input type="url" class="form-control" id="meetingUrl" formControlName="meetingUrl"
+                  placeholder="Masukkan URL meeting online (contoh: https://meet.google.com/xyz-abcd-efg atau Zoom)"
+                  [ngClass]="{ 'is-invalid': submitted && f['meetingUrl'].errors }" />
+              </div>
+              <div class="invalid-feedback d-block" *ngIf="submitted && f['meetingUrl'].errors?.['required']">
+                Link pertemuan online wajib diisi untuk event daring/online.
+              </div>
+              <div class="form-text text-muted">
+                Tautan ini akan digunakan peserta untuk bergabung ke sesi virtual.
+              </div>
+            </div>
+
+            <!-- KONDISI 3: HYBRID (Venue Fisik dan Meeting URL Keduanya Ada) -->
+            <ng-container *ngIf="f['eventType'].value === 'HYBRID'">
+              <div class="col-md-6">
+                <label for="venueIdHybrid" class="form-label">
+                  Venue / Lokasi Event <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="venueIdHybrid" formControlName="venueId" (change)="checkVenueAvailability()"
+                  [ngClass]="{ 'is-invalid': submitted && f['venueId'].errors }">
+                  <option value="">-- Pilih Venue / Lokasi Fisik --</option>
+                  <option *ngFor="let v of venues" [value]="v.id">
+                    {{ v.name }}{{ v.city ? ' (' + v.city + ')' : '' }}
+                  </option>
+                </select>
+                <div class="invalid-feedback" *ngIf="f['venueId'].errors?.['required']">
+                  Venue / lokasi fisik wajib dipilih untuk event hybrid.
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="meetingUrlHybrid" class="form-label">
+                  Link Pertemuan Online (Meeting URL) <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="ri-video-chat-line"></i></span>
+                  <input type="url" class="form-control" id="meetingUrlHybrid" formControlName="meetingUrl"
+                    placeholder="Masukkan URL meeting online (contoh: https://meet.google.com/...)"
+                    [ngClass]="{ 'is-invalid': submitted && f['meetingUrl'].errors }" />
+                </div>
+                <div class="invalid-feedback d-block" *ngIf="submitted && f['meetingUrl'].errors?.['required']">
+                  Link pertemuan online wajib diisi untuk event hybrid.
+                </div>
+              </div>
+            </ng-container>
 
             <div class="col-md-6">
               <label for="startDatetime" class="form-label">

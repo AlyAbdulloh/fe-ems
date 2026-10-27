@@ -16,6 +16,7 @@ interface LayoutEvent {
 
 export type EventStatusType = 'DRAFT' | 'PUBLISHED' | 'CANCELLED' | 'COMPLETED';
 export type EventPricingType = 'FREE' | 'PAID';
+export type EventType = 'OFFLINE' | 'ONLINE' | 'HYBRID';
 
 export interface SpeakerItem {
   id: string;
@@ -62,6 +63,8 @@ export interface EventItem {
   endDatetime: string;
   status: EventStatusType;
   pricingType: EventPricingType;
+  eventType: EventType;
+  meetingUrl?: string | null;
   createdAt: string;
   updatedAt: string;
   organizer?: {
@@ -90,6 +93,8 @@ export interface CreateEventRequest {
   endDatetime: string;
   status?: EventStatusType;
   pricingType?: EventPricingType;
+  eventType?: EventType;
+  meetingUrl?: string | null;
 }
 
 export interface QueryEventParams {
@@ -97,6 +102,7 @@ export interface QueryEventParams {
   limit?: number;
   status?: EventStatusType;
   pricingType?: EventPricingType;
+  eventType?: EventType;
   venueType?: 'ONLINE' | 'OFFLINE' | 'HYBRID';
   city?: string;
   categoryId?: string;
@@ -148,6 +154,7 @@ export class EventService {
       if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
       if (params.status) httpParams = httpParams.set('status', params.status);
       if (params.pricingType) httpParams = httpParams.set('pricingType', params.pricingType);
+      if (params.eventType) httpParams = httpParams.set('eventType', params.eventType);
       if (params.venueType) httpParams = httpParams.set('venueType', params.venueType);
       if (params.city) httpParams = httpParams.set('city', params.city);
       if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId);
@@ -171,6 +178,7 @@ export class EventService {
       if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
       if (params.status) httpParams = httpParams.set('status', params.status);
       if (params.pricingType) httpParams = httpParams.set('pricingType', params.pricingType);
+      if (params.eventType) httpParams = httpParams.set('eventType', params.eventType);
       if (params.venueType) httpParams = httpParams.set('venueType', params.venueType);
       if (params.city) httpParams = httpParams.set('city', params.city);
       if (params.categoryId) httpParams = httpParams.set('categoryId', params.categoryId);

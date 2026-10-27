@@ -33,18 +33,6 @@
                 <i class="ri-search-line search-icon"></i>
               </div>
 
-              <select
-                class="form-select"
-                style="width: 150px;"
-                [(ngModel)]="typeFilter"
-                (change)="onFilterChange()"
-              >
-                <option value="">Tipe Venue</option>
-                <option value="OFFLINE">OFFLINE</option>
-                <option value="ONLINE">ONLINE</option>
-                <option value="HYBRID">HYBRID</option>
-              </select>
-
               <button class="btn btn-success" (click)="openCreateModal()">
                 <i class="ri-add-line align-bottom me-1"></i> Tambah Venue
               </button>
@@ -63,7 +51,6 @@
             <thead class="table-light">
               <tr>
                 <th scope="col">Nama Venue</th>
-                <th scope="col">Tipe</th>
                 <th scope="col">Kota / Alamat / Link</th>
                 <th scope="col">Kapasitas</th>
                 <th scope="col" class="text-center" style="width: 120px;">Aksi</th>
@@ -71,7 +58,7 @@
             </thead>
             <tbody>
               <tr *ngIf="loading">
-                <td colspan="5" class="text-center py-4">
+                <td colspan="4" class="text-center py-4">
                   <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Memuat...</span>
                   </div>
@@ -79,18 +66,13 @@
               </tr>
 
               <tr *ngIf="!loading && venues.length === 0">
-                <td colspan="5" class="text-center py-4">
+                <td colspan="4" class="text-center py-4">
                   <p class="text-muted mb-0">Belum ada venue tersimpan.</p>
                 </td>
               </tr>
 
               <tr *ngFor="let item of venues">
                 <td class="fw-medium">{{ item.name }}</td>
-                <td>
-                  <span [class]="getVenueBadgeClass(item.type)">
-                    {{ item.type }}
-                  </span>
-                </td>
                 <td>
                   <div *ngIf="item.city" class="fw-semibold">{{ item.city }}</div>
                   <div *ngIf="item.address" class="text-muted fs-12 text-truncate" style="max-width: 250px;">
@@ -156,7 +138,7 @@
       <form [formGroup]="venueForm" (ngSubmit)="onSubmit()">
         <div class="modal-body">
           <div class="row g-3">
-            <div class="col-md-8">
+            <div class="col-12">
               <label for="venueName" class="form-label">
                 Nama Venue / Gedung <span class="text-danger">*</span>
               </label>
@@ -173,22 +155,7 @@
               </div>
             </div>
 
-            <div class="col-md-4">
-              <label for="venueType" class="form-label">
-                Tipe Venue <span class="text-danger">*</span>
-              </label>
-              <select
-                class="form-select"
-                id="venueType"
-                formControlName="type"
-              >
-                <option value="OFFLINE">OFFLINE (Tatap Muka)</option>
-                <option value="ONLINE">ONLINE (Daring)</option>
-                <option value="HYBRID">HYBRID (Kombinasi)</option>
-              </select>
-            </div>
-
-            <div class="col-md-6" *ngIf="venueForm.value.type !== 'ONLINE'">
+            <div class="col-md-6">
               <label for="city" class="form-label">Kota</label>
               <input
                 type="text"
@@ -199,7 +166,7 @@
               />
             </div>
 
-            <div class="col-md-6" *ngIf="venueForm.value.type !== 'ONLINE'">
+            <div class="col-md-6">
               <label for="capacity" class="form-label">Kapasitas Maksimal (Orang)</label>
               <input
                 type="number"
@@ -210,7 +177,7 @@
               />
             </div>
 
-            <div class="col-12" *ngIf="venueForm.value.type !== 'ONLINE'">
+            <div class="col-12">
               <label for="address" class="form-label">Alamat Lengkap</label>
               <textarea
                 class="form-control"
@@ -221,7 +188,7 @@
               ></textarea>
             </div>
 
-            <div class="col-12" *ngIf="venueForm.value.type !== 'ONLINE'">
+            <div class="col-12">
               <label class="form-label d-flex align-items-center justify-content-between mb-1">
                 <span>
                   <i class="ri-map-pin-2-fill text-danger me-1"></i>Pilih Lokasi pada Peta (Map Picker)
@@ -257,8 +224,8 @@
               </div>
             </div>
 
-            <div class="col-12" *ngIf="venueForm.value.type !== 'OFFLINE'">
-              <label for="meetingUrl" class="form-label">URL Meeting (Zoom / Google Meet)</label>
+            <div class="col-12">
+              <label for="meetingUrl" class="form-label">URL Meeting Opsional (Zoom / Google Meet)</label>
               <input
                 type="text"
                 class="form-control"

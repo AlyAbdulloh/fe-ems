@@ -95,8 +95,14 @@
                 </td>
                 <td>
                   <div class="text-dark fs-14">{{ item.category?.name || '-' }}</div>
-                  <div class="text-muted fs-13" *ngIf="item.venue">
-                    {{ item.venue.name }} ({{ item.venue.type }})
+                  <div class="text-muted fs-13" *ngIf="item.eventType === 'ONLINE'">
+                    Online (Virtual)
+                  </div>
+                  <div class="text-muted fs-13" *ngIf="item.eventType === 'HYBRID'">
+                    Hybrid: {{ item.venue?.name || '-' }}
+                  </div>
+                  <div class="text-muted fs-13" *ngIf="item.eventType === 'OFFLINE' || (!item.eventType && item.venue)">
+                    {{ item.venue?.name || '-' }}
                   </div>
                 </td>
                 <td>
@@ -239,21 +245,32 @@
             </div>
           </div>
 
-          <!-- Venue / Lokasi -->
+          <!-- Venue / Lokasi / Meeting URL -->
           <div class="col-md-7">
             <div class="d-flex align-items-start gap-3 p-3 rounded border bg-white h-100">
               <div
                 class="avatar-xs rounded bg-soft-info text-info d-flex align-items-center justify-content-center flex-shrink-0 mt-1">
-                <i class="ri-map-pin-2-line fs-18"></i>
+                <i [class]="selectedEventForPublish.eventType === 'ONLINE' ? 'ri-video-chat-line fs-18' : 'ri-map-pin-2-line fs-18'"></i>
               </div>
               <div class="flex-grow-1">
-                <div class="text-muted small fw-medium">Lokasi / Venue</div>
-                <div class="fw-semibold text-dark fs-14 mt-1">
+                <div class="text-muted small fw-medium">
+                  {{ selectedEventForPublish.eventType === 'ONLINE' ? 'Format & Link Pertemuan' : 'Lokasi / Venue' }}
+                </div>
+                <div class="fw-semibold text-dark fs-14 mt-1" *ngIf="selectedEventForPublish.eventType === 'ONLINE'">
+                  Online (Virtual Event)
+                </div>
+                <div class="fw-semibold text-dark fs-14 mt-1" *ngIf="selectedEventForPublish.eventType !== 'ONLINE'">
                   {{ selectedEventForPublish.venue?.name || 'Belum Ditentukan' }}
                 </div>
-                <div class="text-muted fs-12 mt-1" *ngIf="selectedEventForPublish.venue">
-                  <span class="badge bg-light text-dark border me-1">{{ selectedEventForPublish.venue.type }}</span>
+                <div class="text-muted fs-12 mt-1" *ngIf="selectedEventForPublish.venue && selectedEventForPublish.eventType !== 'ONLINE'">
+                  <span class="badge bg-light text-dark border me-1">{{ selectedEventForPublish.eventType || 'OFFLINE' }}</span>
                   <span>{{ selectedEventForPublish.venue.city || selectedEventForPublish.venue.address || '' }}</span>
+                </div>
+                <div class="text-muted fs-12 mt-1" *ngIf="selectedEventForPublish.meetingUrl">
+                  <span class="badge bg-soft-primary text-primary me-1">Link URL</span>
+                  <a [href]="selectedEventForPublish.meetingUrl" target="_blank" class="text-truncate d-inline-block text-primary" style="max-width: 250px;">
+                    {{ selectedEventForPublish.meetingUrl }}
+                  </a>
                 </div>
               </div>
             </div>

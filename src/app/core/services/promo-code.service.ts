@@ -34,7 +34,7 @@ export interface CreatePromoCodeRequest {
 
 @Injectable({ providedIn: 'root' })
 export class PromoCodeService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   async findByEventId(eventId: string): Promise<ApiResponse<PromoCode[]>> {
     return await firstValueFrom(
@@ -57,6 +57,12 @@ export class PromoCodeService {
   async delete(id: string): Promise<ApiResponse<any>> {
     return await firstValueFrom(
       this.http.delete<ApiResponse<any>>(`${API_URL}promo-codes/${id}`),
+    );
+  }
+
+  async checkPromoCode(code?: string, eventId?: string): Promise<ApiResponse<PromoCode>> {
+    return await firstValueFrom(
+      this.http.post<ApiResponse<PromoCode>>(`${API_URL}promo-codes/check`, { code, eventId }),
     );
   }
 }

@@ -53,11 +53,24 @@
                 <i [ngClass]="event.pricingType === 'PAID' ? 'ri-money-dollar-circle-line me-1' : 'ri-gift-line me-1'"></i>
                 {{ event.pricingType === 'PAID' ? 'BERBAYAR' : 'GRATIS' }}
               </span>
+              <span class="badge px-2 py-1"
+                [ngClass]="{
+                  'bg-soft-info text-info': event.eventType === 'ONLINE',
+                  'bg-soft-primary text-primary': event.eventType === 'HYBRID',
+                  'bg-soft-secondary text-secondary': event.eventType === 'OFFLINE' || !event.eventType
+                }">
+                <i [ngClass]="{
+                  'ri-global-line me-1': event.eventType === 'ONLINE',
+                  'ri-shuffle-line me-1': event.eventType === 'HYBRID',
+                  'ri-building-line me-1': event.eventType === 'OFFLINE' || !event.eventType
+                }"></i>
+                {{ event.eventType || 'OFFLINE' }}
+              </span>
               <span class="badge bg-soft-primary text-primary px-2 py-1" *ngIf="event.category">
                 <i class="ri-price-tag-3-line me-1"></i> {{ event.category.name }}
               </span>
               <span class="badge bg-soft-info text-info px-2 py-1" *ngIf="event.venue">
-                <i class="ri-map-pin-line me-1"></i> {{ event.venue.name }} ({{ event.venue.type }})
+                <i class="ri-map-pin-line me-1"></i> {{ event.venue.name }}{{ event.venue.city ? ' (' + event.venue.city + ')' : '' }}
               </span>
             </div>
             <h3 class="fw-bold text-dark mb-2">{{ event.title }}</h3>
@@ -133,12 +146,12 @@
                       </div>
                     </div>
 
-                    <!-- Venue Information -->
-                    <div class="card border mb-4 shadow-none" *ngIf="event.venue">
+                    <!-- Venue / Location Information (OFFLINE / HYBRID) -->
+                    <div class="card border mb-4 shadow-none" *ngIf="event.eventType !== 'ONLINE' && event.venue">
                       <div class="card-header bg-light py-3">
                         <h5 class="card-title mb-0 fw-bold text-dark">
                           <i class="ri-building-line text-info me-2 align-middle"></i>
-                          Informasi Venue / Lokasi
+                          Informasi Venue / Lokasi Fisik
                         </h5>
                       </div>
                       <div class="card-body p-4">
@@ -148,11 +161,10 @@
                             <div class="fw-semibold text-dark fs-15">{{ event.venue.name }}</div>
                           </div>
                           <div class="col-sm-6">
-                            <small class="text-muted d-block mb-1">Tipe & Kapasitas</small>
+                            <small class="text-muted d-block mb-1">Kapasitas Maksimal</small>
                             <div class="fw-medium text-dark">
-                              <span class="badge bg-light text-dark me-1">{{ event.venue.type }}</span>
-                              <span *ngIf="event.venue.capacity">Kapasitas: {{ event.venue.capacity | number }}
-                                orang</span>
+                              <span *ngIf="event.venue.capacity"><i class="ri-user-line me-1 text-primary"></i>{{ event.venue.capacity | number }} orang</span>
+                              <span *ngIf="!event.venue.capacity" class="text-muted">-</span>
                             </div>
                           </div>
                           <div class="col-12" *ngIf="event.venue.address">
@@ -162,6 +174,36 @@
                               {{ event.venue.address }}
                               <span *ngIf="event.venue.city">, {{ event.venue.city }}</span>
                             </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Online / Virtual Meeting Information (ONLINE / HYBRID) -->
+                    <div class="card border mb-4 shadow-none" *ngIf="event.eventType === 'ONLINE' || event.eventType === 'HYBRID'">
+                      <div class="card-header bg-soft-info py-3 border-0">
+                        <h5 class="card-title mb-0 fw-bold text-info">
+                          <i class="ri-video-chat-line me-2 align-middle"></i>
+                          Akses Pertemuan Virtual (Online)
+                        </h5>
+                      </div>
+                      <div class="card-body p-4">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                          <div>
+                            <small class="text-muted d-block mb-1">Meeting URL / Link Akses</small>
+                            <div *ngIf="event.meetingUrl" class="fs-15">
+                              <a [href]="event.meetingUrl" target="_blank" rel="noopener noreferrer" class="fw-medium text-primary text-break">
+                                <i class="ri-external-link-line me-1"></i>{{ event.meetingUrl }}
+                              </a>
+                            </div>
+                            <span *ngIf="!event.meetingUrl" class="text-muted fst-italic fs-14">
+                              Tautan meeting belum disediakan oleh penyelenggara.
+                            </span>
+                          </div>
+                          <div *ngIf="event.meetingUrl">
+                            <a [href]="event.meetingUrl" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-info">
+                              <i class="ri-login-box-line me-1"></i> Buka Link
+                            </a>
                           </div>
                         </div>
                       </div>
