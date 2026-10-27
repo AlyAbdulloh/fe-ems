@@ -171,6 +171,23 @@ export class EventDetailComponent implements OnInit {
     }
   }
 
+  initialOf(name?: string): string {
+    const trimmed = (name ?? '').trim();
+    return trimmed ? trimmed.charAt(0).toUpperCase() : '?';
+  }
+
+  trackBySession(index: number, item: EventSession): string {
+    return item.id;
+  }
+
+  trackByTicket(index: number, item: TicketType): string {
+    return item.id;
+  }
+
+  trackByPromo(index: number, item: PromoCode): string {
+    return item.id;
+  }
+
   getStatusBadgeClass(status: string): string {
     switch (status) {
       case 'DRAFT':
@@ -773,10 +790,5 @@ export class EventDetailComponent implements OnInit {
       return { label: 'Kedaluwarsa', badgeClass: 'badge bg-secondary' };
     }
     return { label: 'Aktif', badgeClass: 'badge bg-success' };
-  }
-
-  getPromoUsagePercentage(used: number = 0, max: number): number {
-    if (!max || max <= 0) return 0;
-    return Math.min(100, Math.round((used / max) * 100));
   }
 }
