@@ -108,7 +108,7 @@
         <div class="mb-4" *ngIf="event.sessions && event.sessions.length > 0">
           <h5 class="section-subheading">Agenda & Pembicara ({{ event.sessions.length }} Sesi)</h5>
           <div class="timeline-sessions mt-3">
-            <div class="timeline-session-item" *ngFor="let s of event.sessions">
+            <div class="timeline-session-item" *ngFor="let s of event.sessions; trackBy: trackBySession">
               <div class="timeline-session-time">
                 {{ display.formatEventTime(s.startTime, s.endTime) }}
                 <span class="timeline-room" *ngIf="s.roomOrTrack">{{ s.roomOrTrack }}</span>
@@ -130,7 +130,7 @@
         <div class="mb-3" *ngIf="event.ticketTypes && event.ticketTypes.length > 0">
           <h5 class="section-subheading">Pilihan Tiket</h5>
           <div class="row g-2 mt-2">
-            <div class="col-sm-6" *ngFor="let t of event.ticketTypes">
+            <div class="col-sm-6" *ngFor="let t of event.ticketTypes; trackBy: trackByTicket">
               <div class="ticket-type-card">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                   <span class="ticket-name fw-bold">{{ t.name }}</span>

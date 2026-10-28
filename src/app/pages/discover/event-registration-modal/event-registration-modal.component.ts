@@ -3,6 +3,7 @@ import Swal from 'sweetalert2';
 import { EventItem } from '../../../core/services/event.service';
 import { PromoCodeService } from '../../../core/services/promo-code.service';
 import { EventRegistrationService } from '../../../core/services/event-registration.service';
+import { TicketType } from '../../../core/services/ticket-type.service';
 import { User } from '../../../core/models/user.model';
 import { EventDisplayService } from '../services/event-display.service';
 
@@ -100,7 +101,7 @@ export class EventRegistrationModalComponent implements OnInit {
     return this.selectedTicketQuantities[ticketTypeId] || 0;
   }
 
-  incrementTicketQuantity(ticket: any): void {
+  incrementTicketQuantity(ticket: TicketType): void {
     const availableQuota = (ticket.quota || 0) - (ticket.soldCount || 0);
     if (availableQuota <= 0) return;
 
@@ -118,13 +119,13 @@ export class EventRegistrationModalComponent implements OnInit {
     }
   }
 
-  selectFreeTicket(ticket: any): void {
+  selectFreeTicket(ticket: TicketType): void {
     if (this.event.pricingType === 'FREE') {
       this.incrementTicketQuantity(ticket);
     }
   }
 
-  decrementTicketQuantity(ticket: any): void {
+  decrementTicketQuantity(ticket: TicketType): void {
     const current = this.getTicketQuantity(ticket.id);
     if (current > 0) {
       const next = current - 1;
@@ -190,7 +191,7 @@ export class EventRegistrationModalComponent implements OnInit {
         newAttendees.push({
           ticketTypeId: item.ticket.id,
           ticketTypeName: item.ticket.name,
-          ticketPrice: parseFloat(item.ticket.price) || 0,
+          ticketPrice: item.ticket.price || 0,
           ticketIndex: globalIndex,
           typeIndex: i,
           attendeeName: defaultName,
@@ -221,13 +222,21 @@ export class EventRegistrationModalComponent implements OnInit {
     );
   }
 
-  get selectedTicketsList(): Array<{ ticket: any; quantity: number; subtotal: number }> {
+  trackByTicket(index: number, ticket: TicketType): string {
+    return ticket.id;
+  }
+
+  trackByAttendee(index: number, attendee: TicketAttendeeInput): number {
+    return attendee.ticketIndex;
+  }
+
+  get selectedTicketsList(): Array<{ ticket: TicketType; quantity: number; subtotal: number }> {
     if (!this.event.ticketTypes) return [];
     return this.event.ticketTypes
       .filter((t) => this.getTicketQuantity(t.id) > 0)
       .map((t) => {
         const qty = this.getTicketQuantity(t.id);
-        const price = parseFloat(t.price) || 0;
+        const price = t.price || 0;
         return {
           ticket: t,
           quantity: qty,
@@ -303,11 +312,6 @@ export class EventRegistrationModalComponent implements OnInit {
     this.appliedPromo = null;
     this.promoCodeInput = '';
     this.promoError = '';
-  }
-
-  setPromoCode(code: string): void {
-    this.promoCodeInput = code;
-    this.applyPromoCode(code);
   }
 
   buildRegistrationPayload(): EventRegistrationPayload | null {

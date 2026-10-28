@@ -24,4 +24,12 @@ export class EventDetailModalComponent {
   get isMine(): boolean {
     return this.display.isMyEvent(this.currentUser, this.event);
   }
+
+  trackBySession(index: number, item: any): string {
+    return item.id;
+  }
+
+  trackByTicket(index: number, item: any): string {
+    return item.id;
+  }
 }

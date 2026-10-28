@@ -1,0 +1,82 @@
+<div class="orders-page">
+
+  <!-- Header -->
+  <div class="orders-header">
+    <div>
+      <h2 class="orders-title">My Orders</h2>
+      <p class="orders-subtitle">Riwayat pemesanan event</p>
+    </div>
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs" role="tablist">
+    <button *ngFor="let tab of filterTabs" type="button" role="tab" class="filter-tab"
+      [class.active]="statusFilter === tab.value" (click)="selectTab(tab.value)">
+      {{ tab.label }}
+    </button>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="alert-error" role="alert">
+    <i class="ri-error-warning-line"></i>{{ error }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p class="loading-text">Memuat pesanan...</p>
+  </div>
+
+  <!-- Empty -->
+  <div *ngIf="!loading && orders.length === 0" class="empty-state card">
+    <i class="ri-shopping-bag-3-line empty-icon"></i>
+    <p class="empty-title">Belum ada pesanan</p>
+    <p class="empty-subtitle">Pesan tiket event dan pesanan Anda akan muncul di sini.</p>
+  </div>
+
+  <!-- Order Cards -->
+  <div class="order-list" *ngIf="!loading && orders.length > 0">
+    <div class="order-card" *ngFor="let order of orders">
+
+      <!-- Top row: order ID + badge -->
+      <div class="order-card-top">
+        <span class="order-id">{{ formatOrderId(order.id) }}</span>
+        <span class="order-badge" [ngClass]="getPaymentBadgeClass(order.payment?.status)">
+          {{ getPaymentLabel(order.payment?.status) }}
+        </span>
+      </div>
+
+      <!-- Event name -->
+      <div class="order-event-title">{{ order.event?.title }}</div>
+
+      <!-- Date -->
+      <div class="order-event-date">
+        {{ order.event?.startDatetime | date:'dd MMMM yyyy' }}
+      </div>
+
+      <!-- Divider -->
+      <div class="order-divider"></div>
+
+      <!-- Tiket + Amount -->
+      <div class="order-card-mid">
+        <span class="order-ticket-count">{{ getTotalQuantity(order) }} tiket</span>
+        <span class="order-amount">{{ order.totalAmount | currency:'IDR':'Rp':'1.0-0' }}</span>
+      </div>
+
+      <!-- Action Button -->
+      <button class="order-action-btn" type="button"
+        (click)="isPending(order) ? continuePayment(order) : viewDetail(order.id)">
+        {{ isPending(order) ? 'Lanjutkan pembayaran' : 'Lihat detail pesanan' }}
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-wrap" *ngIf="meta.total > limit && !loading">
+    <ngb-pagination [collectionSize]="meta.total" [(page)]="page" [pageSize]="limit" (pageChange)="changePage($event)"
+      [maxSize]="5" [rotate]="true" [boundaryLinks]="true">
+    </ngb-pagination>
+  </div>
+
+</div>

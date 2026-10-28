@@ -158,3 +158,10 @@
     transform: scale(1);
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop-custom,
+  .modal-content-custom {
+    animation: none;
+  }
+}

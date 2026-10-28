@@ -110,6 +110,13 @@ export const MENU: MenuItem[] = [
         link: '/events/manage',
         parentId: 1020,
         roles: ['ORGANIZER']
+      },
+      {
+        id: 1007,
+        label: 'My Orders',
+        link: '/events/my-orders',
+        parentId: 1020,
+        roles: ['USER', 'ORGANIZER']
       }
     ]
   },

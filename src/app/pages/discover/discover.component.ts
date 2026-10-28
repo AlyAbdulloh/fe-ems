@@ -21,7 +21,6 @@ export class DiscoverComponent implements OnInit, OnDestroy {
   // Event Data State
   events: EventItem[] = [];
   spotlightEvent: EventItem | null = null;
-  otherEvents: EventItem[] = [];
   categories: EventCategory[] = [];
   loading = true;
   loadError = false;
@@ -43,7 +42,7 @@ export class DiscoverComponent implements OnInit, OnDestroy {
   isRegisterModalOpen = false;
 
   // Debounce timer for search
-  private searchTimer?: any;
+  private searchTimer?: ReturnType<typeof setTimeout>;
 
   constructor(
     private router: Router,
@@ -113,19 +112,12 @@ export class DiscoverComponent implements OnInit, OnDestroy {
       this.totalEvents = res?.meta?.total || allFetched.length;
       this.events = allFetched;
 
-      if (allFetched.length > 0) {
-        this.spotlightEvent = allFetched[0];
-        this.otherEvents = allFetched.slice(1);
-      } else {
-        this.spotlightEvent = null;
-        this.otherEvents = [];
-      }
+      this.spotlightEvent = allFetched.length > 0 ? allFetched[0] : null;
     } catch (err) {
       console.error('Failed to load events:', err);
       this.loadError = true;
       this.events = [];
       this.spotlightEvent = null;
-      this.otherEvents = [];
       this.totalEvents = 0;
     } finally {
       this.loading = false;
@@ -152,6 +144,10 @@ export class DiscoverComponent implements OnInit, OnDestroy {
     this.selectedPricing = 'ALL';
     this.selectedCategoryId = 'ALL';
     this.loadEvents();
+  }
+
+  trackByEvent(index: number, item: EventItem): string {
+    return item.id;
   }
 
   get hasActiveFilters(): boolean {

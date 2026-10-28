@@ -1,0 +1,619 @@
+/* =============================================
+   Order Detail — Clean Vertical Layout
+   ============================================= */
+
+$primary: var(--vz-primary, #405189);
+$border: var(--vz-border-color, #e9ecef);
+$card-bg: var(--vz-card-bg, #fff);
+$heading: var(--vz-heading-color, #1a1a2e);
+$muted: var(--vz-secondary-color, #878a99);
+$body: var(--vz-body-color, #495057);
+$success: #0ab39c;
+$warning: #f79009;
+$danger: #f04438;
+$info: #405189;
+
+/* ── Loading ── */
+.od-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 240px;
+  gap: 14px;
+
+  p {
+    font-size: 13px;
+    color: $muted;
+    margin: 0;
+  }
+}
+
+.od-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid $border;
+  border-top-color: $primary;
+  border-radius: 50%;
+  animation: od-spin 0.65s linear infinite;
+}
+
+@keyframes od-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Error ── */
+.od-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff4f4;
+  border: 1px solid #ffd5d5;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 13.5px;
+  color: #c0392b;
+  margin-bottom: 20px;
+
+  i { font-size: 18px; flex-shrink: 0; }
+}
+
+/* ── Back Nav ── */
+.od-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.od-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  appearance: none;
+  border: 1px solid $border;
+  background: $card-bg;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: $body;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+
+  i { font-size: 15px; }
+
+  &:hover {
+    border-color: $primary;
+    color: $primary;
+  }
+}
+
+.od-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  color: $muted;
+
+  i { font-size: 14px; }
+
+  .active { color: $body; font-weight: 500; }
+}
+
+/* ── Page Header ── */
+.od-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.od-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.od-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: $muted;
+  font-weight: 500;
+}
+
+.od-order-id {
+  font-size: 14px;
+  font-weight: 700;
+  color: $heading;
+  margin: 0;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.3px;
+  word-break: break-all;
+}
+
+.od-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  color: $muted;
+
+  i { font-size: 13px; }
+}
+
+/* Status Badge */
+.od-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  border: 1.5px solid transparent;
+  align-self: flex-start;
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  &.status-paid {
+    background: rgba($success, 0.1);
+    color: $success;
+    border-color: rgba($success, 0.25);
+    .status-dot { background: $success; }
+  }
+
+  &.status-pending {
+    background: rgba($warning, 0.1);
+    color: $warning;
+    border-color: rgba($warning, 0.25);
+    .status-dot { background: $warning; }
+  }
+
+  &.status-failed {
+    background: rgba($danger, 0.1);
+    color: $danger;
+    border-color: rgba($danger, 0.25);
+    .status-dot { background: $danger; }
+  }
+
+  &.status-refunded {
+    background: rgba($info, 0.1);
+    color: $info;
+    border-color: rgba($info, 0.25);
+    .status-dot { background: $info; }
+  }
+
+  &.status-expired,
+  &.status-default {
+    background: rgba(135, 138, 153, 0.1);
+    color: #878a99;
+    border-color: rgba(135, 138, 153, 0.25);
+    .status-dot { background: #878a99; }
+  }
+}
+
+/* ── Body ── */
+.od-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── Card Shell ── */
+.od-card {
+  background: $card-bg;
+  border: 1px solid $border;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.od-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 18px;
+  background: var(--vz-light, #f8f9fa);
+  border-bottom: 1px solid $border;
+  font-size: 13px;
+  font-weight: 600;
+  color: $heading;
+
+  i {
+    font-size: 16px;
+    color: $primary;
+  }
+}
+
+/* ── ① Event Info ── */
+.od-event {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 16px 18px;
+}
+
+.od-event-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--vz-light, #f3f6f9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &--placeholder i {
+    font-size: 28px;
+    color: #ced4da;
+  }
+}
+
+.od-event-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.od-event-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: $heading;
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+
+.od-event-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: $muted;
+
+    i {
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+  }
+}
+
+/* ── ② Ticket Items ── */
+.od-items {
+  padding: 0 18px 4px;
+}
+
+.od-items-thead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 130px 60px 120px;
+  gap: 0 8px;
+  padding: 11px 0 9px;
+  border-bottom: 1px solid $border;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: $muted;
+
+  .col-price,
+  .col-qty,
+  .col-sub { text-align: right; }
+}
+
+.od-items-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 130px 60px 120px;
+  gap: 0 8px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px dashed $border;
+  font-size: 13.5px;
+  color: $body;
+
+  &:last-child { border-bottom: none; }
+
+  .col-price,
+  .col-qty,
+  .col-sub { text-align: right; }
+}
+
+.od-ticket-name {
+  font-weight: 600;
+  color: $heading;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.od-ticket-sub {
+  font-weight: 600;
+  color: $heading;
+}
+
+.od-items-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0 14px;
+  border-top: 2px solid $border;
+  margin-top: 4px;
+
+  > span:first-child {
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $muted;
+  }
+}
+
+.od-total-amount {
+  font-size: 18px;
+  font-weight: 700;
+  color: $heading;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.4px;
+}
+
+/* ── ③ Summary ── */
+.od-summary {
+  padding: 4px 18px 6px;
+}
+
+.od-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px dashed $border;
+
+  &:last-child { border-bottom: none; }
+
+  &--total {
+    border-bottom: none;
+    border-top: 2px solid $border;
+    padding-top: 14px;
+    margin-top: 4px;
+  }
+}
+
+.od-summary-label {
+  font-size: 13px;
+  color: $muted;
+}
+
+.od-summary-value {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: $heading;
+}
+
+.od-summary-total {
+  font-size: 18px;
+  font-weight: 700;
+  color: $heading;
+  font-variant-numeric: tabular-nums;
+}
+
+.od-summary-divider {
+  display: none; /* rows handle borders */
+}
+
+/* ── ④ Payment ── */
+.od-pay-card {
+  border-color: rgba(64, 81, 137, 0.2);
+}
+
+.od-pay-hint {
+  font-size: 13px;
+  color: $muted;
+  margin: 0;
+  padding: 14px 18px 0;
+
+  strong { color: $heading; }
+}
+
+.od-pay-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 12px 18px 0;
+}
+
+.od-method {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 14px;
+  border: 1.5px solid $border;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  margin-bottom: 8px;
+  position: relative;
+
+  &:hover {
+    border-color: $primary;
+    background: rgba(64, 81, 137, 0.02);
+  }
+
+  &.selected {
+    border-color: $primary;
+    background: rgba(64, 81, 137, 0.05);
+
+    .od-method-check {
+      opacity: 1;
+    }
+  }
+}
+
+.od-method-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.od-method-icon {
+  font-size: 22px;
+  color: $primary;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+.od-method-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.od-method-label {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: $heading;
+  line-height: 1;
+}
+
+.od-method-desc {
+  font-size: 12px;
+  color: $muted;
+}
+
+.od-method-check {
+  font-size: 18px;
+  color: $primary;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.od-pay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 36px);
+  margin: 14px 18px 18px;
+  padding: 13px 20px;
+  background: $primary;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+
+  i { font-size: 18px; }
+
+  &:hover:not(:disabled) {
+    background: darken(#405189, 8%);
+    transform: translateY(-1px);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.od-pay-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: od-spin 0.65s linear infinite;
+}
+
+/* ── Responsive ── */
+@media (max-width: 576px) {
+  .od-event {
+    flex-direction: column;
+  }
+
+  .od-event-img {
+    width: 100%;
+    height: 140px;
+    border-radius: 8px;
+  }
+
+  .od-items-thead,
+  .od-items-row {
+    grid-template-columns: minmax(0, 1fr) 70px 40px 90px;
+    font-size: 12px;
+  }
+
+  .od-total-amount,
+  .od-summary-total {
+    font-size: 16px;
+  }
+
+  .od-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .od-status-badge {
+    align-self: flex-start;
+  }
+}
+
+/* ── Dark Mode ── */
+[data-bs-theme="dark"] {
+  .od-back-btn {
+    background: #2b3035;
+    border-color: #3d4046;
+    color: #adb5bd;
+
+    &:hover { border-color: #6c8ebf; color: #e9ecef; }
+  }
+
+  .od-card-header {
+    background: #2b3035;
+  }
+
+  .od-event-title,
+  .od-order-id,
+  .od-total-amount,
+  .od-summary-total,
+  .od-ticket-name,
+  .od-ticket-sub,
+  .od-summary-value { color: #f0f0f0; }
+
+  .od-method {
+    border-color: #3d4046;
+    background: #22272e;
+
+    &.selected {
+      border-color: #6c8ebf;
+      background: rgba(64, 81, 137, 0.12);
+    }
+  }
+
+  .od-method-label { color: #e9ecef; }
+}

@@ -164,7 +164,7 @@
 
           <!-- Events Responsive Grid -->
           <div class="events-grid" *ngIf="events.length > 0">
-            <app-event-card *ngFor="let item of events; let idx = index" [event]="item"
+            <app-event-card *ngFor="let item of events; let idx = index; trackBy: trackByEvent" [event]="item"
               [imageIndex]="idx + 1" [currentUser]="currentUser"
               (openDetail)="openDetailModal($event)" (register)="onRegisterEvent($event)">
             </app-event-card>

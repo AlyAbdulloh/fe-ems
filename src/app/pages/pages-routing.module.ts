@@ -74,6 +74,9 @@ const routes: Routes = [
       path: 'events', loadChildren: () => import('./events/events.module').then(m => m.EventsModule)
     },
     {
+      path: 'events', loadChildren: () => import('./orders/orders.module').then(m => m.OrdersModule)
+    },
+    {
       path: 'discover', loadChildren: () => import('./discover/discover.module').then(m => m.DiscoverModule)
     },
 ];

@@ -52,7 +52,7 @@
 
           <ng-container *ngIf="event.ticketTypes && event.ticketTypes.length > 0; else noTicketTypesTpl">
             <div class="d-flex flex-column gap-2 mb-3">
-              <div class="ticket-type-card-interactive" *ngFor="let t of event.ticketTypes"
+              <div class="ticket-type-card-interactive" *ngFor="let t of event.ticketTypes; trackBy: trackByTicket"
                 (click)="selectFreeTicket(t)"
                 [ngClass]="{'has-quantity': getTicketQuantity(t.id) > 0, 'is-soldout': (t.quota - (t.soldCount || 0)) <= 0, 'cursor-pointer': event.pricingType === 'FREE'}">
                 <div class="ticket-info-col">
@@ -101,7 +101,7 @@
               </div>
 
               <div class="d-flex flex-column gap-2 mb-2">
-                <div class="attendee-card-item" *ngFor="let a of ticketAttendees; let idx = index">
+                <div class="attendee-card-item" *ngFor="let a of ticketAttendees; let idx = index; trackBy: trackByAttendee">
                   <div class="attendee-card-header">
                     <span class="fw-semibold fs-12 text-dark d-flex align-items-center gap-1">
                       <span class="badge bg-dark text-white rounded-pill px-2 py-0.5 fs-10">#{{ a.ticketIndex }}</span>

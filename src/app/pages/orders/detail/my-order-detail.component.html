@@ -1,0 +1,165 @@
+<!-- ============ LOADING ============ -->
+<div *ngIf="loading" class="od-loading">
+  <div class="od-spinner"></div>
+  <p>Memuat detail pesanan...</p>
+</div>
+
+<!-- ============ ERROR ============ -->
+<div *ngIf="!loading && error" class="od-error" role="alert">
+  <i class="ri-error-warning-line"></i>
+  <span>{{ error }}</span>
+</div>
+
+<!-- ============ CONTENT ============ -->
+<ng-container *ngIf="!loading && order">
+
+  <!-- Back Nav -->
+  <div class="od-nav">
+    <button type="button" class="od-back-btn" (click)="goBack()">
+      <i class="ri-arrow-left-line"></i> Kembali ke Pesanan
+    </button>
+    <div class="od-breadcrumb">
+      <span>My Orders</span>
+      <i class="ri-arrow-right-s-line"></i>
+      <span class="active">Detail</span>
+    </div>
+  </div>
+
+  <!-- Order ID + Status Header -->
+  <div class="od-header">
+    <div class="od-header-left">
+      <span class="od-label">Nomor Pesanan</span>
+      <h1 class="od-order-id">{{ order.id }}</h1>
+      <span class="od-date">
+        <i class="ri-time-line"></i>
+        {{ order.createdAt | date:'dd MMMM yyyy, HH:mm' }} WIB
+      </span>
+    </div>
+    <div class="od-status-badge" [ngClass]="getPaymentStatusClass(order.payment?.status)">
+      <span class="status-dot"></span>
+      <span>{{ getPaymentLabel(order.payment?.status) }}</span>
+    </div>
+  </div>
+
+  <!-- Main Layout: single column card stack -->
+  <div class="od-body">
+
+    <!-- ① Event Card -->
+    <div class="od-card">
+      <div class="od-card-header">
+        <i class="ri-calendar-event-line"></i>
+        <span>Informasi Event</span>
+      </div>
+      <div class="od-event">
+        <div class="od-event-img" *ngIf="order.event?.bannerImage">
+          <img [src]="apiUrl + order.event.bannerImage" alt="Banner event" />
+        </div>
+        <div class="od-event-img od-event-img--placeholder" *ngIf="!order.event?.bannerImage">
+          <i class="ri-image-line"></i>
+        </div>
+        <div class="od-event-info">
+          <h2 class="od-event-title">{{ order.event?.title }}</h2>
+          <div class="od-event-meta">
+            <span>
+              <i class="ri-calendar-line"></i>
+              {{ order.event?.startDatetime | date:'EEEE, dd MMMM yyyy' }}
+            </span>
+            <span>
+              <i class="ri-time-line"></i>
+              {{ order.event?.startDatetime | date:'HH:mm' }} WIB
+            </span>
+            <span *ngIf="getVenue(order)">
+              <i class="ri-map-pin-line"></i>
+              {{ getVenue(order) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② Ticket Items -->
+    <div class="od-card">
+      <div class="od-card-header">
+        <i class="ri-ticket-2-line"></i>
+        <span>Rincian Tiket</span>
+      </div>
+      <div class="od-items">
+        <div class="od-items-thead">
+          <span class="col-name">Jenis Tiket</span>
+          <span class="col-price">Harga</span>
+          <span class="col-qty">Qty</span>
+          <span class="col-sub">Subtotal</span>
+        </div>
+        <div class="od-items-row" *ngFor="let item of order.items">
+          <span class="col-name od-ticket-name">{{ item.ticketType?.name || '-' }}</span>
+          <span class="col-price">{{ item.ticketType?.price | currency:'IDR':'Rp':'1.0-0' }}</span>
+          <span class="col-qty">{{ item.quantity }}</span>
+          <span class="col-sub od-ticket-sub">{{ item.subtotal | currency:'IDR':'Rp':'1.0-0' }}</span>
+        </div>
+        <div class="od-items-total">
+          <span>Total</span>
+          <span class="od-total-amount">{{ order.totalAmount | currency:'IDR':'Rp':'1.0-0' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ Payment Summary -->
+    <div class="od-card mb-2">
+      <div class="od-card-header">
+        <i class="ri-receipt-line"></i>
+        <span>Ringkasan Pembayaran</span>
+      </div>
+      <div class="od-summary">
+        <div class="od-summary-row">
+          <span class="od-summary-label">Jumlah Tiket</span>
+          <span class="od-summary-value">{{ getTotalQuantity(order) }} tiket</span>
+        </div>
+        <div class="od-summary-row" *ngIf="order.payment?.method">
+          <span class="od-summary-label">Metode Pembayaran</span>
+          <span class="od-summary-value">{{ order.payment.method }}</span>
+        </div>
+        <div class="od-summary-row" *ngIf="order.payment?.paidAt">
+          <span class="od-summary-label">Tanggal Bayar</span>
+          <span class="od-summary-value">{{ order.payment.paidAt | date:'dd MMM yyyy, HH:mm' }}</span>
+        </div>
+        <div class="od-summary-divider"></div>
+        <div class="od-summary-row od-summary-row--total">
+          <span class="od-summary-label">Total Pembayaran</span>
+          <span class="od-summary-value od-summary-total">
+            {{ order.totalAmount | currency:'IDR':'Rp':'1.0-0' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ Payment Section (only if unpaid) -->
+    <div class="od-card od-pay-card" *ngIf="isUnpaid">
+      <div class="od-card-header">
+        <i class="ri-bank-card-line"></i>
+        <span>Selesaikan Pembayaran</span>
+      </div>
+      <p class="od-pay-hint">
+        Pilih metode pembayaran untuk menyelesaikan pesanan senilai
+        <strong>{{ order.totalAmount | currency:'IDR':'Rp':'1.0-0' }}</strong>
+      </p>
+      <div class="od-pay-methods">
+        <label class="od-method" *ngFor="let m of paymentMethods" [class.selected]="selectedMethod === m.value">
+          <input type="radio" name="paymentMethod" class="od-method-radio" [value]="m.value"
+            [(ngModel)]="selectedMethod" />
+          <i [class]="m.icon + ' od-method-icon'"></i>
+          <div class="od-method-text">
+            <span class="od-method-label">{{ m.label }}</span>
+            <span class="od-method-desc">{{ m.desc }}</span>
+          </div>
+          <i class="ri-check-line od-method-check"></i>
+        </label>
+      </div>
+      <button class="od-pay-btn" type="button" (click)="pay()" [disabled]="submitting">
+        <span *ngIf="submitting" class="od-pay-spinner"></span>
+        <i *ngIf="!submitting" class="ri-secure-payment-line"></i>
+        <span>{{ submitting ? 'Memproses...' : 'Bayar Sekarang' }}</span>
+      </button>
+    </div>
+
+  </div>
+</ng-container>

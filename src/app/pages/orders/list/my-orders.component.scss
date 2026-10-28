@@ -1,0 +1,378 @@
+/* =============================================
+   My Orders — Card Layout
+   ============================================= */
+
+.orders-page {
+  padding-bottom: 20px;
+}
+
+/* ── Header ── */
+.orders-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.orders-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--vz-heading-color, #1a1a2e);
+  margin: 0 0 2px;
+}
+
+.orders-subtitle {
+  font-size: 12px;
+  color: var(--vz-secondary-color, #878a99);
+  margin: 0;
+}
+
+/* ── Filter Tabs ── */
+.filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.filter-tab {
+  appearance: none;
+  padding: 4px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--vz-border-color, #dee2e6);
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--vz-body-color, #495057);
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: var(--vz-primary, #405189);
+    color: var(--vz-primary, #405189);
+  }
+
+  &.active {
+    background: var(--vz-primary, #405189);
+    border-color: var(--vz-primary, #405189);
+    color: #fff;
+  }
+}
+
+/* ── Error ── */
+.alert-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff0f0;
+  color: #c0392b;
+  border: 1px solid #ffc5c5;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 12.5px;
+  margin-bottom: 10px;
+
+  i { font-size: 14px; }
+}
+
+/* ── Loading ── */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  gap: 10px;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--vz-border-color, #e2e8f0);
+  border-top-color: var(--vz-primary, #405189);
+  border-radius: 50%;
+  animation: spin 0.65s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 12.5px;
+  color: var(--vz-secondary-color, #878a99);
+  margin: 0;
+}
+
+/* ── Empty ── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 38px;
+  color: var(--vz-border-color, #ced4da);
+  margin-bottom: 10px;
+}
+
+.empty-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--vz-heading-color, #1a1a2e);
+  margin: 0 0 4px;
+}
+
+.empty-subtitle {
+  font-size: 12px;
+  color: var(--vz-secondary-color, #878a99);
+  margin: 0;
+  max-width: 260px;
+}
+
+/* ── Order List ── */
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── Order Card ── */
+.order-card {
+  background: var(--vz-card-bg, #fff);
+  border: 1px solid var(--vz-border-color, #e9ecef);
+  border-radius: 10px;
+  padding: 13px 15px 11px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    border-color: darken(#e9ecef, 6%);
+  }
+}
+
+/* Top row: ID + Badge */
+.order-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.order-id {
+  font-size: 11px;
+  color: var(--vz-secondary-color, #878a99);
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+/* Status Badge */
+.order-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.badge-paid {
+  background: rgba(10, 179, 156, 0.12);
+  color: #0ab39c;
+  border: 1px solid rgba(10, 179, 156, 0.25);
+}
+
+.badge-pending {
+  background: rgba(247, 144, 9, 0.12);
+  color: #e08906;
+  border: 1px solid rgba(247, 144, 9, 0.25);
+}
+
+.badge-failed {
+  background: rgba(240, 68, 56, 0.12);
+  color: #d63e2e;
+  border: 1px solid rgba(240, 68, 56, 0.25);
+}
+
+.badge-expired {
+  background: rgba(135, 138, 153, 0.12);
+  color: #878a99;
+  border: 1px solid rgba(135, 138, 153, 0.2);
+}
+
+.badge-refunded {
+  background: rgba(64, 81, 137, 0.12);
+  color: #405189;
+  border: 1px solid rgba(64, 81, 137, 0.25);
+}
+
+.badge-secondary {
+  background: rgba(135, 138, 153, 0.1);
+  color: #878a99;
+  border: 1px solid rgba(135, 138, 153, 0.15);
+}
+
+/* Event Title */
+.order-event-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--vz-heading-color, #1a1a2e);
+  margin-bottom: 3px;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Date */
+.order-event-date {
+  font-size: 12px;
+  color: var(--vz-secondary-color, #878a99);
+  margin-bottom: 10px;
+}
+
+/* Divider */
+.order-divider {
+  border: none;
+  border-top: 1px solid var(--vz-border-color, #e9ecef);
+  margin-bottom: 10px;
+}
+
+/* Mid row: tiket + amount */
+.order-card-mid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.order-ticket-count {
+  font-size: 12.5px;
+  color: var(--vz-secondary-color, #878a99);
+}
+
+.order-amount {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vz-heading-color, #1a1a2e);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
+}
+
+/* Action Button */
+.order-action-btn {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1.5px solid var(--vz-border-color, #dee2e6);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--vz-body-color, #495057);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+
+  &:hover {
+    border-color: var(--vz-primary, #405189);
+    color: var(--vz-primary, #405189);
+    background: rgba(64, 81, 137, 0.04);
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+/* ── Pagination ── */
+.pagination-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+/* ── Responsive ── */
+
+/* Tablet & small desktop: 2 columns */
+@media (min-width: 600px) {
+  .order-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* Large desktop: 3 columns */
+@media (min-width: 1100px) {
+  .order-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Mobile only adjustments */
+@media (max-width: 599px) {
+  .orders-page {
+    padding-bottom: 16px;
+  }
+
+  .order-card {
+    padding: 11px 13px 10px;
+  }
+
+  .order-event-title {
+    font-size: 13.5px;
+  }
+}
+
+/* ── Dark Mode ── */
+[data-bs-theme="dark"] {
+  .order-card {
+    background: #22272e;
+    border-color: #3d4046;
+
+    &:hover {
+      border-color: #555a64;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+    }
+  }
+
+  .order-divider {
+    border-top-color: #3d4046;
+  }
+
+  .orders-title,
+  .order-event-title,
+  .order-amount {
+    color: #e9ecef;
+  }
+
+  .order-action-btn {
+    border-color: #3d4046;
+    color: #adb5bd;
+
+    &:hover {
+      border-color: #6c8ebf;
+      color: #e9ecef;
+      background: rgba(255, 255, 255, 0.04);
+    }
+  }
+
+  .filter-tab {
+    border-color: #3d4046;
+    color: #adb5bd;
+
+    &:hover {
+      border-color: #6c8ebf;
+      color: #e9ecef;
+    }
+  }
+}
